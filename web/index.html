@@ -84,10 +84,15 @@
   <section class="card">
     <details>
       <summary>Gerät (Stufe 1)</summary>
-      <p class="muted">Schickt das Rezept als JSON an den ESP32. Erst nutzbar, wenn die Spritzenpumpen stehen.</p>
-      <label for="devUrl">Adresse</label>
-      <input type="url" id="devUrl" value="http://farbmixer.local/dispense">
-      <p><button class="primary" id="send">Rezept dosieren</button> <span id="devStatus" class="muted"></span></p>
+      <p class="muted">Schickt das Rezept als JSON an den ESP32. Erst nutzbar, wenn die Spritzenpumpen stehen. Vor dem ersten Dosieren eine Referenzfahrt machen.</p>
+      <label for="devUrl">Adresse des Geräts</label>
+      <input type="url" id="devUrl" value="http://farbmixer.local">
+      <p>
+        <button class="primary" id="send">Rezept dosieren</button>
+        <button id="home">Referenzfahrt</button>
+        <button id="stop">Stopp</button>
+      </p>
+      <p id="devStatus" class="muted"></p>
       <pre id="json"></pre>
     </details>
   </section>
@@ -163,13 +168,34 @@
   $('resetPrims').addEventListener('click', function () {
     prims = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES)); savePrims(); renderPrims(); update();
   });
-  $('send').addEventListener('click', function () {
-    var st = $('devStatus'); st.textContent = 'sende …';
-    fetch($('devUrl').value, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: $('json').textContent })
-      .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status)); })
-      .then(function (t) { st.textContent = 'OK: ' + t; })
-      .catch(function (e) { st.textContent = 'Fehler: ' + e.message; });
-  });
+  // Wird die Seite vom ESP32 selbst ausgeliefert, ist das Gerät die eigene Adresse.
+  if (location.protocol.indexOf('http') === 0) $('devUrl').value = location.origin;
+  function devBase() { return $('devUrl').value.replace(/\/+$/, ''); }
+  function post(path, body) {
+    return fetch(devBase() + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body || '{}' })
+      .then(function (r) { return r.json().then(function (j) { return r.ok ? j : Promise.reject(new Error(j.error || ('HTTP ' + r.status))); }); });
+  }
+  var pollTimer = null;
+  function poll() {
+    clearTimeout(pollTimer);
+    fetch(devBase() + '/status').then(function (r) { return r.json(); }).then(function (s) {
+      var st = $('devStatus');
+      if (s.busy) { st.textContent = 'läuft, Station ' + s.station + ' …'; pollTimer = setTimeout(poll, 700); }
+      else if (s.error) { st.textContent = 'Fehler: ' + s.error; }
+      else {
+        var rest = Object.keys(s.stations).map(function (k) { return k + ' ' + s.stations[k].remaining_ml.toFixed(0) + ' ml'; }).join(', ');
+        st.textContent = 'fertig. Vorrat: ' + rest;
+      }
+    }).catch(function (e) { $('devStatus').textContent = 'Keine Verbindung: ' + e.message; });
+  }
+  function run(path, body) {
+    $('devStatus').textContent = 'sende …';
+    post(path, body).then(function () { pollTimer = setTimeout(poll, 500); })
+      .catch(function (e) { $('devStatus').textContent = 'Fehler: ' + e.message; });
+  }
+  $('send').addEventListener('click', function () { run('/dispense', $('json').textContent); });
+  $('home').addEventListener('click', function () { run('/home'); });
+  $('stop').addEventListener('click', function () { run('/stop'); });
 
   renderPrims();
   update();
