@@ -66,7 +66,9 @@ Grob 120 bis 180 Euro.
 
 ### Druckteile
 
-`hardware/spritzenpumpe.scad`, parametrisch. Variable `teil` am Dateianfang auf `motorhalter`, `kolbenschlitten`, `spritzenhalter`, `grundplatte` oder `alle` setzen und als STL exportieren. Pro Station je ein Motorhalter, Kolbenschlitten und Spritzenhalter, dazu eine Grundplatte. Die Maße der Spritze und der Flanschmutter vor dem Druck an den echten Teilen nachmessen, die Datei ist ungerendert entstanden.
+`hardware/spritzenpumpe.scad`, parametrisch. Variable `teil` am Dateianfang auf `motorhalter`, `kolbenschlitten`, `spritzenhalter`, `grundplatte` oder `alle` setzen und als STL exportieren. Pro Station je ein Motorhalter, Kolbenschlitten und Spritzenhalter, dazu eine Grundplatte. Die Maße der Spritze und der Flanschmutter vor dem Druck an den echten Teilen nachmessen, die Datei ist ungerendert entstanden. Die Liste der nachzumessenden Maße steht im Kommentarblock am Dateiende.
+
+Die Grundplatte für fünf Stationen ist etwa 316 x 264 mm groß und passt auf die meisten Druckbetten nicht. Empfehlung: Lochbild als Vorlage nehmen und die Platte aus Holz oder Acryl zuschneiden, oder stationsweise drucken mit `grundplatte(anzahl=1, becher=false)`.
 
 ### Dosierung
 
