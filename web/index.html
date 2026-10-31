@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farbmischer</title>
+<style>
+  :root { --bg:#f6f4ef; --fg:#1d1d1b; --muted:#6b6963; --card:#ffffff; --line:#e3dfd6; --accent:#2b6cb0; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.5rem; margin: 8px 0 16px; }
+  h2 { font-size: 1.05rem; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  label { display:block; font-size:.9rem; color:var(--muted); margin-bottom:4px; }
+  input[type=text], input[type=number], input[type=url] { width:100%; padding:10px; font-size:1rem; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--fg); }
+  input[type=color] { width:100%; height:64px; border:1px solid var(--line); border-radius:8px; padding:4px; background:#fff; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .swatches { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+  .swatch { height:96px; border-radius:10px; border:1px solid var(--line); display:flex; align-items:flex-end; padding:8px; font-size:.85rem; color:#fff; text-shadow:0 0 4px rgba(0,0,0,.6); }
+  table { width:100%; border-collapse: collapse; }
+  td, th { padding:8px 4px; border-bottom:1px solid var(--line); text-align:left; font-size:.95rem; }
+  th { color:var(--muted); font-weight:600; font-size:.8rem; }
+  td.num { text-align:right; font-variant-numeric: tabular-nums; font-weight:600; }
+  .chip { display:inline-block; width:18px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,.15); vertical-align:middle; margin-right:8px; }
+  .rating { font-size:.95rem; margin: 6px 0 0; }
+  .muted { color:var(--muted); font-size:.85rem; }
+  button { padding:10px 14px; border-radius:8px; border:1px solid var(--line); background:#fff; color:var(--fg); font-size:.95rem; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .prim { display:grid; grid-template-columns: 44px 1fr auto; gap:10px; align-items:center; margin-bottom:8px; }
+  .prim input[type=color] { height:40px; padding:2px; }
+  details summary { cursor:pointer; color:var(--muted); }
+  .notice { background:#fff4e5; border:1px solid #f0c48a; padding:12px; border-radius:8px; margin-bottom:16px; }
+  pre { background:#f1efe9; padding:10px; border-radius:8px; overflow:auto; font-size:.85rem; }
+  @media (max-width: 420px) { .row, .swatches { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Farbmischer</h1>
+  <div id="notice" class="notice" hidden>
+    <strong>mixbox.js fehlt.</strong> Die Datei <code>mixbox.js</code> muss neben dieser Seite liegen. Download-Anleitung steht in der README.
+  </div>
+
+  <section class="card">
+    <h2>Zielfarbe</h2>
+    <div class="row">
+      <div>
+        <label for="color">Farbe wählen</label>
+        <input type="color" id="color" value="#e08a3c">
+      </div>
+      <div>
+        <label for="hex">Hex-Wert</label>
+        <input type="text" id="hex" value="#e08a3c" spellcheck="false">
+        <label for="grams" style="margin-top:10px">Gesamtmenge in Gramm</label>
+        <input type="number" id="grams" value="20" min="1" max="500" step="1">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Rezept</h2>
+    <div class="swatches">
+      <div class="swatch" id="swTarget">Ziel</div>
+      <div class="swatch" id="swPred">Vorhersage</div>
+    </div>
+    <table>
+      <thead><tr><th>Farbe</th><th style="text-align:right">Gramm</th><th style="text-align:right">Anteil</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="rating" id="rating"></p>
+    <p class="muted">Abwiegen auf einer Waage mit 0,1 g Auflösung. Erst die hellen Farben in den Becher, dunkle zuletzt in kleinen Schritten.</p>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Primärfarben kalibrieren</summary>
+      <p class="muted">Jede Farbe satt auf weißes Papier streichen, trocknen lassen, bei Tageslicht fotografieren und den Farbwert hier eintragen. Wird im Browser gespeichert.</p>
+      <div id="prims"></div>
+      <button id="resetPrims">Zurücksetzen</button>
+    </details>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Gerät (Stufe 1)</summary>
+      <p class="muted">Schickt das Rezept als JSON an den ESP32. Erst nutzbar, wenn die Spritzenpumpen stehen.</p>
+      <label for="devUrl">Adresse</label>
+      <input type="url" id="devUrl" value="http://farbmixer.local/dispense">
+      <p><button class="primary" id="send">Rezept dosieren</button> <span id="devStatus" class="muted"></span></p>
+      <pre id="json"></pre>
+    </details>
+  </section>
+</main>
+
+<script src="mixbox.js"></script>
+<script src="farbmath.js"></script>
+<script>
+(function () {
+  if (typeof mixbox === 'undefined' || typeof farbmath === 'undefined') {
+    document.getElementById('notice').hidden = false;
+    return;
+  }
+  var $ = function (id) { return document.getElementById(id); };
+  var KEY = 'farbmischer.primaries';
+
+  function loadPrims() {
+    try {
+      var s = localStorage.getItem(KEY);
+      if (s) return JSON.parse(s);
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES));
+  }
+  var prims = loadPrims();
+  function savePrims() { try { localStorage.setItem(KEY, JSON.stringify(prims)); } catch (e) {} }
+
+  function renderPrims() {
+    var box = $('prims'); box.innerHTML = '';
+    prims.forEach(function (p, i) {
+      var div = document.createElement('div'); div.className = 'prim';
+      var c = document.createElement('input'); c.type = 'color'; c.value = farbmath.rgbToHex(p.rgb);
+      c.addEventListener('input', function () { prims[i].rgb = farbmath.hexToRgb(c.value); savePrims(); update(); });
+      var name = document.createElement('span'); name.textContent = p.name;
+      var hex = document.createElement('span'); hex.className = 'muted'; hex.textContent = farbmath.rgbToHex(p.rgb);
+      c.addEventListener('input', function () { hex.textContent = c.value; });
+      div.appendChild(c); div.appendChild(name); div.appendChild(hex);
+      box.appendChild(div);
+    });
+  }
+
+  var last = null;
+  function update() {
+    var rgb = farbmath.hexToRgb($('hex').value);
+    if (!rgb) return;
+    var grams = Math.max(1, parseFloat($('grams').value) || 20);
+    var sol = farbmath.solve(rgb, prims);
+    var rec = farbmath.recipe(sol.weights, prims, grams);
+    last = rec;
+    $('swTarget').style.background = farbmath.rgbToHex(rgb);
+    $('swPred').style.background = farbmath.rgbToHex(rec.predictedRgb);
+    var tb = $('rows'); tb.innerHTML = '';
+    rec.rows.forEach(function (r) {
+      if (r.grams <= 0) return;
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td><span class="chip" style="background:' + farbmath.rgbToHex(r.rgb) + '"></span>' + r.name + '</td>' +
+        '<td class="num">' + r.grams.toFixed(1).replace('.', ',') + ' g</td>' +
+        '<td class="num" style="font-weight:400;color:var(--muted)">' + r.percent.toFixed(0) + ' %</td>';
+      tb.appendChild(tr);
+    });
+    var dE = farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb));
+    $('rating').textContent = 'Abweichung ΔE ' + dE.toFixed(1).replace('.', ',') + ': ' + farbmath.rating(dE);
+    var payload = { total_g: grams, grams: {} };
+    rec.rows.forEach(function (r) { payload.grams[r.id] = r.grams; });
+    $('json').textContent = JSON.stringify(payload, null, 2);
+  }
+
+  $('color').addEventListener('input', function () { $('hex').value = $('color').value; update(); });
+  $('hex').addEventListener('input', function () {
+    var rgb = farbmath.hexToRgb($('hex').value);
+    if (rgb) { $('color').value = farbmath.rgbToHex(rgb); update(); }
+  });
+  $('grams').addEventListener('input', update);
+  $('resetPrims').addEventListener('click', function () {
+    prims = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES)); savePrims(); renderPrims(); update();
+  });
+  $('send').addEventListener('click', function () {
+    var st = $('devStatus'); st.textContent = 'sende …';
+    fetch($('devUrl').value, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: $('json').textContent })
+      .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function (t) { st.textContent = 'OK: ' + t; })
+      .catch(function (e) { st.textContent = 'Fehler: ' + e.message; });
+  });
+
+  renderPrims();
+  update();
+})();
+</script>
+</body>
+</html>
