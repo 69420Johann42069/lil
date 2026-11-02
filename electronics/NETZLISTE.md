@@ -194,6 +194,9 @@ Erzeugt von generate_pcb.py. Pinnummern wie auf der Platine.
 | J11 | 2 | GND | GND |
 | J12 | 1 | SIG | GPIO34 |
 | J12 | 2 | GND | GND |
+| J13 | 1 | 5V | +5V |
+| J13 | 2 | GND | GND |
+| J13 | 3 | DATA | GPIO5 |
 | R1 | 1 |  | GPIO34 |
 | R1 | 2 |  | +3V3 |
 | J1 | 1 | +12V | +12V_IN |

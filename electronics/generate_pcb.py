@@ -172,6 +172,10 @@ for i in range(5):
     pads = header_row(jref, ["SIG", "GND"], [gpio_net(ENDSTOP_GPIO[i]), "GND"], 0, 0, pitch=2.5, vertical=False)
     footprint(jref, f"Endstop {i+1} XH-2", "Farbmixer:JST_XH_2", 10 + i * 9.0, 93.0, pads, outline=(7.5, 5.8))
 
+# LED-Ring WS2812 (J13): 5 V, GND, Daten GPIO 5
+pads = header_row("J13", ["5V", "GND", "DATA"], ["+5V", "GND", gpio_net(5)], 0, 0, pitch=2.5, vertical=False)
+footprint("J13", "LED-Ring XH-3", "Farbmixer:JST_XH_3", 62.0, 93.0, pads, outline=(10.0, 5.8))
+
 # Pullup für GPIO 34 (kein interner Pullup)
 footprint("R1", "10k", "Farbmixer:R_Axial_7.62", 36.0, 80.0,
           [pad(1, -3.81, 0, gpio_net(34), shape="rect"), pad(2, 3.81, 0, "+3V3")], outline=(9.0, 2.5))

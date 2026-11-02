@@ -169,7 +169,7 @@
     });
     var dE = farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb));
     $('rating').textContent = 'Abweichung ΔE ' + dE.toFixed(1).replace('.', ',') + ': ' + farbmath.rating(dE);
-    var payload = { total_g: grams, grams: {} };
+    var payload = { total_g: grams, rgb: rgb, grams: {} };
     rec.rows.forEach(function (r) { payload.grams[r.id] = r.grams; });
     $('json').textContent = JSON.stringify(payload, null, 2);
   }

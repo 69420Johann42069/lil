@@ -41,4 +41,9 @@ static const bool DIR_INVERT[N_STATIONS] = {false, false, false, false, false};
 // Kleinste dosierbare Menge in Gramm.
 #define MIN_DOSE_G 0.1f
 
+// LED-Ring WS2812 unter der Haube, zeigt die Zielfarbe beim Dosieren.
+#define PIN_LED_RING 5
+#define LED_COUNT 12
+#define LED_BRIGHTNESS 80  // 0 bis 255
+
 #define MDNS_NAME "farbmixer"

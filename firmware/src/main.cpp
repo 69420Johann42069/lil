@@ -19,9 +19,17 @@
 #include <LittleFS.h>
 #include <Preferences.h>
 #include <ArduinoJson.h>
+#include <Adafruit_NeoPixel.h>
 
 #include "config.h"
 #include "secrets.h"
+
+static Adafruit_NeoPixel ring(LED_COUNT, PIN_LED_RING, NEO_GRB + NEO_KHZ800);
+
+static void ringShow(uint8_t r, uint8_t g, uint8_t b) {
+  for (int i = 0; i < LED_COUNT; i++) ring.setPixelColor(i, ring.Color(r, g, b));
+  ring.show();
+}
 
 // ---------------------------------------------------------------- Stationen
 
@@ -170,6 +178,8 @@ struct Job {
   int stationMask = 0;  // für HOME: Bitmaske, für PRIME: Index in primeIdx
   int primeIdx = -1;
   float primeMl = 0;
+  uint8_t rgb[3] = {0, 0, 0};  // Zielfarbe für den LED-Ring
+  bool hasRgb = false;
 };
 static Job job;
 static bool busy = false;
@@ -185,6 +195,7 @@ static void runJob() {
   bool ok = true;
   switch (job.type) {
     case JOB_DISPENSE:
+      if (job.hasRgb) ringShow(job.rgb[0], job.rgb[1], job.rgb[2]);
       for (int o = 0; o < N_STATIONS && ok; o++) {
         int i = stationIndex(DISPENSE_ORDER[o]);
         if (i < 0 || job.grams[i] < MIN_DOSE_G) continue;
@@ -220,6 +231,7 @@ static void runJob() {
   job.type = JOB_NONE;
   busy = false;
   if (!ok && lastError.length() == 0) lastError = "Fehler";
+  if (!ok) ringShow(60, 0, 0);  // rot = Fehler, bleibt bis zum nächsten Auftrag
 }
 
 // ---------------------------------------------------------------- HTTP
@@ -278,6 +290,11 @@ static void handleDispense() {
     sum += g;
   }
   if (sum < MIN_DOSE_G) { sendError(400, "Rezept ist leer"); return; }
+  JsonArray rgb = doc["rgb"].as<JsonArray>();
+  if (!rgb.isNull() && rgb.size() == 3) {
+    for (int k = 0; k < 3; k++) j.rgb[k] = (uint8_t)constrain(rgb[k].as<int>(), 0, 255);
+    j.hasRgb = true;
+  }
   for (int i = 0; i < N_STATIONS; i++) {
     if (j.grams[i] >= MIN_DOSE_G && !stations[i].homed) {
       sendError(409, String("Station ") + stations[i].id + " zuerst referenzieren (/home)");
@@ -406,6 +423,10 @@ void setup() {
     digitalWrite(s.stepPin, LOW);
   }
   loadConfig();
+
+  ring.begin();
+  ring.setBrightness(LED_BRIGHTNESS);
+  ringShow(0, 0, 0);
 
   if (!LittleFS.begin(true)) Serial.println("LittleFS konnte nicht gestartet werden");
 
