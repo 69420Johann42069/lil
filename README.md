@@ -78,7 +78,7 @@ Stößelkraft: NEMA 17 (0,4 Nm) an T8 mit 2 mm Steigung ergibt bei 30 % Wirkungs
 | TMC2209 StepStick (oder A4988) | 2 | Elektronikhändler |
 | NEMA 17, 40 mm | 2 | Stößel und Karussell |
 | Stahlwelle Ø 8, 170 mm, mit Abflachung | 1 | 3D-Druck-Shop, Antriebswelle Karussell |
-| Ritzel Modul 1, 16 Zähne, Bohrung 8 mm (oder gedruckt) | 1 | Zahnkranz wird gedruckt |
+| Ritzel Modul 1, 20 Zähne, Bohrung 8 mm (oder gedruckt) | 1 | Zahnkranz wird gedruckt |
 | T8-Spindel 2 mm Steigung, 150 mm, mit Flanschmutter | 1 | 3D-Druck-Shop |
 | Linearwelle 8 mm, 150 mm, LM8UU | 1 plus 1 | 3D-Druck-Shop |
 | Kugellager 608 | 2 | 3D-Druck-Shop |
@@ -115,7 +115,7 @@ Grob 80 bis 110 Euro. Die Trägerplatine aus `electronics/` ist für fünf Motor
 
 ### Für die Software-Sitzung
 
-Die Firmware in `firmware/` ist noch für fünf Spritzenpumpen geschrieben. Für den Revolver ändert sich: Motor 1 Stößel, Motor 2 Karussell; Dosierung als Strecke nach Kontakt (Stößel fährt bis der Taster schließt, dann Gramm geteilt durch g_per_ml mal Schritte pro ml, danach 2 Sekunden warten, dann 2 mm hoch, dann ganz nach oben); Karussell referenziert beim Start per Hall-Sensor und fährt dann 350 Vollschritte je Station (Übersetzung 8,75); vor jedem Drehen muss der Stößel am oberen Endschalter stehen; ein Rezept läuft vollautomatisch alle Stationen ab, am Ende Fertigmeldung und Zielfarbe auf dem LED-Ring. Details in `hardware/revolver_parameter.md`, Abschnitt „Was die Firmware wissen muss“.
+Die Firmware in `firmware/` ist noch für fünf Spritzenpumpen geschrieben. Für den Revolver ändert sich: Motor 1 Stößel, Motor 2 Karussell; Dosierung als Strecke nach Kontakt (Stößel fährt bis der Taster schließt, dann Gramm geteilt durch g_per_ml mal Schritte pro ml, danach 2 Sekunden warten, dann 2 mm hoch, dann ganz nach oben); Karussell referenziert beim Start per Hall-Sensor und fährt dann 272 Vollschritte je Station (Übersetzung 6,8); vor jedem Drehen muss der Stößel am oberen Endschalter stehen; ein Rezept läuft vollautomatisch alle Stationen ab, am Ende Fertigmeldung und Zielfarbe auf dem LED-Ring. Details in `hardware/revolver_parameter.md`, Abschnitt „Was die Firmware wissen muss“.
 
 ### Firmware bauen und flashen
 
@@ -130,4 +130,4 @@ Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und m
 - Druckteile des Revolvers in OpenSCAD rendern, eine Station probeweise drucken, Spritzenmaße nachmessen
 - Firmware auf zwei Motoren (Stößel, Karussell) und Kontakt-Dosierung umstellen (Software-Sitzung)
 - Karussell-Lagerung und Zahnkranz testen: Gleitlager PETG auf PETG oder Stahlkugeln, Zahnspiel am gedruckten Innenkranz
-- Erster Hardwaretest ohne Farbe: Referenzfahrten beider Motoren, Kontakt-Taster, 350 Schritte je Station prüfen
+- Erster Hardwaretest ohne Farbe: Referenzfahrten beider Motoren, Kontakt-Taster, 272 Schritte je Station prüfen

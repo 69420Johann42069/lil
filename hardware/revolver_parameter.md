@@ -1,12 +1,12 @@
 # Revolver: Parameterblatt für Rendering und Druckteile
 
-Zwei Schrittmotoren, fünf Spritzen. Die Spritzen stecken in einem Karussell, das ein Motor im Sockel über eine Welle und einen Innenzahnkranz dreht. Der Stößel sitzt fest über der vorderen Station. Die Nutzerin wählt nur die Farbe in der App, das Gerät dreht jede Station nach vorne und dosiert; am Ende nimmt sie den Becher heraus und rührt um. Optik: schlanke Säule Ø 170 mm, 48 cm hoch, mit einem messingfarbenen Drehring in der Mitte und einem Fenster unten vorne.
+Zwei Schrittmotoren, fünf Spritzen. Die Spritzen stecken in einem Karussell, das ein Motor im Sockel über eine Welle und einen Innenzahnkranz dreht. Der Stößel sitzt fest über der vorderen Station. Die Nutzerin wählt nur die Farbe in der App, das Gerät dreht jede Station nach vorne und dosiert; am Ende nimmt sie den Becher heraus und rührt um. Optik: schlanke, glatte Säule Ø 170 mm, 48 cm hoch, mit einem Fenster unten vorne und LED-Ring unter der Haube.
 
 Druckbett: Anycubic Kobra 2 Pro, 220 x 220 x 250 mm. Alle Teile passen liegend.
 
 Alle Maße in mm. Z nach oben, Z = 0 ist die Tischplatte. Winkel 0° zeigt nach vorne (Fenster, aktive Station). Stationen im Karussell bei 0°, 72°, 144°, 216°, 288°. Die Spritzen stehen senkrecht, keine Neigung.
 
-Stand 3: Karussell wird motorisch gedreht (zweiter NEMA 17 im Sockel bei 180°, Welle Ø 8 nach oben, Ritzel 16 Zähne auf Innenzahnkranz 140 Zähne, Modul 1, unter der Karussellplatte). Rändelschlitz, Rastung, fünf Stationsmagnete und Sperrklinke entfallen, ein Referenzmagnet plus Hall-Sensor bleibt zum Referenzieren.
+Stand 3: Karussell wird motorisch gedreht (zweiter NEMA 17 im Sockel bei 180°, Welle Ø 8 nach oben, Ritzel 20 Zähne auf Innenzahnkranz 136 Zähne, Modul 1, unter der Karussellplatte, beides auf Radius 58, weil ein Motor auf Radius 62 über die Schale hinausragt). Rändelschlitz, Rastung, fünf Stationsmagnete und Sperrklinke entfallen, ein Referenzmagnet plus Hall-Sensor bleibt zum Referenzieren.
 
 Stand 2: Stationsradius 50 statt 42 (gedrehte Flansche kollidierten bei 42), Säule Ø 170, Stößelfuß als 15 mm hoher Stempel unter dem Schlitten (Führungen enden über der Flanschplatte), Kupplung über dem Schlitten eingeplant, Brückenaussparungen nur an den hinteren drei Stationen, Führungen tangential ±20.
 
@@ -46,11 +46,11 @@ Gesamt: Ø 170 (Fuß 185), Höhe 480. Mit 30-ml-Spritzen 35 niedriger (445).
 
 | Element | Wert |
 |---|---|
-| Zahnkranz | Innenverzahnung, Modul 1, 140 Zähne, Teilkreis Ø 140, Fußkreis r 71,25, als Skirt unter der Karussellplatte: Ring r 66 bis 74, Z 228 bis 245, Zähne innen. Die Spritzenzylinder (bis r 65) laufen innen frei vorbei |
-| Ritzel | Modul 1, 16 Zähne, Teilkreis Ø 16, 12 breit, auf der Antriebswelle, Mitte bei Radius 62, Winkel 180°, Z 230 bis 242. Übersetzung 8,75, 72° Karussell = 350 Vollschritte, Luft zum nächsten Zylinder 21 |
-| Antriebswelle | Stahl Ø 8, Länge 170, Z 72 bis 242, oben Ritzel (Madenschraube auf Abflachung), 608-Lager in der Sockeloberseite (Z 113 bis 120) und Gleitbuchse Ø 8,3 in einem Haltearm der Mittelschale bei Z 215 bis 225, unten Kupplung 5 auf 8 zum Motor |
-| Motor 2 | NEMA 17, 40 lang, steht im Sockel bei 180° auf Radius 62, Welle nach oben, Flansch bei Z 72, Motorkörper Z 32 bis 72, Kupplung Z 72 bis 97. Der Becherraum liegt bei 0°, keine Kollision; das Elektronikfach bleibt im Fuß |
-| Durchlässe | Bohrung Ø 12 in der Abtropfschale bei 180° r 62 für die Welle |
+| Zahnkranz | Innenverzahnung, Modul 1, 136 Zähne, Teilkreis Ø 136, Kopfkreis r 67, Fußkreis r 69,25, als Skirt unter der Karussellplatte: Ring r 67 bis 74, Z 228 bis 245, Zähne innen. Die Spritzenzylinder (bis r 65) laufen innen mit 2 mm Luft vorbei |
+| Ritzel | Modul 1, 20 Zähne, Teilkreis Ø 20, Kopfkreis Ø 22, 12 breit, auf der Antriebswelle, Mitte bei Radius 58, Winkel 180°, Z 230 bis 242. Übersetzung 6,8, 72° Karussell = 272 Vollschritte, Luft Ritzelkopf zum nächsten Zylinder 8 |
+| Antriebswelle | Stahl Ø 8, Länge 170, Z 72 bis 242 auf Radius 58 bei 180°, oben Ritzel (Madenschraube auf Abflachung), 608-Lager in der Sockeloberseite (Z 113 bis 120) und Gleitbuchse Ø 8,3 in einem Haltearm der Mittelschale bei Z 215 bis 225, unten Kupplung 5 auf 8 zum Motor |
+| Motor 2 | NEMA 17, 40 lang, steht im Sockel bei 180° auf Radius 58 (Außenecke r 81,9, Innenradius Schale 82,6), Welle nach oben, Flansch bei Z 72, Motorkörper Z 32 bis 72, Kupplung Z 72 bis 97. Der Becherraum liegt bei 0°, keine Kollision; das Elektronikfach bleibt im Fuß |
+| Durchlässe | Bohrung Ø 22 in der Abtropfschale bei 180° r 58, weil dort die Kupplung Ø 19 durchläuft |
 | Drehmoment | 0,4 Nm am Motor ergibt 3,5 Nm am Karussell, Reibung des Karussells grob 0,25 Nm |
 
 ## Stößel (eine Station, vorne)
@@ -80,7 +80,7 @@ ESP32 DevKit, zwei TMC2209 (Stößel und Karussell), ein Hall-Sensor (z. B. A314
 ## Was die Firmware wissen muss (für die Software-Sitzung)
 
 - Ein Motor, Dosierung über Strecke nach Kontakt: Kontakt-Taster schließt, dann Schritte = Gramm / g_per_ml * Schritte pro ml, danach 2 mm Rückzug des Stößels (nicht des Kolbens).
-- Karussell: zweiter Motor, Referenzfahrt beim Start (drehen bis der Hall-Sensor den Magneten sieht, dann Nullpunkt = Station 1 vorne), danach 350 Vollschritte je Station (Übersetzung 8,75 bei 200 Schritten), Mikroschritte entsprechend. Kürzester Drehweg wählen.
+- Karussell: zweiter Motor, Referenzfahrt beim Start (drehen bis der Hall-Sensor den Magneten sieht, dann Nullpunkt = Station 1 vorne), danach 272 Vollschritte je Station (Übersetzung 6,8 bei 200 Schritten), Mikroschritte entsprechend. Kürzester Drehweg wählen.
 - Vor jedem Drehen: Stößel am oberen Endschalter, sonst nicht drehen.
 - Rezeptablauf vollautomatisch: Stationen der Reihe nach, hell zuerst (W, Y, C, M, K), am Ende Fertigmeldung.
 - Erste Dosierung einer Session je Station: 0,1 ml Vorlauf, weil die Kolbendichtung erst anliegt.
