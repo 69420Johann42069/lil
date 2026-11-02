@@ -1,10 +1,12 @@
 # Revolver: Parameterblatt für Rendering und Druckteile
 
-Ein Schrittmotor, fünf Spritzen. Die Spritzen stecken in einem drehbaren Karussell, der Stößel sitzt fest über der vorderen Station. Zum Farbwechsel wird der Drehring von Hand weitergedreht, bis die gewünschte Spritze vorne einrastet. Die App weiß über einen Hall-Sensor, welche Station vorne steht, und drückt dann die Menge aus. Optik: schlanke Säule Ø 170 mm, 48 cm hoch, mit einem messingfarbenen Drehring in der Mitte und einem Fenster unten vorne.
+Zwei Schrittmotoren, fünf Spritzen. Die Spritzen stecken in einem Karussell, das ein Motor im Sockel über eine Welle und einen Innenzahnkranz dreht. Der Stößel sitzt fest über der vorderen Station. Die Nutzerin wählt nur die Farbe in der App, das Gerät dreht jede Station nach vorne und dosiert; am Ende nimmt sie den Becher heraus und rührt um. Optik: schlanke Säule Ø 170 mm, 48 cm hoch, mit einem messingfarbenen Drehring in der Mitte und einem Fenster unten vorne.
 
 Druckbett: Anycubic Kobra 2 Pro, 220 x 220 x 250 mm. Alle Teile passen liegend.
 
 Alle Maße in mm. Z nach oben, Z = 0 ist die Tischplatte. Winkel 0° zeigt nach vorne (Fenster, aktive Station). Stationen im Karussell bei 0°, 72°, 144°, 216°, 288°. Die Spritzen stehen senkrecht, keine Neigung.
+
+Stand 3: Karussell wird motorisch gedreht (zweiter NEMA 17 im Sockel bei 180°, Welle Ø 8 nach oben, Ritzel 16 Zähne auf Innenzahnkranz 140 Zähne, Modul 1, unter der Karussellplatte). Rändelschlitz, Rastung, fünf Stationsmagnete und Sperrklinke entfallen, ein Referenzmagnet plus Hall-Sensor bleibt zum Referenzieren.
 
 Stand 2: Stationsradius 50 statt 42 (gedrehte Flansche kollidierten bei 42), Säule Ø 170, Stößelfuß als 15 mm hoher Stempel unter dem Schlitten (Führungen enden über der Flanschplatte), Kupplung über dem Schlitten eingeplant, Brückenaussparungen nur an den hinteren drei Stationen, Führungen tangential ±20.
 
@@ -17,7 +19,7 @@ Stand 2: Stationsradius 50 statt 42 (gedrehte Flansche kollidierten bei 42), Sä
 | 30 bis 90 | Mischbecher Ø 60, Höhe 60 (Kaufteil, Glas oder Becher) |
 | 105 | Düsenspitzen, 15 über dem Becherrand |
 | 120 bis 245 | Mittelschale Ø 170, Wand 2,4, innen bei Z 238 ein Laufring für das Karussell |
-| 245 bis 259 | Karussellplatte (Halterplatte) Ø 160 x 14, Außenkante gerändelt, messingfarben, durch einen Schlitz in der Schale (20 hoch, 60 breit, bei -60°) mit dem Daumen drehbar. Fünf Flanschtaschen von oben auf Radius 50, Zylinderdurchlass Ø 31 |
+| 245 bis 259 | Karussellplatte (Halterplatte) Ø 160 x 14, glatter Rand, kein Schlitz in der Schale mehr. Fünf Flanschtaschen von oben auf Radius 50, Zylinderdurchlass Ø 31. Unter der Platte ein Zahnkranz-Skirt (siehe Karussellantrieb) |
 | 259 bis 418 | Oberschale Ø 170 (Mittel- und Oberschale dürfen ein Teil Z 120 bis 300 und ein Teil Z 300 bis 418 sein), trägt oben die Brücke |
 | 344 | Kolbenplatte oben bei voller Spritze (s 239 ab Düse) |
 | 346 bis 361 | Stößelfuß (Stempel Ø 26, 15 hoch, mit Taster) in oberster Stellung, in unterster Stellung Z 254 bis 269 |
@@ -35,10 +37,21 @@ Gesamt: Ø 170 (Fuß 185), Höhe 480. Mit 30-ml-Spritzen 35 niedriger (445).
 |---|---|
 | Stationsradius | 50 (Sehne 58,8, Zylinder Ø 30 hat 29 Luft, gedrehte Flansche 45 x 32 haben 2,9 Luft, Taschen 2,2) |
 | Flanschtasche | 45,6 x 32,6, 3,6 tief, von oben offen, Zylinderdurchlass Ø 31, keine Rastlasche nötig (Spritze hängt im Flansch, der Stößel drückt nur) |
-| Lagerung | Platte liegt auf dem Laufring der Mittelschale (Ring Innen-Ø 130, Außen-Ø 158, Gleitlagerung PETG auf PETG, Rille mit 6-mm-Stahlkugeln als Option, 24 Stück) |
-| Rastung | fünf Kerben an der Plattenunterseite auf Radius 72, Federzunge 1,2 dick in der Mittelschale rastet ein |
-| Positionserkennung | fünf Magnete Ø 5 x 2 in der Plattenunterseite auf Radius 76 (eine je Station), ein Hall-Sensor fest in der Mittelschale bei 0°; Station 1 hat einen zweiten Magneten auf Radius 68, zweiter Hall-Sensor darüber als Referenz. Firmware zählt Rastschritte ab Referenz |
+| Lagerung | Platte liegt mit ihrem Außenrand auf dem Laufring der Mittelschale (Ring Innen-Ø 152, Außen-Ø 160 bei Z 238 bis 245, Gleitlagerung PETG auf PETG, Rille mit 6-mm-Stahlkugeln als Option, 24 Stück). Innen davon hängt der Zahnkranz-Skirt |
+| Rastung | entfällt, der Motor hält die Position |
+| Positionserkennung | ein Referenzmagnet Ø 5 x 2 in der Plattenunterseite auf Radius 76 bei Station 1, ein Hall-Sensor fest in der Mittelschale bei 0°. Firmware referenziert beim Start (drehen bis Magnet) und zählt danach Schritte |
 | Mittelloch | Ø 40 für Kabel und Blick in den Becherraum |
+
+## Karussellantrieb
+
+| Element | Wert |
+|---|---|
+| Zahnkranz | Innenverzahnung, Modul 1, 140 Zähne, Teilkreis Ø 140, Fußkreis r 71,25, als Skirt unter der Karussellplatte: Ring r 66 bis 74, Z 228 bis 245, Zähne innen. Die Spritzenzylinder (bis r 65) laufen innen frei vorbei |
+| Ritzel | Modul 1, 16 Zähne, Teilkreis Ø 16, 12 breit, auf der Antriebswelle, Mitte bei Radius 62, Winkel 180°, Z 230 bis 242. Übersetzung 8,75, 72° Karussell = 350 Vollschritte, Luft zum nächsten Zylinder 21 |
+| Antriebswelle | Stahl Ø 8, Länge 170, Z 72 bis 242, oben Ritzel (Madenschraube auf Abflachung), 608-Lager in der Sockeloberseite (Z 113 bis 120) und Gleitbuchse Ø 8,3 in einem Haltearm der Mittelschale bei Z 215 bis 225, unten Kupplung 5 auf 8 zum Motor |
+| Motor 2 | NEMA 17, 40 lang, steht im Sockel bei 180° auf Radius 62, Welle nach oben, Flansch bei Z 72, Motorkörper Z 32 bis 72, Kupplung Z 72 bis 97. Der Becherraum liegt bei 0°, keine Kollision; das Elektronikfach bleibt im Fuß |
+| Durchlässe | Bohrung Ø 12 in der Abtropfschale bei 180° r 62 für die Welle |
+| Drehmoment | 0,4 Nm am Motor ergibt 3,5 Nm am Karussell, Reibung des Karussells grob 0,25 Nm |
 
 ## Stößel (eine Station, vorne)
 
@@ -50,24 +63,24 @@ Gesamt: Ø 170 (Fuß 185), Höhe 480. Mit 30-ml-Spritzen 35 niedriger (445).
 | Endschalter oben | an der Brückenunterseite, Nase am Schlitten, Referenz |
 | Motor | NEMA 17, 40 lang, auf der Brücke über der Spindel |
 
-Der Stößel drückt nur. Vor dem Drehen des Karussells fährt er ganz nach oben (App und Firmware prüfen den Endschalter, die Rastung lässt sich sonst nicht drehen: eine Sperrklinke am Schlitten blockiert den Drehring, solange der Schlitten nicht oben ist).
+Der Stößel drückt nur. Vor dem Drehen des Karussells fährt er ganz nach oben, die Firmware dreht erst, wenn der obere Endschalter geschlossen ist. Eine mechanische Sperrklinke ist nicht mehr nötig.
 
 ## Ablauf
 
-1. App: Farbe wählen, Rezept berechnen. Die App zeigt die Reihenfolge der Stationen an.
-2. Drehring drehen, bis die angezeigte Station vorne einrastet. Die App bestätigt per Hall-Sensor.
-3. Stößel fährt herunter, bis der Taster die Kolbenplatte berührt, dann die berechnete Strecke weiter, dann 2 mm hoch. Nächste Station, zurück zu Schritt 2.
-4. Becher durchs Fenster entnehmen, umrühren.
+1. App: Farbe wählen, Rezept berechnen, Start.
+2. Gerät: Stößel nach oben, Karussell dreht die erste Station nach vorne, Stößel fährt herunter bis der Taster die Kolbenplatte berührt, drückt die berechnete Strecke, wartet 2 Sekunden, hebt 2 mm ab, fährt nach oben. Nächste Station, bis das Rezept fertig ist.
+3. LED-Ring zeigt die Zielfarbe, dann Fertigmeldung. Becher durchs Fenster entnehmen, umrühren.
 
-Spritze wechseln: Haube abnehmen, Karussell so drehen, dass die leere Station hinten unter einer der drei Brückenaussparungen (144°, 216°, 288°) steht, Spritze nach oben herausziehen, volle einsetzen. Über 0° sitzt der Stößel, über 72° der Motor, dort geht es nicht.
+Spritze wechseln: In der App „Wechseln“ wählen, das Gerät dreht die leere Station unter eine der drei Brückenaussparungen (144°, 216°, 288°). Haube abnehmen, Spritze nach oben herausziehen, volle einsetzen. Über 0° sitzt der Stößel, über 72° der Motor, dort geht es nicht.
 
 ## Elektronik
 
-ESP32 DevKit, ein TMC2209, zwei Hall-Sensoren (z. B. SS49E oder A3144), Mikroschalter im Stößelfuß, Endschalter oben, LED-Ring, Netzteil 12 V 2 A. Keine Trägerplatine nötig, ein Lochrasterstück oder ein fertiges ESP32-Stepper-Shield reicht.
+ESP32 DevKit, zwei TMC2209 (Stößel und Karussell), ein Hall-Sensor (z. B. A3144) als Referenz, Mikroschalter im Stößelfuß, Endschalter oben, LED-Ring, Netzteil 12 V 3 A. Lochraster oder die Trägerplatine aus `electronics/` mit zwei bestückten Treiberplätzen.
 
 ## Was die Firmware wissen muss (für die Software-Sitzung)
 
 - Ein Motor, Dosierung über Strecke nach Kontakt: Kontakt-Taster schließt, dann Schritte = Gramm / g_per_ml * Schritte pro ml, danach 2 mm Rückzug des Stößels (nicht des Kolbens).
-- Station = Zählwert der Hall-Impulse ab Referenzmagnet, Drehrichtung egal, Rastung sichert die Position.
-- Vor jedem Drehen: Stößel am oberen Endschalter, sonst Drehring gesperrt.
+- Karussell: zweiter Motor, Referenzfahrt beim Start (drehen bis der Hall-Sensor den Magneten sieht, dann Nullpunkt = Station 1 vorne), danach 350 Vollschritte je Station (Übersetzung 8,75 bei 200 Schritten), Mikroschritte entsprechend. Kürzester Drehweg wählen.
+- Vor jedem Drehen: Stößel am oberen Endschalter, sonst nicht drehen.
+- Rezeptablauf vollautomatisch: Stationen der Reihe nach, hell zuerst (W, Y, C, M, K), am Ende Fertigmeldung.
 - Erste Dosierung einer Session je Station: 0,1 ml Vorlauf, weil die Kolbendichtung erst anliegt.
