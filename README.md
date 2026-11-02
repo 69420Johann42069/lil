@@ -1,29 +1,32 @@
 # Farbmischer
 
-Ein Geschenk: Gerät plus Web-App, das aus fünf Acryl-Grundfarben ein Rezept für eine Wunschfarbe berechnet und die Mengen selbst dosiert. Gemischt wird von Hand.
+Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwähler oder Foto antippen), das Gerät dosiert die passenden Mengen aus fünf günstigen Acryl-Grundfarben in einen Becher, sie rührt um. Gemerkte Farben lassen sich später exakt nachmischen.
 
 ## Entscheidungen
 
-- Acrylfarbe, fünf Kartuschen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
-- Bedienung nur im Browser, keine native App. Der ESP32 liefert die Seite selbst im WLAN aus.
+- Acrylfarbe aus fünf 60-ml-Spritzen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
+- Günstige Studienacryl in 500-ml-Flaschen als Vorrat, nachgefüllt wird direkt in die Spritze
+- Bauform Turm: Spritzen senkrecht, Düse nach unten, Becher darunter, etwa 20 x 11 cm Stellfläche
+- Bedienung nur im Browser, der ESP32 liefert die Seite selbst im WLAN aus
 - Gerät dosiert nur, kein Rührwerk
-- 3D-Drucker vorhanden, Halter und Gehäuse werden gedruckt
+- Elektronik auf einer Trägerplatine von JLCPCB mit gesteckten Modulen, Druckteile aus dem eigenen Drucker
 
 ## Aufbau des Repos
 
 | Pfad | Inhalt |
 |---|---|
-| `web/` | Web-App: Farbwahl, Rezept, Kalibrierung, Gerätesteuerung |
+| `web/` | Web-App: Farbwahl, Foto, Rezept, gemerkte Farben, Kalibrierung, Gerätesteuerung |
 | `firmware/` | PlatformIO-Projekt für den ESP32 |
-| `hardware/` | OpenSCAD-Druckteile der Spritzenpumpe |
+| `hardware/` | OpenSCAD-Druckteile des Turms |
+| `electronics/` | Generator für die KiCad-Trägerplatine plus Netzliste |
 
 ## Stufen
 
 | Stufe | Was | Status |
 |---|---|---|
 | 0 | Web-App: Farbe wählen, Rezept in Gramm, mit Küchenwaage abwiegen | fertig, getestet |
-| 1 | Fünf Spritzenpumpen am ESP32, Web-App dosiert per HTTP | Code geschrieben, noch nicht auf Hardware getestet |
-| 2 | Kalibrierung mit Farbsensor, automatische Korrektur der Primärfarben | optional |
+| 1 | Turm mit fünf Spritzenpumpen am ESP32 | Code, Druckteile und Platine entworfen, nichts davon auf Hardware getestet |
+| 2 | Kalibrierung mit Farbsensor | optional |
 
 ## Stufe 0: Web-App
 
@@ -37,42 +40,71 @@ python3 -m http.server 8000
 
 Dann am Handy `http://<IP des Rechners>:8000` aufrufen.
 
-Die Farbmathematik liegt in `web/farbmath.js`: Mixbox mischt die Primärfarben im Latentraum, ein projizierter Gradientenabstieg sucht die Anteile mit kleinster Lab-Abweichung zur Zielfarbe. Die Primärfarben sind im Aufklappmenü kalibrierbar und werden im Browser gespeichert.
+Funktionen: Farbwähler oder Hex-Wert, Farbe aus einem Foto antippen (Handykamera), Gesamtmenge in Gramm, Rezept mit Vorhersage-Swatch und Abweichung, Farben mit Namen merken und wieder laden, Primärfarben kalibrieren, Gerät steuern.
+
+Die Farbmathematik liegt in `web/farbmath.js`: Mixbox mischt die Primärfarben im Latentraum, ein projizierter Gradientenabstieg sucht die Anteile mit kleinster Lab-Abweichung zur Zielfarbe.
 
 ### Primärfarben kalibrieren
 
 Jede Grundfarbe satt auf weißes Papier streichen, trocknen lassen, bei Tageslicht fotografieren, Farbwert mit einer Pipette ablesen und in der App eintragen. Das verbessert die Rezepte deutlich, weil die Standardwerte nur grobe Schätzungen sind.
 
-## Stufe 1: Hardware
+## Farben kaufen
+
+Fünf Flaschen reichen für alles. Gesucht wird in Studienqualität (Flasche 250 bis 500 ml, meist unter 10 Euro):
+
+| Spritze | Farbe | Suchbegriff beim Händler |
+|---|---|---|
+| C | Primär-Cyan | Primary Cyan, Primärblau, Cyan |
+| M | Primär-Magenta | Primary Magenta, Primärrot, Magenta |
+| Y | Primär-Gelb | Primary Yellow, Primärgelb |
+| W | Titanweiß | Titanium White |
+| K | Schwarz | Ivory Black oder Mars Black |
+
+Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Kolben wieder einsetzen, Düse nach oben, Luft rausdrücken. Flaschenfarbe ist dünner als Tubenfarbe und pumpt sich leichter.
+
+## Stufe 1: Turm
+
+### Mechanik
+
+Fünf Stationen im Abstand von 40 mm. Je Station: 60-ml-Luer-Lock-Spritze senkrecht in einem von vorne offenen Halter, dahinter eine T8-Spindel mit 2 mm Steigung und zwei 8-mm-Linearwellen, NEMA 17 unten im Sockel, Kolbenschlitten mit Arm, der die Kolbenplatte greift, Endschalter oben. Unter den Düsen ein Becherraum von 90 mm. Spritzenwechsel: Schlitten nach oben fahren, Spritze nach vorne herausziehen, neue einschieben.
+
+Druckteile: `hardware/spritzenpumpe.scad`, Variable `teil` auf `sockel`, `schlitten`, `spritzenhalter`, `kopf` oder `alle` setzen und als STL exportieren. Die Datei ist ungerendert entstanden, die nachzumessenden Maße stehen im Kommentarblock am Dateiende. Berechnete Wellen- und Spindellängen gibt OpenSCAD in der Konsole aus.
 
 ### Stückliste
 
-| Teil | Menge | Hinweis |
+| Teil | Menge | Woher |
 |---|---|---|
-| ESP32 DevKit | 1 | WLAN und Bluetooth eingebaut |
-| NEMA 17 Schrittmotor | 5 | 40 mm Länge reicht |
-| Schrittmotortreiber TMC2208 oder A4988 | 5 | TMC2208 ist leise, Mikroschritt 1/16 einstellen |
-| Trapezgewindespindel T8, 2 mm Steigung, 150 mm, mit Flanschmutter | 5 | 2 mm Steigung statt 8 mm für feine Dosierung |
-| Spritze 60 ml Luer-Lock | 5 | Standard-Einwegspritze |
-| Linearwelle 8 mm, 150 mm, plus LM8UU Lager | 10 | Führung des Kolbenschlittens |
-| Kupplung 5 mm auf 8 mm | 5 | Motor auf Spindel |
-| Netzteil 12 V, 3 A | 1 | |
-| Step-Down 12 V auf 5 V | 1 | für den ESP32 |
-| Mikro-Endschalter | 5 | Referenzfahrt am Anschlag |
-| Luer-Lock-Verschlusskappen | 10 | gegen Eintrocknen |
-| Schrauben M3, Elko 100 µF für die Treiber-Versorgung | | |
+| ESP32 DevKit V1, 30-polig | 1 | Elektronikhändler |
+| TMC2209 StepStick (oder A4988) | 5 | Elektronikhändler |
+| NEMA 17, 40 mm | 5 | Elektronikhändler, 3D-Druck-Shop |
+| T8-Spindel 2 mm Steigung, 200 mm, mit Flanschmutter | 5 | 3D-Druck-Shop |
+| Linearwelle 8 mm, 200 mm | 10 | 3D-Druck-Shop |
+| LM8UU | 10 | 3D-Druck-Shop |
+| Kupplung 5 auf 8 mm | 5 | 3D-Druck-Shop |
+| Mikro-Endschalter mit Hebel | 5 | Elektronikhändler |
+| Spritze 60 ml Luer-Lock | 5 plus Ersatz | Apotheke |
+| Luer-Lock-Verschlusskappen | 10 | Apotheke |
+| Netzteil 12 V 3 A mit Hohlstecker, Adapter auf Schraubklemme | 1 | Elektronikhändler |
+| Buck-Modul 12 V auf 5 V (z. B. MP1584) | 1 | Elektronikhändler |
+| JST-XH-Stecker 4-polig und 2-polig mit Kabel | 5 plus 5 | Elektronikhändler |
+| Elko 470 µF und 5 x 100 µF, 25 V, Polyfuse 3 A, Widerstand 10 kOhm | | Elektronikhändler |
+| Buchsenleisten 2 x 15 und 10 x 8, Schraubklemmen 5,08 mm 2- und 4-polig | | Elektronikhändler |
+| Trägerplatine | 5 Stück (Mindestmenge) | JLCPCB |
+| Schrauben M3, Muttern | | Baumarkt |
 
-Grob 120 bis 180 Euro.
+Grob 150 bis 200 Euro, die Spindeln und Wellen sind der größte Posten. Die Längen von Spindel und Wellen vor der Bestellung aus der OpenSCAD-Konsole übernehmen.
 
-### Druckteile
+### Bestellung bei JLCPCB
 
-`hardware/spritzenpumpe.scad`, parametrisch. Variable `teil` am Dateianfang auf `motorhalter`, `kolbenschlitten`, `spritzenhalter`, `grundplatte` oder `alle` setzen und als STL exportieren. Pro Station je ein Motorhalter, Kolbenschlitten und Spritzenhalter, dazu eine Grundplatte. Die Maße der Spritze und der Flanschmutter vor dem Druck an den echten Teilen nachmessen, die Datei ist ungerendert entstanden. Die Liste der nachzumessenden Maße steht im Kommentarblock am Dateiende.
+Nur die Trägerplatine. Ablauf:
 
-Die Grundplatte für fünf Stationen ist etwa 316 x 264 mm groß und passt auf die meisten Druckbetten nicht. Empfehlung: Lochbild als Vorlage nehmen und die Platte aus Holz oder Acryl zuschneiden, oder stationsweise drucken mit `grundplatte(anzahl=1, becher=false)`.
+1. `python3 electronics/generate_pcb.py` ausführen, erzeugt `electronics/farbmixer_traeger.kicad_pcb` (alle Bauteile und Netze, keine Leiterbahnen) und `electronics/NETZLISTE.md`.
+2. Datei in KiCad 8 öffnen. Vorher nachmessen: Reihenabstand der DevKit-Pins (im Generator 25,4 mm) und Pinreihenfolge am eigenen DevKit. Beides als Variable am Anfang des Generators.
+3. Leiterbahnen ziehen: Route, dann entweder von Hand (etwa 30 Minuten, nur Durchsteckbauteile) oder mit dem Freerouting-Plugin. Für die Motorbahnen und 12 V mindestens 0,8 mm Breite.
+4. Design Rules Check, dann Gerber und Bohrdateien exportieren (File, Fabrication Outputs). Als Zip hochladen bei JLCPCB, 2 Lagen, 100 x 100 mm, 1,6 mm, 5 Stück, Rest Standard. Preis grob 2 Dollar plus Versand.
+5. Lötjumper nach dem Löten: MS1 und MS2 bei allen fünf Treibern schließen (1/16 Mikroschritt). MS3 und RST-SLP nur bei A4988 schließen, bei TMC2209 offen lassen.
 
-### Dosierung
-
-Spritze 60 ml, Innendurchmesser etwa 26,7 mm, ergibt rund 0,56 ml pro mm Kolbenweg. Mit 2 mm Spindelsteigung, 200 Vollschritten und 1/16 Mikroschritt sind das 1600 Schritte pro mm, also etwa 2860 Schritte pro ml. Die kleinste Dosis von 0,1 g entspricht rund 220 Schritten, Auflösung ist also kein Problem. Dichte von Acrylfarbe etwa 1,2 bis 1,5 g/ml, der Faktor wird pro Station einmal durch Auswiegen bestimmt (siehe Kalibrierung).
+Die Platine ist generiert und nur strukturell geprüft, nicht in KiCad geöffnet. Beim Öffnen auf Fehlermeldungen achten und den Generator anpassen, er ist kurz und kommentiert.
 
 ### Verdrahtung
 
@@ -81,9 +113,14 @@ Spritze 60 ml, Innendurchmesser etwa 26,7 mm, ergibt rund 0,56 ml pro mm Kolbenw
 | STEP C, M, Y, W, K | 13, 14, 27, 26, 25 | |
 | DIR C, M, Y, W, K | 33, 32, 4, 16, 17 | |
 | ENABLE (alle Treiber) | 23 | LOW = aktiv |
-| Endschalter C, M, Y, W, K | 18, 19, 21, 22, 15 | Schließer gegen GND, interner Pullup |
+| Endschalter C, M, Y, W | 18, 19, 21, 22 | interner Pullup |
+| Endschalter K | 34 | nur Eingang, 10 kOhm Pullup auf der Platine |
 
-Endschalter sitzt am Motorhalter und wird vom Kolbenschlitten in der hinteren Stellung (Spritze voll aufgezogen) gedrückt. Läuft ein Motor falsch herum, in `firmware/include/config.h` den Eintrag `DIR_INVERT` für die Station auf `true` setzen.
+Endschalter als Schließer gegen GND. Läuft ein Motor falsch herum, in `firmware/include/config.h` den Eintrag `DIR_INVERT` für die Station auf `true` setzen oder den Motorstecker umdrehen.
+
+### Dosierung
+
+Spritze 60 ml, Innendurchmesser etwa 26,7 mm, ergibt rund 0,56 ml pro mm Kolbenweg. Mit 2 mm Spindelsteigung, 200 Vollschritten und 1/16 Mikroschritt sind das 1600 Schritte pro mm, also etwa 2860 Schritte pro ml. Die kleinste Dosis von 0,1 g entspricht rund 220 Schritten. Dichte von Acrylfarbe etwa 1,2 bis 1,5 g/ml, der Faktor wird pro Station einmal durch Auswiegen bestimmt.
 
 ### Firmware bauen und flashen
 
@@ -119,14 +156,14 @@ Nach jeder Dosierung zieht der Kolben 0,05 ml zurück, damit nichts nachtropft. 
 
 ### Gewicht kalibrieren
 
-Pro Station: Becher auf die Waage, tarieren, `/prime` mit 5 ml, Gewicht ablesen. Gewicht geteilt durch 5 ist `g_per_ml`, per `/config` setzen. Weicht die Menge auch volumetrisch ab (Spritze hat anderen Innendurchmesser), `ml_per_mm` anpassen.
+Pro Station: Becher auf die Waage, tarieren, `/prime` mit 5 ml, Gewicht ablesen. Gewicht geteilt durch 5 ist `g_per_ml`, per `/config` setzen.
 
 ### Bekannte Hürde
 
-Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und mit Luer-Kappen verschließen. Die Spritzen bleiben geschlossen, nur zum Dosieren öffnen.
+Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und mit Luer-Kappen verschließen.
 
 ## Offene Punkte
 
+- Platine in KiCad öffnen, routen, DRC
+- Druckteile rendern, Probedruck einer Station, Maße nachmessen
 - Firmware auf echter Hardware testen, besonders Richtung, Endschalter und Geschwindigkeit bei zäher Farbe
-- Druckteile an echten Spritzen und Muttern nachmessen
-- Stufe 2 (Farbsensor) nur, wenn die Rezepte ohne Kalibrierung zu weit daneben liegen

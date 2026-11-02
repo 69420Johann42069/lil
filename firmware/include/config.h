@@ -10,9 +10,12 @@ static const int PIN_STEP[N_STATIONS] = {13, 14, 27, 26, 25};
 static const int PIN_DIR[N_STATIONS]  = {33, 32, 4, 16, 17};
 static const int PIN_ENABLE = 23;  // LOW = Treiber aktiv
 
-// Endschalter am Motorhalter, Schließer gegen GND, interner Pullup.
-// Gedrückt = Kolbenschlitten ganz hinten (Spritze voll aufgezogen).
-static const int PIN_ENDSTOP[N_STATIONS] = {18, 19, 21, 22, 15};
+// Endschalter, Schließer gegen GND, interner Pullup.
+// Gedrückt = Kolbenschlitten ganz oben (Spritze voll aufgezogen).
+// GPIO 34 ist nur Eingang ohne internen Pullup, auf der Trägerplatine
+// sitzt dafür ein 10-kOhm-Pullup nach 3,3 V. (GPIO 15 fehlt auf dem
+// 30-poligen DevKit V1.)
+static const int PIN_ENDSTOP[N_STATIONS] = {18, 19, 21, 22, 34};
 
 // Drehrichtung pro Station umkehren, falls der Motor falsch herum läuft.
 static const bool DIR_INVERT[N_STATIONS] = {false, false, false, false, false};
