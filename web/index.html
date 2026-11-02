@@ -5,118 +5,141 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Farben">
-<meta name="theme-color" content="#f4ede2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Ilianas Farben">
+<meta name="theme-color" content="#fbf2ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#221b1d" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon.png">
-<title>Farbmischer</title>
+<title>Ilianas Farbmischer</title>
 <script>
   // Widmung: hier den Namen eintragen, der Rest bleibt wie er ist.
-  var WIDMUNG = { name: '', ort: 'Hamburg', jahr: '2026' };
+  var WIDMUNG = { name: 'Iliana G\u00e4rtner', vorname: 'Iliana', ort: 'Hamburg', jahr: '2026' };
 </script>
 <style>
   :root {
-    --paper:#f4ede2; --ink:#2a2420; --muted:#8a7f72; --hair:rgba(42,36,32,.14); --soft:rgba(42,36,32,.05);
-    --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
-    --sans: -apple-system, system-ui, "Helvetica Neue", sans-serif;
+    --paper:#fbf2ec; --ink:#3a2a2e; --muted:#9a8087; --hair:rgba(58,42,46,.13); --soft:rgba(58,42,46,.05);
+    --rose:#f4c7cf; --rose-ink:#b2415c; --btn:#e98aa1;
+    --round: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Helvetica Neue", sans-serif;
+    --serif: ui-serif, "New York", Georgia, serif;
     --mono: ui-monospace, "SF Mono", Menlo, monospace;
-    --ok:#4f9a63; --mid:#d2a233; --bad:#c8503e;
+    --ok:#5fae74; --mid:#e0b04a; --bad:#d9655a;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --paper:#1c1917; --ink:#efe8dd; --muted:#9a8f82; --hair:rgba(239,232,221,.16); --soft:rgba(239,232,221,.06); }
+    :root { --paper:#221b1d; --ink:#f6e9ec; --muted:#a8929a; --hair:rgba(246,233,236,.16); --soft:rgba(246,233,236,.06);
+      --rose:#5a3540; --rose-ink:#f3b4c3; --btn:#d97a93; }
   }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { -webkit-text-size-adjust:100%; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.45; }
-  main { max-width:440px; margin:0 auto; padding:calc(24px + env(safe-area-inset-top)) 22px calc(32px + env(safe-area-inset-bottom)); }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--round); line-height:1.45;
+    background-image:radial-gradient(circle at 20% 0%, rgba(244,199,207,.35), transparent 45%), radial-gradient(circle at 90% 20%, rgba(250,224,150,.25), transparent 40%); }
+  @media (prefers-color-scheme: dark) { body { background-image:radial-gradient(circle at 20% 0%, rgba(217,122,147,.12), transparent 45%), radial-gradient(circle at 90% 20%, rgba(250,224,150,.06), transparent 40%); } }
+  main { max-width:440px; margin:0 auto; padding:calc(22px + env(safe-area-inset-top)) 22px calc(32px + env(safe-area-inset-bottom)); }
   input, button { font:inherit; color:inherit; }
 
   /* Widmung */
-  header { text-align:center; margin:8px 0 34px; }
-  .eyebrow { margin:0 0 6px; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); }
-  h1 { font-family:var(--serif); font-weight:500; font-size:2.3rem; letter-spacing:-.01em; margin:0; line-height:1.1; }
-  .dedi { font-family:var(--serif); font-style:italic; font-size:1.15rem; margin:8px 0 0; color:var(--ink); }
-  .dedi .n { border-bottom:1px solid var(--hair); padding-bottom:1px; }
+  header { text-align:center; margin:6px 0 26px; }
+  .eyebrow { margin:0; font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--rose-ink); display:inline-flex; align-items:center; gap:8px; }
+  .eyebrow::before, .eyebrow::after { content:"\2661"; font-size:.9rem; letter-spacing:0; }
+  h1 { font-family:var(--serif); font-weight:500; font-size:2.35rem; letter-spacing:-.01em; margin:4px 0 0; line-height:1.1; }
+  .dedi { font-size:.95rem; margin:8px 0 0; color:var(--muted); }
+  .dedi b { font-weight:600; color:var(--ink); }
+  .tag { display:inline-block; margin-top:12px; padding:5px 12px; border-radius:999px; background:var(--rose); color:var(--rose-ink); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
 
-  /* Farbklecks */
-  .blob-wrap { display:flex; justify-content:center; margin:0 0 18px; }
-  .blob { position:relative; width:230px; height:230px; cursor:pointer;
+  /* Farbklecks mit Gesicht und schwebenden Tupfern */
+  .stage { position:relative; height:300px; display:flex; justify-content:center; align-items:center; margin:0 0 6px; }
+  .blob { position:relative; width:220px; height:220px; cursor:pointer;
     border-radius:58% 42% 55% 45% / 48% 56% 44% 52%;
-    animation:morph 14s ease-in-out infinite alternate; transition:background .25s, box-shadow .25s; }
+    animation:morph 12s ease-in-out infinite alternate; transition:background .25s, box-shadow .25s; }
   .blob input { position:absolute; inset:0; width:100%; height:100%; opacity:0; -webkit-appearance:none; appearance:none; border:none; padding:0; cursor:pointer; }
-  .blob .hint { position:absolute; left:50%; bottom:-30px; transform:translateX(-50%); white-space:nowrap; font-family:var(--serif); font-style:italic;
-    font-size:.95rem; color:var(--muted); pointer-events:none; }
+  .face { position:absolute; left:50%; top:50%; width:84px; height:50px; margin:-14px 0 0 -42px; pointer-events:none; }
+  .face .eye { position:absolute; top:6px; width:11px; height:14px; border-radius:50%; background:var(--face); animation:blink 5.5s infinite; }
+  .face .eye.l { left:14px; } .face .eye.r { right:14px; animation-delay:.08s; }
+  .face .mouth { position:absolute; left:50%; top:24px; width:22px; height:11px; margin-left:-11px; border:3px solid var(--face); border-top:none; border-radius:0 0 22px 22px; box-sizing:border-box; }
+  .face .cheek { position:absolute; top:22px; width:14px; height:8px; border-radius:50%; background:var(--face); opacity:.28; }
+  .face .cheek.l { left:0; } .face .cheek.r { right:0; }
+  @keyframes blink { 0%,92%,100% { transform:scaleY(1); } 95% { transform:scaleY(.1); } }
+  .hint { position:absolute; left:50%; bottom:4px; transform:translateX(-50%); white-space:nowrap; font-size:.9rem; color:var(--muted); pointer-events:none; }
+  .dot { position:absolute; border-radius:50% 50% 46% 54% / 54% 46% 54% 46%; pointer-events:none; animation:float 6s ease-in-out infinite; opacity:.9; }
+  .dot.a { width:26px; height:26px; left:8%; top:18%; background:#ffd84a; }
+  .dot.b { width:18px; height:18px; right:10%; top:14%; background:#ff8fb0; animation-delay:-1.5s; }
+  .dot.c { width:14px; height:14px; left:14%; bottom:26%; background:#6fb7ff; animation-delay:-3s; }
+  .dot.d { width:22px; height:22px; right:12%; bottom:20%; background:#9ad7a2; animation-delay:-4.5s; }
+  .dot.e { width:10px; height:10px; left:30%; top:4%; background:#c99bff; animation-delay:-2.2s; }
+  .dot.f { width:12px; height:12px; right:6%; bottom:30%; background:#ffb36b; animation-delay:-5s; }
+  @keyframes float { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-9px) rotate(12deg); } }
   @keyframes morph {
     0%   { border-radius:58% 42% 55% 45% / 48% 56% 44% 52%; }
     50%  { border-radius:45% 55% 48% 52% / 56% 44% 56% 44%; }
     100% { border-radius:52% 48% 42% 58% / 44% 52% 48% 56%; }
   }
-  @media (prefers-reduced-motion: reduce) { .blob { animation:none; } }
+  @media (prefers-reduced-motion: reduce) { .blob, .dot, .face .eye { animation:none; } }
 
-  .hexline { text-align:center; margin:28px 0 14px; }
+  .hexline { text-align:center; margin:0 0 14px; }
   .hexline input { width:9ch; text-align:center; border:none; background:none; font-family:var(--mono); font-size:1rem; letter-spacing:.06em;
     color:var(--muted); border-bottom:1px solid transparent; outline:none; padding:2px 0; }
   .hexline input:focus { color:var(--ink); border-bottom-color:var(--hair); }
 
   .controls { display:flex; justify-content:center; align-items:center; gap:14px; }
-  .round { width:46px; height:46px; border-radius:50%; border:1px solid var(--hair); background:none; display:inline-flex; align-items:center;
-    justify-content:center; cursor:pointer; font-size:1.3rem; font-weight:300; line-height:1; transition:background .15s; }
-  .round:active { background:var(--soft); }
+  .round { width:46px; height:46px; border-radius:50%; border:none; background:var(--rose); color:var(--rose-ink); display:inline-flex; align-items:center;
+    justify-content:center; cursor:pointer; font-size:1.4rem; font-weight:500; line-height:1; transition:transform .1s; }
+  .round:active { transform:scale(.92); }
   .round svg { width:20px; height:20px; }
   .round input { display:none; }
   .grams { display:inline-flex; align-items:baseline; gap:4px; font-family:var(--serif); font-size:1.5rem; min-width:88px; justify-content:center; }
   .grams input { width:3.2ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:0; }
   .grams input::-webkit-inner-spin-button, .grams input::-webkit-outer-spin-button { -webkit-appearance:none; }
-  .grams small { font-size:1rem; color:var(--muted); font-family:var(--sans); }
+  .grams small { font-size:1rem; color:var(--muted); font-family:var(--round); }
   .sep { width:1px; height:28px; background:var(--hair); margin:0 4px; }
-  #canvas { display:none; width:100%; border-radius:18px; margin-top:18px; touch-action:none; }
-  .photohint { display:none; text-align:center; font-size:.82rem; color:var(--muted); margin:8px 0 0; }
+  #canvas { display:none; width:100%; border-radius:22px; margin-top:18px; touch-action:none; }
+  .photohint { display:none; text-align:center; font-size:.85rem; color:var(--muted); margin:8px 0 0; }
 
   /* Abschnitte */
-  section { margin-top:38px; padding-top:26px; border-top:1px solid var(--hair); }
-  h2 { font-family:var(--serif); font-weight:500; font-size:1.35rem; margin:0 0 16px; }
-  h2 small { font-family:var(--sans); font-size:.8rem; color:var(--muted); margin-left:10px; font-weight:400; }
+  section { margin-top:34px; padding-top:24px; border-top:1px dashed var(--hair); }
+  h2 { font-family:var(--serif); font-weight:500; font-size:1.4rem; margin:0 0 14px; }
+  h2 small { font-family:var(--round); font-size:.8rem; color:var(--muted); margin-left:10px; font-weight:400; }
 
   /* Rezept als Farbtupfer */
   .ing { display:grid; grid-template-columns:84px 1fr auto; align-items:center; gap:12px; min-height:52px; }
   .ing .dab { display:block; justify-self:center; border-radius:50% 50% 48% 52% / 52% 48% 52% 48%; box-shadow:inset 0 0 0 1px var(--hair); transition:width .3s, height .3s; }
-  .ing .name { font-size:1rem; }
+  .ing .name { font-size:1.02rem; }
   .ing .g { font-family:var(--serif); font-size:1.45rem; font-variant-numeric:tabular-nums; }
-  .ing .g small { font-family:var(--sans); font-size:.85rem; color:var(--muted); margin-left:3px; }
-  .compare { display:flex; align-items:center; gap:14px; margin-top:20px; padding:12px 14px; border-radius:16px; background:var(--soft); }
-  .twin { flex:none; width:44px; height:44px; border-radius:50%; overflow:hidden; display:flex; box-shadow:inset 0 0 0 1px var(--hair); }
+  .ing .g small { font-family:var(--round); font-size:.85rem; color:var(--muted); margin-left:3px; }
+  .compare { display:flex; align-items:center; gap:14px; margin-top:18px; padding:14px 16px; border-radius:22px; background:var(--soft); }
+  .twin { flex:none; width:46px; height:46px; border-radius:50%; overflow:hidden; display:flex; box-shadow:inset 0 0 0 1px var(--hair); }
   .twin span { flex:1; }
-  .rating { margin:0; font-family:var(--serif); font-style:italic; font-size:1rem; line-height:1.3; }
-  .rating b { font-style:normal; font-family:var(--sans); font-size:.78rem; display:block; color:var(--muted); letter-spacing:.04em; margin-bottom:2px; }
+  .rating { margin:0; font-size:.98rem; line-height:1.35; }
+  .rating b { font-weight:600; font-size:.76rem; display:block; color:var(--muted); letter-spacing:.04em; margin-bottom:2px; }
   .rating b::before { content:""; display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--muted); vertical-align:1px; }
   .rating.ok b::before { background:var(--ok); } .rating.mid b::before { background:var(--mid); } .rating.bad b::before { background:var(--bad); }
-  .tip { font-size:.85rem; color:var(--muted); margin:16px 0 0; }
+  .tip { font-size:.85rem; color:var(--muted); margin:14px 0 0; }
 
   /* Palette */
-  .dabs { display:flex; flex-wrap:wrap; gap:18px 14px; }
+  .dabs { display:flex; flex-wrap:wrap; gap:18px 12px; }
   .dabs:empty + .empty { display:block; }
-  .empty { display:none; font-family:var(--serif); font-style:italic; color:var(--muted); margin:0; }
+  .empty { display:none; color:var(--muted); margin:0; font-size:.95rem; }
   .rc { position:relative; width:74px; text-align:center; background:none; border:none; padding:0; cursor:pointer; }
   .rc .chip { display:block; width:56px; height:56px; margin:0 auto 6px; border-radius:50% 50% 46% 54% / 54% 46% 54% 46%; box-shadow:inset 0 0 0 1px var(--hair); transition:transform .15s; }
   .rc:active .chip { transform:scale(.94); }
-  .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.75rem; line-height:1.25; color:var(--muted); }
-  .rc .del { position:absolute; top:-6px; right:-2px; width:22px; height:22px; border-radius:50%; border:none; background:var(--paper); color:var(--muted);
+  .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.76rem; line-height:1.25; color:var(--muted); }
+  .rc .del { position:absolute; top:-6px; right:0; width:22px; height:22px; border-radius:50%; border:none; background:var(--paper); color:var(--muted);
     box-shadow:0 0 0 1px var(--hair); font-size:.9rem; line-height:22px; cursor:pointer; padding:0; }
   .save { display:flex; gap:10px; margin-top:22px; }
   .save input { flex:1; min-width:0; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; }
-  .save input:focus { border-bottom-color:var(--ink); }
-  .btn { padding:10px 18px; border-radius:999px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font-size:.95rem; cursor:pointer; }
-  .btn.ghost { background:none; color:var(--ink); }
-  .btn.warn { border-color:var(--bad); color:var(--bad); background:none; }
-  .btn:active { opacity:.8; }
+  .save input:focus { border-bottom-color:var(--rose-ink); }
+  .btn { padding:10px 18px; border-radius:999px; border:none; background:var(--btn); color:#fff; font-size:.95rem; font-weight:600; cursor:pointer; }
+  .btn.ghost { background:var(--rose); color:var(--rose-ink); }
+  .btn.warn { background:none; box-shadow:inset 0 0 0 1px var(--bad); color:var(--bad); }
+  .btn:active { opacity:.85; }
+  .toast { position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translate(-50%, 20px); opacity:0; padding:10px 18px;
+    border-radius:999px; background:var(--ink); color:var(--paper); font-size:.9rem; pointer-events:none; transition:opacity .25s, transform .25s; z-index:9; }
+  .toast.show { opacity:1; transform:translate(-50%, 0); }
 
   /* Einstellungen, zugeklappt */
-  footer { margin-top:44px; text-align:center; }
+  footer { margin-top:40px; text-align:center; }
   details { text-align:left; }
-  details summary { list-style:none; cursor:pointer; font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; padding:8px; }
+  details summary { list-style:none; cursor:pointer; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; padding:8px; }
   details summary::-webkit-details-marker { display:none; }
   details[open] summary { margin-bottom:14px; }
-  .set { padding:16px 0; border-top:1px solid var(--hair); }
+  .set { padding:16px 0; border-top:1px dashed var(--hair); }
   .set h3 { font-family:var(--serif); font-weight:500; font-size:1.1rem; margin:0 0 6px; }
   .set p { font-size:.85rem; color:var(--muted); margin:0 0 12px; }
   .prim { display:grid; grid-template-columns:38px 1fr auto; gap:12px; align-items:center; padding:5px 0; }
@@ -127,28 +150,32 @@
   .field { width:100%; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; margin-bottom:12px; }
   .btnrow { display:flex; gap:8px; flex-wrap:wrap; }
   #devStatus { font-size:.85rem; color:var(--muted); margin:12px 0 0; }
-  pre { background:var(--soft); padding:10px 12px; border-radius:12px; overflow:auto; font-size:.78rem; margin:12px 0 0; }
+  pre { background:var(--soft); padding:10px 12px; border-radius:14px; overflow:auto; font-size:.78rem; margin:12px 0 0; }
   pre:empty { display:none; }
-  .sig { margin:30px 0 0; font-family:var(--serif); font-style:italic; color:var(--muted); font-size:.95rem; }
+  .sig { margin:28px 0 0; font-family:var(--serif); font-style:italic; color:var(--muted); font-size:.95rem; }
+  .sig .h { color:var(--rose-ink); font-style:normal; }
   .notice { background:#fff4e5; color:#5a3b00; border:1px solid #f0c48a; padding:12px 14px; border-radius:14px; margin-bottom:18px; font-size:.9rem; }
 </style>
 </head>
 <body>
 <main>
   <header>
-    <p class="eyebrow">Unikat · Nr. 1 von 1</p>
-    <h1>Farbmischer</h1>
-    <p class="dedi">gemacht für <span class="n" id="dediName">dich</span></p>
+    <p class="eyebrow">Ein Geschenk, nur für</p>
+    <h1 id="dediName">dich</h1>
+    <p class="dedi">dein eigener <b>Farbmischer</b></p>
+    <span class="tag">Unikat · Nr. 1 von 1</span>
   </header>
   <div id="notice" class="notice" hidden>
     <strong>mixbox.js fehlt.</strong> Die Datei <code>mixbox.js</code> muss neben dieser Seite liegen. Download-Anleitung steht in der README.
   </div>
 
-  <div class="blob-wrap">
+  <div class="stage">
+    <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span><span class="dot d"></span><span class="dot e"></span><span class="dot f"></span>
     <div class="blob" id="hero">
       <input type="color" id="color" value="#e08a3c" aria-label="Farbe wählen">
-      <span class="hint">tippen und Farbe wählen</span>
+      <span class="face"><span class="cheek l"></span><span class="cheek r"></span><span class="eye l"></span><span class="eye r"></span><span class="mouth"></span></span>
     </div>
+    <span class="hint">tipp mich an und such dir eine Farbe aus</span>
   </div>
   <div class="hexline"><input type="text" id="hex" value="#e08a3c" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Hex-Wert"></div>
   <div class="controls">
@@ -157,15 +184,15 @@
     <button class="round" id="gPlus" aria-label="mehr">+</button>
     <span class="sep"></span>
     <label class="round" for="photo" aria-label="Farbe aus Foto">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
       <input type="file" id="photo" accept="image/*" capture="environment">
     </label>
   </div>
   <canvas id="canvas"></canvas>
-  <p class="photohint" id="photohint">Ins Bild tippen, um die Farbe zu übernehmen.</p>
+  <p class="photohint" id="photohint">Tipp ins Bild, dann übernehme ich die Farbe.</p>
 
   <section>
-    <h2>Rezept<small>für <span id="gramsShow">20</span> g</small></h2>
+    <h2>Dein Rezept<small>für <span id="gramsShow">20</span> g</small></h2>
     <div id="rows"></div>
     <div class="compare">
       <span class="twin"><span id="swTarget" title="Ziel"></span><span id="swPred" title="Vorhersage"></span></span>
@@ -175,9 +202,9 @@
   </section>
 
   <section>
-    <h2>Deine Palette</h2>
+    <h2 id="palTitle">Deine Palette</h2>
     <div class="dabs" id="recipes"></div>
-    <p class="empty">Noch leer. Mische eine Farbe und merke sie dir hier.</p>
+    <p class="empty">Noch leer. Misch dir eine Farbe und merk sie dir hier, dann kannst du sie jederzeit genau so wieder anrühren.</p>
     <div class="save">
       <input type="text" id="recipeName" placeholder="Name, z. B. Himmel über Hamburg">
       <button class="btn" id="saveRecipe">merken</button>
@@ -209,6 +236,7 @@
     <p class="sig" id="sig"></p>
   </footer>
 </main>
+<div class="toast" id="toast"></div>
 
 <script src="mixbox.js"></script>
 <script src="farbmath.js"></script>
@@ -216,7 +244,10 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   if (WIDMUNG.name) $('dediName').textContent = WIDMUNG.name;
-  $('sig').textContent = 'Handgemacht' + (WIDMUNG.ort ? ' in ' + WIDMUNG.ort : '') + (WIDMUNG.jahr ? ', ' + WIDMUNG.jahr : '');
+  if (WIDMUNG.vorname) $('palTitle').textContent = WIDMUNG.vorname + 's Palette';
+  $('sig').innerHTML = 'Mit Liebe handgemacht' + (WIDMUNG.ort ? ' in ' + WIDMUNG.ort : '') + (WIDMUNG.jahr ? ', ' + WIDMUNG.jahr : '') + ' <span class="h">\u2661</span>';
+  var toastTimer = null;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1600); }
   if (typeof mixbox === 'undefined' || typeof farbmath === 'undefined') {
     $('notice').hidden = false;
     return;
@@ -262,6 +293,8 @@
     $('swTarget').style.background = hex;
     $('hero').style.background = hex;
     $('hero').style.boxShadow = '0 24px 48px -18px ' + rgba(rgb, .55);
+    var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+    $('hero').style.setProperty('--face', lum > 0.62 ? 'rgba(40,25,30,.75)' : 'rgba(255,255,255,.9)');
     $('swPred').style.background = farbmath.rgbToHex(rec.predictedRgb);
     var tb = $('rows'); tb.innerHTML = '';
     rec.rows.forEach(function (r) {
@@ -376,6 +409,7 @@
     var list = loadRecipes();
     list.unshift({ name: name, hex: $('hex').value, grams: parseFloat($('grams').value) || 20 });
     saveRecipes(list.slice(0, 50)); $('recipeName').value = ''; $('recipeName').blur(); renderRecipes();
+    toast('\u2661 ' + name + ' gemerkt');
   });
   $('recipes').addEventListener('click', function (ev) {
     var t = ev.target.closest('.del, .load'); if (!t) return;
@@ -385,6 +419,7 @@
       list.splice(i, 1); saveRecipes(list); renderRecipes(); return;
     }
     $('hex').value = list[i].hex; $('color').value = list[i].hex; $('grams').value = list[i].grams; update();
+    toast(list[i].name);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
