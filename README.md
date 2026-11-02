@@ -6,10 +6,10 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 
 - Acrylfarbe aus fünf 60-ml-Spritzen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
 - Günstige Studienacryl in 500-ml-Flaschen als Vorrat, nachgefüllt wird direkt in die Spritze
-- Bauform Turm: Spritzen senkrecht, Düse nach unten, Becher darunter, etwa 20 x 11 cm Stellfläche
+- Bauform Revolver: runde Säule Ø 156 mm, 44 cm hoch, ein Schrittmotor, Spritzen im handgedrehten Karussell
 - Bedienung nur im Browser, der ESP32 liefert die Seite selbst im WLAN aus
 - Gerät dosiert nur, kein Rührwerk
-- Elektronik auf einer Trägerplatine von JLCPCB mit gesteckten Modulen, Druckteile aus dem eigenen Drucker
+- Elektronik auf Lochraster (ein Treiber), Druckteile aus dem eigenen Drucker (Anycubic Kobra 2 Pro)
 
 ## Aufbau des Repos
 
@@ -17,15 +17,15 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 |---|---|
 | `web/` | Web-App: Farbwahl, Foto, Rezept, gemerkte Farben, Kalibrierung, Gerätesteuerung |
 | `firmware/` | PlatformIO-Projekt für den ESP32 |
-| `hardware/` | OpenSCAD-Druckteile des Turms |
-| `electronics/` | Generator für die KiCad-Trägerplatine plus Netzliste |
+| `hardware/` | Parameterblätter, OpenSCAD-Druckteile und Renderings (aktuell: Revolver) |
+| `electronics/` | Generator für die KiCad-Trägerplatine (Fünf-Motor-Variante, beim Revolver nicht nötig) |
 
 ## Stufen
 
 | Stufe | Was | Status |
 |---|---|---|
 | 0 | Web-App: Farbe wählen, Rezept in Gramm, mit Küchenwaage abwiegen | fertig, getestet |
-| 1 | Turm mit fünf Spritzenpumpen am ESP32 | Code, Druckteile und Platine entworfen, nichts davon auf Hardware getestet |
+| 1 | Revolver mit einem Motor und Karussell | Konzept, Druckteile und Rendering entworfen, Firmware noch auf fünf Motoren, nichts auf Hardware getestet |
 | 2 | Kalibrierung mit Farbsensor | optional |
 
 ## Stufe 0: Web-App
@@ -62,112 +62,69 @@ Fünf Flaschen reichen für alles. Gesucht wird in Studienqualität (Flasche 250
 
 Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Kolben wieder einsetzen, Düse nach oben, Luft rausdrücken. Flaschenfarbe ist dünner als Tubenfarbe und pumpt sich leichter.
 
-## Stufe 1: Turm
+## Stufe 1: Revolver (aktuelles Konzept)
 
-### Mechanik
+Ein Schrittmotor, fünf Spritzen in einem drehbaren Karussell. Der Stößel sitzt fest über der vorderen Station, zum Farbwechsel dreht man das Karussell von Hand weiter, bis die gewünschte Spritze vorne einrastet. Ein Hall-Sensor meldet der App, welche Station vorne steht. Säule Ø 156 mm, 44 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
 
-Fünf Stationen in einer Reihe im Abstand von 44 mm, Stellfläche etwa 23 x 11,5 cm, Höhe 30 cm. Je Station: 60-ml-Luer-Lock-Spritze senkrecht in einem von vorne offenen Halter, dahinter eine T8-Spindel mit 2 mm Steigung und eine 8-mm-Linearwelle, NEMA 17 unter der Motorplatte im Sockel, Kolbenschlitten mit zwei LM8UU und einem Arm, der die Kolbenplatte greift, Endschalter oben im Kopf. Unter allen fünf Düsen ein von vorne offener Schacht für eine flache Mischschale 200 x 90 x 35 mm (Lebensmitteldose oder Palette). Spritzenwechsel: Schlitten nach oben fahren, Spritze nach vorne herausziehen, neue einschieben.
+Vorbild aus der Recherche: das Hackaday-Projekt If Then Paint nutzt ein Spritzenkarussell mit fester Druckplatte (https://hackaday.io/project/166524). Zwei Lehren daraus: die Druckplatte darf nicht freitragend sein (dort hat sie sich bei 30-ml-Spritzen verbogen), und Acrylfarbe ist thixotrop, also nach dem Dosieren kurz warten, bevor der Stößel hochfährt. Einen Mechanismus, der mit einem Motor dreht und drückt (Malteserkreuz, Klinke), gibt es in der Literatur, aber kein DIY-Beispiel mit Spritzen; deshalb Handdrehung mit Rastung und Sensor.
 
-Druckteile: `hardware/spritzenpumpe.scad`, Variable `teil` auf `sockel`, `bodenplatte`, `schlitten`, `spritzenhalter`, `kopf`, `montage` (nur Ansicht) oder `alle` setzen und als STL exportieren. Der Sockel braucht liegend ein Druckbett ab 235 mm, sonst teilen. Die Datei ist ungerendert entstanden, 15 `assert`-Prüfungen fangen Kollisionen ab, die nachzumessenden Maße stehen im Kommentarblock am Dateiende. Wellen- und Spindellängen gibt OpenSCAD in der Konsole aus (rechnerisch 215 mm Welle, 191 mm Spindel, also 220 bzw. 200 mm kaufen).
+Stößelkraft: NEMA 17 (0,4 Nm) an T8 mit 2 mm Steigung ergibt bei 30 % Wirkungsgrad rund 370 N, ein 60-ml-Kolben braucht bei zäher Farbe deutlich unter 100 N.
 
-Bekannte Schwachstellen des Entwurfs: Die Motoren haben nur 1,7 mm Abstand zueinander (Wärme, bei Dauerbetrieb Lüftungsschlitze), die Sockelwände sind 3 mm und tragen alle Motoren, und der Turm steht hinten, bei vollen Spritzen vorne Gewicht einplanen.
-
-### Stückliste
+### Stückliste Revolver
 
 | Teil | Menge | Woher |
 |---|---|---|
-| ESP32 DevKit V1, 30-polig | 1 | Elektronikhändler |
-| TMC2209 StepStick (oder A4988) | 5 | Elektronikhändler |
-| NEMA 17, 40 mm | 5 | Elektronikhändler, 3D-Druck-Shop |
-| T8-Spindel 2 mm Steigung, 200 mm, mit Flanschmutter | 5 | 3D-Druck-Shop |
-| Linearwelle 8 mm, 220 mm | 5 | 3D-Druck-Shop |
-| LM8UU | 10 | 3D-Druck-Shop |
-| Kugellager 608 | 5 | 3D-Druck-Shop, Skateshop |
-| Kupplung 5 auf 8 mm | 5 | 3D-Druck-Shop |
-| Flache Mischschale etwa 200 x 90 x 35 mm | 2 | Haushaltswaren |
-| Mikro-Endschalter mit Hebel | 5 | Elektronikhändler |
+| ESP32 DevKit V1 | 1 | Elektronikhändler |
+| TMC2209 StepStick (oder A4988) | 1 | Elektronikhändler |
+| NEMA 17, 40 mm | 1 | Elektronikhändler, 3D-Druck-Shop |
+| T8-Spindel 2 mm Steigung, 150 mm, mit Flanschmutter | 1 | 3D-Druck-Shop |
+| Linearwelle 8 mm, 150 mm, LM8UU | 1 plus 1 | 3D-Druck-Shop |
+| Kugellager 608 | 1 | 3D-Druck-Shop |
+| Kupplung 5 auf 8 mm | 1 | 3D-Druck-Shop |
+| Mikro-Endschalter | 2 | einer oben, einer im Stößelfuß |
+| Hall-Sensor A3144 oder SS49E | 2 | Elektronikhändler, je etwa 1 Euro |
+| Magnete Ø 5 x 2 | 6 | Elektronikhändler |
+| Stahlkugeln 6 mm (optional für das Karussell-Lager) | 24 | Baumarkt, Fahrradladen |
 | Spritze 60 ml Luer-Lock | 5 plus Ersatz | Apotheke |
 | Luer-Lock-Verschlusskappen | 10 | Apotheke |
-| Netzteil 12 V 3 A mit Hohlstecker, Adapter auf Schraubklemme | 1 | Elektronikhändler |
-| Buck-Modul 12 V auf 5 V (z. B. MP1584) | 1 | Elektronikhändler |
-| JST-XH-Stecker 4-polig und 2-polig mit Kabel | 5 plus 5 | Elektronikhändler |
-| Elko 470 µF und 5 x 100 µF, 25 V, Polyfuse 3 A, Widerstand 10 kOhm | | Elektronikhändler |
-| Buchsenleisten 2 x 15 und 10 x 8, Schraubklemmen 5,08 mm 2- und 4-polig | | Elektronikhändler |
-| Trägerplatine | 5 Stück (Mindestmenge) | JLCPCB |
-| Schrauben M3, Muttern | | Baumarkt |
+| Netzteil 12 V 2 A mit Hohlstecker | 1 | Elektronikhändler |
+| Buck-Modul 12 V auf 5 V | 1 | Elektronikhändler |
+| LED-Ring WS2812 12 LEDs (optional) | 1 | Elektronikhändler |
+| Lochrasterplatine, Buchsenleisten, Klemmen | | Elektronikhändler |
+| Mischbecher Ø 60, Höhe 60 | 2 | Haushaltswaren |
 
-Grob 150 bis 200 Euro, die Spindeln und Wellen sind der größte Posten. Die Längen von Spindel und Wellen vor der Bestellung aus der OpenSCAD-Konsole übernehmen.
+Grob 60 bis 90 Euro. Die Trägerplatine aus `electronics/` ist für fünf Motoren ausgelegt und beim Revolver nicht nötig, ein Lochrasterstück reicht.
 
-### Bestellung bei JLCPCB
+### Druckteile
 
-Nur die Trägerplatine. Ablauf:
+`hardware/revolver.scad`, Variable `teil` für die einzelnen Teile, alle liegend ohne Stützen, höchstens 200 mm hoch für die Kobra 2 Pro (220 x 220 x 250). Ungerendert entstanden, `assert`-Prüfungen und nachzumessende Maße stehen in der Datei. Das ältere Konzept mit fünf Motoren (gerader Turm `spritzenpumpe.scad`, Säule `saeule_parameter.md`) bleibt als Referenz im Repo.
 
-1. `python3 electronics/generate_pcb.py` ausführen, erzeugt `electronics/farbmixer_traeger.kicad_pcb` (alle Bauteile und Netze, keine Leiterbahnen) und `electronics/NETZLISTE.md`.
-2. Datei in KiCad 8 öffnen. Vorher nachmessen: Reihenabstand der DevKit-Pins (im Generator 25,4 mm) und Pinreihenfolge am eigenen DevKit. Beides als Variable am Anfang des Generators.
-3. Leiterbahnen ziehen: Route, dann entweder von Hand (etwa 30 Minuten, nur Durchsteckbauteile) oder mit dem Freerouting-Plugin. Für die Motorbahnen und 12 V mindestens 0,8 mm Breite.
-4. Design Rules Check, dann Gerber und Bohrdateien exportieren (File, Fabrication Outputs). Als Zip hochladen bei JLCPCB, 2 Lagen, 100 x 100 mm, 1,6 mm, 5 Stück, Rest Standard. Preis grob 2 Dollar plus Versand.
-5. Lötjumper nach dem Löten: MS1 und MS2 bei allen fünf Treibern schließen (1/16 Mikroschritt). MS3 und RST-SLP nur bei A4988 schließen, bei TMC2209 offen lassen.
-
-Die Platine ist generiert und nur strukturell geprüft, nicht in KiCad geöffnet. Beim Öffnen auf Fehlermeldungen achten und den Generator anpassen, er ist kurz und kommentiert.
-
-### Verdrahtung
+### Verdrahtung Revolver
 
 | Signal | GPIO | Hinweis |
 |---|---|---|
-| STEP C, M, Y, W, K | 13, 14, 27, 26, 25 | |
-| DIR C, M, Y, W, K | 33, 32, 4, 16, 17 | |
-| ENABLE (alle Treiber) | 23 | LOW = aktiv |
-| Endschalter C, M, Y, W | 18, 19, 21, 22 | interner Pullup |
-| Endschalter K | 34 | nur Eingang, 10 kOhm Pullup auf der Platine |
+| STEP, DIR, ENABLE | 13, 33, 23 | ein Treiber |
+| Endschalter oben | 18 | Schließer gegen GND, interner Pullup |
+| Kontakt-Taster im Stößelfuß | 19 | Schließer gegen GND |
+| Hall Station (fünf Magnete) | 21 | digitaler Hall, Pullup |
+| Hall Referenz (ein Magnet) | 22 | digitaler Hall, Pullup |
+| LED-Ring | 5 | WS2812 Daten |
 
-Endschalter als Schließer gegen GND. Läuft ein Motor falsch herum, in `firmware/include/config.h` den Eintrag `DIR_INVERT` für die Station auf `true` setzen oder den Motorstecker umdrehen.
+### Für die Software-Sitzung
 
-### Dosierung
-
-Spritze 60 ml, Innendurchmesser etwa 26,7 mm, ergibt rund 0,56 ml pro mm Kolbenweg. Mit 2 mm Spindelsteigung, 200 Vollschritten und 1/16 Mikroschritt sind das 1600 Schritte pro mm, also etwa 2860 Schritte pro ml. Die kleinste Dosis von 0,1 g entspricht rund 220 Schritten. Dichte von Acrylfarbe etwa 1,2 bis 1,5 g/ml, der Faktor wird pro Station einmal durch Auswiegen bestimmt.
+Die Firmware in `firmware/` ist noch für fünf Motoren geschrieben. Für den Revolver ändert sich: ein Motor; Dosierung als Strecke nach Kontakt (Stößel fährt bis der Taster schließt, dann Gramm geteilt durch g_per_ml mal Schritte pro ml, danach 2 Sekunden warten, dann 2 mm hoch); Station aus Hall-Zählung ab Referenz; vor jedem Drehen muss der Stößel am oberen Endschalter stehen; die App führt die Nutzerin Station für Station durch das Rezept („drehe auf Gelb“, Bestätigung per Sensor). Details in `hardware/revolver_parameter.md`, Abschnitt „Was die Firmware wissen muss“.
 
 ### Firmware bauen und flashen
 
-PlatformIO installieren (`pip install platformio`), dann:
-
-```
-cd firmware
-cp include/secrets.h.example include/secrets.h   # WLAN eintragen
-pio run -t upload                                 # Firmware
-./sync_web.sh && pio run -t uploadfs              # Web-App ins LittleFS
-pio device monitor                                # IP-Adresse ablesen
-```
-
-Danach ist das Gerät unter `http://farbmixer.local` erreichbar. Ohne WLAN-Verbindung öffnet der ESP32 einen eigenen Access Point namens `Farbmixer`.
-
-Die Firmware ist bisher nur mit Stub-Headern auf Syntax geprüft, nicht auf einem ESP32 gelaufen. Beim ersten Start ohne Farbe testen: Referenzfahrt, dann `/prime` mit 1 ml pro Station, Richtung und Weg kontrollieren.
-
-### HTTP-Schnittstelle
-
-Alle Antworten sind JSON. Bewegungen starten sofort und laufen im Hintergrund, `/status` zeigt den Fortschritt.
-
-| Aufruf | Body | Wirkung |
-|---|---|---|
-| `GET /status` | | `busy`, aktive Station, Fehler, pro Station Position und Restmenge |
-| `POST /home` | `{"id":"C"}` oder leer | Referenzfahrt einer oder aller Stationen |
-| `POST /prime` | `{"id":"C","ml":2}` | Kolben vorfahren (negativ: zurück), zum Vorfüllen |
-| `POST /dispense` | `{"grams":{"C":1.1,"Y":4.2,"W":14.7}}` | Rezept dosieren, Reihenfolge W, Y, C, M, K |
-| `POST /stop` | | laufende Bewegung abbrechen |
-| `GET /config` | | Kalibrierwerte pro Station |
-| `POST /config` | `{"C":{"g_per_ml":1.32}}` | Kalibrierwerte setzen, im Flash gespeichert |
-
-Nach jeder Dosierung zieht der Kolben 0,05 ml zurück, damit nichts nachtropft. Der Betrag wird beim nächsten Hub wieder vorgefahren.
-
-### Gewicht kalibrieren
-
-Pro Station: Becher auf die Waage, tarieren, `/prime` mit 5 ml, Gewicht ablesen. Gewicht geteilt durch 5 ist `g_per_ml`, per `/config` setzen.
+Unverändert, siehe `firmware/` (PlatformIO). Die Kalibrierung per Waage bleibt gleich: 5 ml ausdrücken, wiegen, `g_per_ml` setzen.
 
 ### Bekannte Hürde
 
-Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und mit Luer-Kappen verschließen.
+Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und mit Luer-Kappen verschließen. Die vier inaktiven Düsen tropfen in die Abtropfschale im Sockel, die sich herausnehmen und abwaschen lässt.
 
 ## Offene Punkte
 
-- Platine in KiCad öffnen, routen, DRC
-- Druckteile rendern, Probedruck einer Station, Maße nachmessen
-- Firmware auf echter Hardware testen, besonders Richtung, Endschalter und Geschwindigkeit bei zäher Farbe
+- Druckteile des Revolvers in OpenSCAD rendern, eine Station probeweise drucken, Spritzenmaße nachmessen
+- Firmware auf einen Motor und Kontakt-Dosierung umstellen (Software-Sitzung)
+- Karussell-Lagerung testen: Gleitlager PETG auf PETG oder Stahlkugeln in der Rille
+- Erster Hardwaretest ohne Farbe: Referenz, Kontakt-Taster, Hall-Zählung
