@@ -64,7 +64,7 @@ Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Ko
 
 ## Stufe 1: Revolver (aktuelles Konzept)
 
-Zwei Schrittmotoren, fünf Spritzen in einem Karussell. Der Stößel sitzt fest über der vorderen Station, ein zweiter Motor im Sockel dreht das Karussell über eine Welle und einen Innenzahnkranz. Die Nutzerin wählt die Farbe, das Gerät dreht und dosiert alle Stationen nacheinander, am Ende nimmt sie den Becher heraus und rührt um. Säule Ø 170 mm, 48 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
+Zwei Schrittmotoren, fünf Spritzen in einem Karussell. Der Stößel sitzt fest über der vorderen Station, ein zweiter Motor zentral im Sockel dreht das Karussell direkt über eine Welle in der Mitte. Die Nutzerin wählt die Farbe, das Gerät dreht und dosiert alle Stationen nacheinander, am Ende nimmt sie den Becher heraus und rührt um. Säule Ø 170 mm, 48 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
 
 Vorbild aus der Recherche: das Hackaday-Projekt If Then Paint nutzt ein Spritzenkarussell mit fester Druckplatte (https://hackaday.io/project/166524). Zwei Lehren daraus: die Druckplatte darf nicht freitragend sein (dort hat sie sich bei 30-ml-Spritzen verbogen), und Acrylfarbe ist thixotrop, also nach dem Dosieren kurz warten, bevor der Stößel hochfährt. Einen Mechanismus, der mit einem Motor dreht und drückt (Malteserkreuz, Klinke), gibt es in der Literatur, aber kein DIY-Beispiel mit Spritzen; deshalb ein zweiter Motor für das Karussell, das ist einfacher und zuverlässiger.
 
@@ -77,8 +77,7 @@ Stößelkraft: NEMA 17 (0,4 Nm) an T8 mit 2 mm Steigung ergibt bei 30 % Wirkungs
 | ESP32 DevKit V1 | 1 | Elektronikhändler |
 | TMC2209 StepStick (oder A4988) | 2 | Elektronikhändler |
 | NEMA 17, 40 mm | 2 | Stößel und Karussell |
-| Stahlwelle Ø 8, 170 mm, mit Abflachung | 1 | 3D-Druck-Shop, Antriebswelle Karussell |
-| Ritzel Modul 1, 20 Zähne, Bohrung 8 mm (oder gedruckt) | 1 | Zahnkranz wird gedruckt |
+| Stahlwelle Ø 8, 180 mm, mit Abflachung | 1 | 3D-Druck-Shop, Antriebswelle Karussell |
 | T8-Spindel 2 mm Steigung, 150 mm, mit Flanschmutter | 1 | 3D-Druck-Shop |
 | Linearwelle 8 mm, 150 mm, LM8UU | 1 plus 1 | 3D-Druck-Shop |
 | Kugellager 608 | 2 | 3D-Druck-Shop |
@@ -93,7 +92,7 @@ Stößelkraft: NEMA 17 (0,4 Nm) an T8 mit 2 mm Steigung ergibt bei 30 % Wirkungs
 | Buck-Modul 12 V auf 5 V | 1 | Elektronikhändler |
 | LED-Ring WS2812 12 LEDs (optional) | 1 | Elektronikhändler |
 | Lochrasterplatine, Buchsenleisten, Klemmen | | Elektronikhändler |
-| Mischbecher Ø 60, Höhe 60 | 2 | Haushaltswaren |
+| Mischbecher Ø 56, Höhe 60 | 2 | Haushaltswaren |
 
 Grob 80 bis 110 Euro. Die Trägerplatine aus `electronics/` ist für fünf Motoren ausgelegt, beim Revolver werden nur zwei Treiberplätze bestückt; Lochraster geht auch.
 
@@ -115,7 +114,7 @@ Grob 80 bis 110 Euro. Die Trägerplatine aus `electronics/` ist für fünf Motor
 
 ### Für die Software-Sitzung
 
-Die Firmware in `firmware/` ist noch für fünf Spritzenpumpen geschrieben. Für den Revolver ändert sich: Motor 1 Stößel, Motor 2 Karussell; Dosierung als Strecke nach Kontakt (Stößel fährt bis der Taster schließt, dann Gramm geteilt durch g_per_ml mal Schritte pro ml, danach 2 Sekunden warten, dann 2 mm hoch, dann ganz nach oben); Karussell referenziert beim Start per Hall-Sensor und fährt dann 272 Vollschritte je Station (Übersetzung 6,8); vor jedem Drehen muss der Stößel am oberen Endschalter stehen; ein Rezept läuft vollautomatisch alle Stationen ab, am Ende Fertigmeldung und Zielfarbe auf dem LED-Ring. Details in `hardware/revolver_parameter.md`, Abschnitt „Was die Firmware wissen muss“.
+Die Firmware in `firmware/` ist noch für fünf Spritzenpumpen geschrieben. Für den Revolver ändert sich: Motor 1 Stößel, Motor 2 Karussell; Dosierung als Strecke nach Kontakt (Stößel fährt bis der Taster schließt, dann Gramm geteilt durch g_per_ml mal Schritte pro ml, danach 2 Sekunden warten, dann 2 mm hoch, dann ganz nach oben); Karussell referenziert beim Start per Hall-Sensor und fährt dann 40 Vollschritte je Station (Direktantrieb 1:1); vor jedem Drehen muss der Stößel am oberen Endschalter stehen; ein Rezept läuft vollautomatisch alle Stationen ab, am Ende Fertigmeldung und Zielfarbe auf dem LED-Ring. Details in `hardware/revolver_parameter.md`, Abschnitt „Was die Firmware wissen muss“.
 
 ### Firmware bauen und flashen
 
@@ -129,5 +128,5 @@ Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und m
 
 - Druckteile des Revolvers in OpenSCAD rendern, eine Station probeweise drucken, Spritzenmaße nachmessen
 - Firmware auf zwei Motoren (Stößel, Karussell) und Kontakt-Dosierung umstellen (Software-Sitzung)
-- Karussell-Lagerung und Zahnkranz testen: Gleitlager PETG auf PETG oder Stahlkugeln, Zahnspiel am gedruckten Innenkranz
-- Erster Hardwaretest ohne Farbe: Referenzfahrten beider Motoren, Kontakt-Taster, 272 Schritte je Station prüfen
+- Karussell-Lagerung testen: Gleitlager PETG auf PETG oder Stahlkugeln in der Rille, Reibung muss unter dem Motormoment bleiben
+- Erster Hardwaretest ohne Farbe: Referenzfahrten beider Motoren, Kontakt-Taster, 40 Schritte je Station prüfen
