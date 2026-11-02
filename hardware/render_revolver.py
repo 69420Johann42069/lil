@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Konzept-Rendering des Farbmischer-Revolvers nach revolver_parameter.md (Stand 3).
+Konzept-Rendering des Farbmischer-Revolvers nach revolver_parameter.md (Stand 4).
 
 Nur numpy, matplotlib und Standardbibliothek. Für Mesh-Bausteine und den Z-Buffer-Rasterizer wird
 render_saeule.py importiert (die Datei bleibt unverändert, es wird kein Bytecode geschrieben).
@@ -15,11 +15,10 @@ Stationsfenster: lokal x = radial nach außen, y = tangential (+ gegen den Uhrze
 Annahmen, wo das Blatt nichts festlegt (nur Darstellung):
   - Kolbenstange 125 lang, Stopfen 5, Platte 4 dick; Flanschmutter Ø16 im Block; Endschalter mit Nase am Schlitten
   - Brücke Ø165 liegt 0,1 mm innerhalb der Schale (Innenradius 82,6), zwischen Oberschale (Z 418) und Haube (Z 426) ist der Brückenrand sichtbar
-  - Abtropfring als C-Ring r 22 bis 80, Oberkante Z 90, Winkelbereich 41 bis 319 Grad
+  - Abtropfring als C-Ring r 12 (Mittelloch Ø24) bis 80, Oberkante Z 90, Winkelbereich 41 bis 319 Grad
   - In Ansicht 2 sind die Schalen nur als gestrichelte Kontur angedeutet; Karussellplatte und Abtropfring sind dort durchscheinend,
-    damit Zahnkranz, Ritzel, Welle und Motor 2 sichtbar bleiben
-  - Zahnkranz: Kontur nach Modul 1 (136 Zähne, Zahnkopf r 67, Zahnfuß r 69,25) im Ring r 67 bis 74; Ritzel 20 Zähne, Kopfkreis r 11, Fuß r 8,75
-  - Haltearm 12 breit, Z 215 bis 225, von r 55 bis zur Schale; Bohrung Ø22 in der Abtropfschale bei 180 Grad r 58
+    damit Motor 2, Welle, Mittelrohr und Nabe sichtbar bleiben
+  - Mittelrohr: Rohr Ø20/12 bis Z 229, darüber Boss Ø28 mit 608-Lager (Ø22,2 x 7), Stege am Sockel nicht dargestellt
 """
 import math
 import os
@@ -39,7 +38,7 @@ import matplotlib.pyplot as plt
 import render_saeule as rs          # Mesh, cyl, box, revolve, shell_surface, ring_prism, View, render_panel, Scene, Frame
 
 # ============================================================
-# Maße aus revolver_parameter.md, Stand 3 (mm)
+# Maße aus revolver_parameter.md, Stand 4 (mm)
 # ============================================================
 R_A, WAND = 85.0, 2.4                              # Schalen Ø170
 R_I = R_A - WAND                                   # 82,6
@@ -52,14 +51,15 @@ Z_BR0, Z_BR1, BR_R = 418.0, 426.0, 82.5            # Brücke Ø165
 Z_MOT0, Z_MOT1, NEMA = 426.0, 466.0, 42.3
 Z_HAUBE0, Z_HAUBE1 = 426.0, 480.0                  # Haube Ø170 über Motor und Brücke
 FENSTER_B, FENSTER_H, FENSTER_Z0, RAHMEN_B = 70.0, 80.0, 28.0, 4.0
-BECHER_D, BECHER_H, BECHER_Z0, BECHERRAUM_D = 60.0, 60.0, 30.0, 64.0
+BECHER_D, BECHER_H, BECHER_Z0, BECHERRAUM_D = 56.0, 60.0, 30.0, 60.0
+BECHER_R = 52.0                                    # Becherraum und Becher: Mitte bei Radius 52, Winkel 0
 Z_DUESE = 105.0
 ST_R = 50.0
 ST_WINKEL = [0, 72, 144, 216, 288]
 ST_NAMEN = ["C", "M", "Y", "W", "K"]
 ZYL_D = 30.0
 FL_R, FL_T = 32.0, 45.0                            # Flansch radial 32, tangential 45
-TA_R, TA_T, TA_TIEF, DURCHLASS_D, LOCH_D = 32.6, 45.6, 3.6, 31.0, 40.0
+TA_R, TA_T, TA_TIEF, DURCHLASS_D, LOCH_D = 32.6, 45.6, 3.6, 31.0, 24.0   # LOCH_D: Nabe Ø24 in der Platte
 Z_TASCHE = Z_RING1 - TA_TIEF                       # 255,4 Taschenboden
 Z_FL0, Z_FL1 = Z_TASCHE, Z_TASCHE + 3.0            # Flansch 3 dick, sitzt im Taschenboden
 STOP_T, ROD_L, PL_T, PL_D = 5.0, 125.0, 4.0, 30.0
@@ -74,20 +74,19 @@ AUSS_T, AUSS_R, AUSS_RE = 48.0, 36.0, 6.0          # Brückenaussparungen 48 x 3
 AUSS_WINKEL = [144, 216, 288]
 MOTOR_Y = SPINDEL_Y                                # Motor über der Spindel
 
-# Karussellantrieb (Stand 3)
-M2_R, M2_A = 58.0, 180.0                           # Motor 2 und Antriebswelle: Radius 58, Winkel 180 Grad
+# Karussellantrieb (Stand 4, Direktantrieb zentral)
 M2_Z, KUPP2_Z = (32.0, 72.0), (72.0, 97.0)         # NEMA 17 40 lang, Flansch bei Z 72; Kupplung 5 auf 8
-WELLE2_D, WELLE2_Z = 8.0, (72.0, 242.0)
-RITZEL_D, RITZEL_Z, RITZEL_N, RITZEL_FUSS = 22.0, (230.0, 242.0), 20, 8.75
-SKIRT_R, SKIRT_Z = (67.0, 74.0), (228.0, 245.0)    # Zahnkranz-Skirt unter der Karussellplatte
-ZK_N, ZK_KOPF, ZK_FUSS = 136, 67.0, 69.25          # Modul 1: Innenverzahnung, Teilkreis Ø136, Kopfkreis r 67, Fußkreis r 69,25
+WELLE2_D, WELLE2_Z = 8.0, (72.0, 252.0)
+ROHR_D, ROHR_DI, ROHR_Z = 20.0, 12.0, (120.0, 236.0)
+BOSS_D, BOSS_Z, LAGER_D = 28.0, (229.0, 236.0), 22.2   # Boss mit 608-Lagersitz Ø22,2 x 7
+NABE_D, NABE_Z = 24.0, (245.0, 259.0)
+SWEEP_R, SWEEP_Z = (35.0, 65.0), (105.0, 259.0)    # von den Spritzenzylindern beim Drehen überstrichen
 LAUF_R, LAUF_Z = (76.0, 80.0), (238.0, 245.0)      # Laufring außen
-ARM_Z, ARM_B, ARM_R0, BUCHSE_D = (215.0, 225.0), 12.0, 55.0, 16.0   # Haltearm mit Gleitbuchse (Bohrung 8,3)
-TRAY_Z, TRAY_BOHR_D = (86.0, 90.0), 22.0           # Abtropfring (Annahme der Darstellung), Bohrung Ø22 für Welle und Kupplung
+TRAY_Z, TRAY_LOCH_D = (86.0, 90.0), 24.0           # Abtropfring (Annahme der Darstellung), Mittelloch Ø24
 
 C_CREME, C_CREME_IN = "#efe6d0", "#d9cfb6"
 C_DUNKEL, C_MESSING = "#4b4e54", "#c9a64e"
-C_PLATTE, C_ZAHN = "#b4bbc4", "#8f96a0"
+C_PLATTE = "#b4bbc4"
 INHALT = {"C": "#17b4e6", "M": "#d4237f", "Y": "#f3d21c", "W": "#f4f2ec", "K": "#1c1c1e"}
 
 
@@ -187,7 +186,7 @@ def hole_gap(shape, a, hr, ht, R):
 
 def pruefung():
     print("=" * 88)
-    print("PRÜFUNG nach revolver_parameter.md, Stand 3  (Maße in mm, negativ = Kollision, nichts wird behoben)")
+    print("PRÜFUNG nach revolver_parameter.md, Stand 4  (Maße in mm, negativ = Kollision, nichts wird behoben)")
     print("=" * 88)
     sehne = 2 * ST_R * math.sin(math.radians(36))
     g = gap2(circ(0, 0, 0, ZYL_D / 2), circ(72, 0, 0, ZYL_D / 2))
@@ -198,10 +197,10 @@ def pruefung():
           "  (Blatt: gedreht 2,9)" % (FL_T, FL_R, f(gap2(fl(0), fl(72))), f(gap2(fl(0), fl(144)))))
     print("    Flanschtaschen %.1f x %.1f untereinander (72°): %s (Blatt: 2,2);  Flansch in Tasche: je Seite %.1f tangential, %.1f radial"
           % (TA_T, TA_R, f(gap2(tasche(0), tasche(72))), (TA_T - FL_T) / 2, (TA_R - FL_R) / 2))
-    r_becher = ST_R + BECHER_D / 2
-    print("[3] Becher Ø%.0f unter Station bei Radius %.0f: Außenkante bei Radius %.1f gegen Schaleninnenradius %.1f: Luft %s"
-          "   (Becherraum Ø%.0f, Außenkante %.0f: %s)" % (BECHER_D, ST_R, r_becher, R_I, f(R_I - r_becher),
-                                                          BECHERRAUM_D, ST_R + BECHERRAUM_D / 2, f(R_I - ST_R - BECHERRAUM_D / 2)))
+    r_becher = BECHER_R + BECHER_D / 2
+    print("[3] Becher Ø%.0f mit Mitte bei Radius %.0f: Außenkante bei Radius %.1f gegen Schaleninnenradius %.1f: Luft %s"
+          "   (Becherraum Ø%.0f, Außenkante %.0f: %s)" % (BECHER_D, BECHER_R, r_becher, R_I, f(R_I - r_becher),
+                                                          BECHERRAUM_D, BECHER_R + BECHERRAUM_D / 2, f(R_I - BECHER_R - BECHERRAUM_D / 2)))
     motor = rect(0, 0, MOTOR_Y, NEMA / 2, NEMA / 2)
     kupp = circ(0, 0, MOTOR_Y, KUPP_D / 2)
     stempel = circ(0, 0, 0, STEMPEL_D / 2)
@@ -269,35 +268,27 @@ def pruefung():
           % (zb0, zb0 + bz1 - bz0, Z_RING1, f(zb0 - Z_RING1, 1), y1 - y0, DURCHLASS_D, TA_T, f(zb0 - Z_FL1, 1)))
     print("    Stempel-Unterkante unten Z %.0f gegen Kolbenplatte (Z 250 bis 254) Oberkante 254: Luft %s (Hub %.0f, Berührung am Endanschlag)"
           % (zs0, f(zs0 - 254.0, 1), HUB))
-    print("[8] Neu in Stand 3 (Karussellantrieb), Grundriss; die Z-Bereiche überlappen jeweils (Zylinder Z 120 bis 255):")
-    c2 = M2_R * _er(M2_A)
-    er2, et2 = _er(M2_A), _et(M2_A)
-    zyl = lambda a: ("C", ST_R * _er(a), ZYL_D / 2)
-    ritzel, welle2 = ("C", c2, RITZEL_D / 2), ("C", c2, WELLE2_D / 2)
-    gr = {a: gap2(ritzel, zyl(a)) for a in ST_WINKEL}
-    print("    Ritzel Ø%.0f (r %.0f, Z %.0f..%.0f) gegen Nachbarzylinder 144°: %s, 216°: %s  (Achse bis Zylinderwand: %s)"
-          % (RITZEL_D, RITZEL_D / 2, RITZEL_Z[0], RITZEL_Z[1], f(gr[144]), f(gr[216]),
-             f(float(np.linalg.norm(c2 - ST_R * _er(144))) - ZYL_D / 2)))
-    print("    Skirt innen r %.0f (Z %.0f..%.0f) gegen Zylinder (äußerster Radius %.0f): %s;  Durchlass Ø%.0f der Platte (r %.1f): %s;  Zahnkopf r %.0f: %s"
-          % (SKIRT_R[0], SKIRT_Z[0], SKIRT_Z[1], ST_R + ZYL_D / 2, f(SKIRT_R[0] - ST_R - ZYL_D / 2), DURCHLASS_D,
-             ST_R + DURCHLASS_D / 2, f(SKIRT_R[0] - ST_R - DURCHLASS_D / 2), ZK_KOPF, f(ZK_KOPF - ST_R - ZYL_D / 2)))
+    print("[8] Neu in Stand 4 (Direktantrieb zentral), Grundriss; Sweep der Zylinder r %.0f bis %.0f, Z %.0f bis %.0f (Luft = %.0f minus Radius):"
+          % (SWEEP_R[0], SWEEP_R[1], SWEEP_Z[0], SWEEP_Z[1], SWEEP_R[0]))
+    for nm, d, z in (("Mittelrohr", ROHR_D, ROHR_Z), ("Boss", BOSS_D, BOSS_Z), ("Antriebswelle", WELLE2_D, WELLE2_Z), ("Nabe", NABE_D, NABE_Z)):
+        print("    %-13s Ø%.0f (r %.0f, Z %.0f..%.0f, im Sweep-Z-Bereich) gegen Sweep-Innenradius: Luft %s"
+              % (nm, d, d / 2, z[0], z[1], f(SWEEP_R[0] - d / 2)))
     h2 = NEMA / 2
-    motor2 = ("P", np.array([c2 + sx * h2 * er2 + sy * h2 * et2 for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]))
-    r_face, r_corner = M2_R + h2, max(float(np.linalg.norm(v)) for v in motor2[1])
-    print("    Motor 2 (%.1f quadratisch, Mitte r %.0f bei %.0f°, Z %.0f..%.0f): Außenfläche bei r %.2f, Ecke bei r %.2f gegen Innenradius %.1f: "
-          "Fläche %s, Ecke %s"
-          % (NEMA, M2_R, M2_A, M2_Z[0], M2_Z[1], r_face, r_corner, R_I, f(R_I - r_face), f(R_I - r_corner)))
-    print("    Motor 2 gegen Becherraum (Mitte r %.0f bei 0°, r %.0f): %s"
-          % (ST_R, BECHERRAUM_D / 2, f(gap2(("C", ST_R * _er(0), BECHERRAUM_D / 2), motor2))))
-    print("    Welle Ø%.0f (Z %.0f..%.0f) gegen Abtropfschale: Bohrung Ø%.0f, Luft %s;  Kupplung Ø%.1f (Z %.0f..%.0f) in dieser Bohrung: %s, "
-          "Abtropfring in der Darstellung bei Z %.0f..%.0f, also Überlapp in Z"
-          % (WELLE2_D, WELLE2_Z[0], WELLE2_Z[1], TRAY_BOHR_D, f(TRAY_BOHR_D / 2 - WELLE2_D / 2), KUPP_D, KUPP2_Z[0], KUPP2_Z[1],
-             f(TRAY_BOHR_D / 2 - KUPP_D / 2), TRAY_Z[0], TRAY_Z[1]))
-    gw = {a: gap2(welle2, zyl(a)) for a in ST_WINKEL}
-    print("    Welle gegen Zylinder: 144° %s, 216° %s, kleinster Wert aller fünf %s" % (f(gw[144]), f(gw[216]), f(min(gw.values()))))
-    arm = ("P", np.array([[-ARM_R0, -ARM_B / 2], [-R_I, -ARM_B / 2], [-R_I, ARM_B / 2], [-ARM_R0, ARM_B / 2]]))
-    print("    Haltearm (Z %.0f..%.0f, %.0f breit) gegen Zylinder: kleinster Wert %s;  Arm-Oberkante Z %.0f unter Skirt-Unterkante Z %.0f: Luft %s"
-          % (ARM_Z[0], ARM_Z[1], ARM_B, f(min(gap2(arm, zyl(a)) for a in ST_WINKEL)), ARM_Z[1], SKIRT_Z[0], f(SKIRT_Z[0] - ARM_Z[1], 1)))
+    motor2 = ("P", np.array([[sx * h2, sy * h2] for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]))
+    raum = ("C", BECHER_R * _er(0), BECHERRAUM_D / 2)
+    print("    Motor 2 (%.1f quadratisch, zentral, Z %.0f..%.0f): Flächenabstand r %.2f gegen Becherraum-Innenkante r %.0f: Luft %s "
+          "(exakt gegen den Kreis: %s; Ecke bei r %.2f gegen Innenradius %.1f: %s)"
+          % (NEMA, M2_Z[0], M2_Z[1], h2, BECHER_R - BECHERRAUM_D / 2, f(BECHER_R - BECHERRAUM_D / 2 - h2), f(gap2(raum, motor2)),
+             h2 * math.sqrt(2), R_I, f(R_I - h2 * math.sqrt(2))))
+    print("    Becherraum Ø%.0f um r %.0f: Außenkante r %.0f gegen Innenradius %.1f: Luft %s" % (BECHERRAUM_D, BECHER_R, BECHER_R + BECHERRAUM_D / 2, R_I,
+                                                                                              f(R_I - BECHER_R - BECHERRAUM_D / 2)))
+    r_in, r_out = BECHER_R - BECHER_D / 2, BECHER_R + BECHER_D / 2
+    print("    Düse der aktiven Station (Achse r %.0f) im Becherrand r %.0f bis %.0f: innen %s, außen %s; mit Düsenschulter r 5: innen %s, außen %s"
+          % (ST_R, r_in, r_out, f(ST_R - r_in), f(r_out - ST_R), f(ST_R - 5 - r_in), f(r_out - ST_R - 5)))
+    print("    Abtropfschale Mittelloch Ø%.0f (Z %.0f..%.0f in der Darstellung): Rohr r %.0f %s, Kupplung r %.1f %s (Z %.0f..%.0f, durch das Loch), "
+          "Boss r %.0f %s (Boss liegt bei Z %.0f..%.0f, passiert die Schale nicht)"
+          % (TRAY_LOCH_D, TRAY_Z[0], TRAY_Z[1], ROHR_D / 2, f(TRAY_LOCH_D / 2 - ROHR_D / 2), KUPP_D / 2, f(TRAY_LOCH_D / 2 - KUPP_D / 2),
+             KUPP2_Z[0], KUPP2_Z[1], BOSS_D / 2, f(TRAY_LOCH_D / 2 - BOSS_D / 2), BOSS_Z[0], BOSS_Z[1]))
     print("=" * 88)
 
 
@@ -445,16 +436,6 @@ def rrect_pts(a, hr, ht, R, n=8):
     return np.array(pts)
 
 
-def zahn_kontur(n, r_a, r_b, cx=0.0, cy=0.0):
-    """Zahnkontur mit n Zähnen: Zahnflächen auf Radius r_a (Mitte der Teilung), Lücken auf r_b (angedeutete Flanken)."""
-    pts = []
-    for k in range(n):
-        for fr, r in ((0.0, r_b), (0.16, r_b), (0.32, r_a), (0.68, r_a), (0.84, r_b)):
-            t = 2 * np.pi * (k + fr) / n
-            pts.append((cx + r * math.cos(t), cy + r * math.sin(t)))
-    return np.array(pts)
-
-
 def c_ring(r0, r1, a0, a1, z0, z1, n=90, holes=()):
     """Kreisringsektor von a0 bis a1 (Grad) als Prisma."""
     t = np.radians(np.linspace(a0, a1, n))
@@ -539,8 +520,8 @@ def build_scene():
     sc.add(rs.revolve([(0, 0), (FUSS_D / 2, 0), (FUSS_D / 2, 21), (FUSS_D / 2 - 3.5, FUSS_H), (0, FUSS_H)], 120),
            "fuss", C_DUNKEL, ks=0.12)
     sc.add(rs.cyl(0, 0, R_I, FUSS_H, Z_BODEN, 120, (False, True)), "boden", "#3a3d43")
-    # Becher Ø60 auf Radius 50, Höhe 60 (Kaufteil, Glas), mit etwas Mischfarbe
-    bx = ST_R
+    # Becher Ø56 mit Mitte bei Radius 52, Höhe 60 (Kaufteil, Glas), mit etwas Mischfarbe
+    bx = BECHER_R
     sc.add(rs.cyl(bx, 0, BECHER_D / 2 - 0.6, BECHER_Z0, BECHER_Z0 + 2.0, 56), "becher", "#dbe6ee")
     sc.add(rs.cyl(bx, 0, BECHER_D / 2 - 1.0, BECHER_Z0 + 2.0, BECHER_Z0 + 14.0, 56), "becher", "#a64d8f", ks=0.3)
     sc.add(rs.cyl(bx, 0, BECHER_D / 2, BECHER_Z0, BECHER_Z0 + BECHER_H, 72, (False, False)), "becher", "#9fc4dc",
@@ -562,7 +543,7 @@ def build_scene():
     th = np.arange(-180, 180.001, 3.0)
     schale(sc, "mittel", np.array([Z_SOCKEL1, Z_MITTE1]), None, th)
     sc.add(rs.ring_prism(rs.circ_r(LAUF_R[1]), rs.circ_r(LAUF_R[0]), LAUF_Z[0], LAUF_Z[1], n=120), "laufring", C_CREME_IN)
-    # Karussellplatte Z 245..259, Ø160, glatter Rand; Taschen von oben, Durchlässe Ø31
+    # Karussellplatte Z 245..259, Ø160, glatter Rand; Taschen von oben, Durchlässe Ø31, Nabe Ø24 in der Mitte
     pid = sc.nid()
     loch = circle_pts(0, 0, LOCH_D / 2, 48)
     kn = circle_pts(0, 0, RING_R, 180)
@@ -570,9 +551,7 @@ def build_scene():
     oben = [loch] + union_loops([rect_pts(a, 0, 0, TA_R / 2, TA_T / 2) for a in ST_WINKEL])
     sc.add(extrude(kn, unten, Z_RING0, Z_TASCHE), "karussell", C_PLATTE, pid=pid, ks=0.2)
     sc.add(extrude(kn, oben, Z_TASCHE, Z_RING1), "karussell", C_PLATTE, pid=pid, ks=0.2)
-    # Zahnkranz-Skirt unter der Platte: Ring bis r 74, Z 228 bis 245, Innenverzahnung Modul 1 (140 Zähne)
-    sc.add(extrude(circle_pts(0, 0, SKIRT_R[1], 180), [zahn_kontur(ZK_N, ZK_KOPF, ZK_FUSS)], SKIRT_Z[0], SKIRT_Z[1]),
-           "zahnkranz", C_ZAHN, ks=0.2)
+    sc.add(rs.cyl(0, 0, NABE_D / 2, *NABE_Z, 40), "karussell", "#6b6f76", ks=0.3)       # Nabe sitzt im Plattenloch
     # Oberschale Z 300 bis 418 (cremeweiß), Oberkante als Ring
     schale(sc, "ober", np.linspace(Z_MITTE1, Z_OBER1, 6))
     sc.add(rs.revolve([(R_I, Z_OBER1), (R_A, Z_OBER1)], 120), "ober", C_CREME)
@@ -580,10 +559,9 @@ def build_scene():
     sc.add(rs.revolve([(R_A, Z_HAUBE0), (R_A, Z_HAUBE1 - 5), (R_A - 5, Z_HAUBE1), (0, Z_HAUBE1)], 120), "kappe", C_DUNKEL, ks=0.12)
     # Abtropfring unter den vier inaktiven Stationen (C-Ring, Boden und Rand, Oberkante Z 90)
     pid = sc.nid()
-    sc.add(c_ring(22, 80, 41, 319, TRAY_Z[0], TRAY_Z[0] + 2.0, holes=[circle_pts(*(M2_R * _er(M2_A)), TRAY_BOHR_D / 2, 32)]),
-           "tray", "#c4cad1", pid=pid)
+    sc.add(c_ring(TRAY_LOCH_D / 2, 80, 41, 319, TRAY_Z[0], TRAY_Z[0] + 2.0), "tray", "#c4cad1", pid=pid)
     sc.add(c_ring(78.2, 80, 41, 319, TRAY_Z[0] + 2.0, TRAY_Z[1]), "tray", "#c4cad1", pid=pid)
-    sc.add(c_ring(22, 23.8, 41, 319, TRAY_Z[0] + 2.0, TRAY_Z[1]), "tray", "#c4cad1", pid=pid)
+    sc.add(c_ring(TRAY_LOCH_D / 2, TRAY_LOCH_D / 2 + 1.8, 41, 319, TRAY_Z[0] + 2.0, TRAY_Z[1]), "tray", "#c4cad1", pid=pid)
     # Brücke Ø165 mit Aussparungen 48 x 36 (R 6) nur bei 144, 216, 288
     sc.add(extrude(circle_pts(0, 0, BR_R, 180), [rrect_pts(a, AUSS_R / 2, AUSS_T / 2, AUSS_RE) for a in AUSS_WINKEL],
                    Z_BR0, Z_BR1), "bruecke", "#c7cbd1")
@@ -593,18 +571,17 @@ def build_scene():
     sc.add(rs.box(-h, h, MOTOR_Y - h, MOTOR_Y + h, Z_MOT0, Z_MOT0 + 5), "motor", "#8d9097", frame=fr0, ks=0.25)
     sc.add(rs.box(-h, h, MOTOR_Y - h, MOTOR_Y + h, Z_MOT0 + 5, Z_MOT1 - 4), "motor", "#3b3e44", frame=fr0)
     sc.add(rs.box(-h, h, MOTOR_Y - h, MOTOR_Y + h, Z_MOT1 - 4, Z_MOT1), "motor", "#8d9097", frame=fr0, ks=0.25)
-    # Karussellantrieb: Motor 2 im Sockel bei 180 Grad r 62, Kupplung, Welle Ø8, Ritzel, Haltearm mit Gleitbuchse
-    cx2, cy2 = M2_R * math.cos(math.radians(M2_A)), M2_R * math.sin(math.radians(M2_A))
+    # Direktantrieb: Motor 2 zentral im Sockel, Kupplung, Welle Ø8, Mittelrohr mit Boss und 608-Lager
     h2, ga = NEMA / 2, "antrieb"
     z0, z1 = M2_Z
-    sc.add(rs.box(cx2 - h2, cx2 + h2, cy2 - h2, cy2 + h2, z0, z0 + 4), ga, "#8d9097", ks=0.25)
-    sc.add(rs.box(cx2 - h2, cx2 + h2, cy2 - h2, cy2 + h2, z0 + 4, z1 - 5), ga, "#3b3e44")
-    sc.add(rs.box(cx2 - h2, cx2 + h2, cy2 - h2, cy2 + h2, z1 - 5, z1), ga, "#8d9097", ks=0.25)
-    sc.add(rs.cyl(cx2, cy2, KUPP_D / 2, *KUPP2_Z, 28), ga, "#a3abb5", ks=0.5)
-    sc.add(rs.cyl(cx2, cy2, WELLE2_D / 2, *WELLE2_Z, 20), ga, "#d0d4da", ks=0.5)
-    sc.add(extrude(zahn_kontur(RITZEL_N, RITZEL_D / 2, RITZEL_FUSS, cx2, cy2), [], *RITZEL_Z), ga, "#b9bec5", ks=0.4)
-    sc.add(rs.box(-R_I, -ARM_R0, cy2 - ARM_B / 2, cy2 + ARM_B / 2, *ARM_Z), ga, C_CREME_IN)
-    sc.add(rs.cyl(cx2, cy2, BUCHSE_D / 2, *ARM_Z, 28), ga, "#6b6f76", ks=0.3)
+    sc.add(rs.box(-h2, h2, -h2, h2, z0, z0 + 4), ga, "#8d9097", ks=0.25)
+    sc.add(rs.box(-h2, h2, -h2, h2, z0 + 4, z1 - 5), ga, "#3b3e44")
+    sc.add(rs.box(-h2, h2, -h2, h2, z1 - 5, z1), ga, "#8d9097", ks=0.25)
+    sc.add(rs.cyl(0, 0, KUPP_D / 2, *KUPP2_Z, 28), ga, "#a3abb5", ks=0.5)
+    sc.add(rs.cyl(0, 0, WELLE2_D / 2, *WELLE2_Z, 20), ga, "#d0d4da", ks=0.5)
+    sc.add(rs.ring_prism(rs.circ_r(ROHR_D / 2), rs.circ_r(ROHR_DI / 2), ROHR_Z[0], BOSS_Z[0], n=64), ga, C_CREME_IN)
+    sc.add(rs.ring_prism(rs.circ_r(BOSS_D / 2), rs.circ_r(LAGER_D / 2), BOSS_Z[0], BOSS_Z[1], n=64), ga, C_CREME_IN)
+    sc.add(rs.ring_prism(rs.circ_r(LAGER_D / 2), rs.circ_r(WELLE2_D / 2), BOSS_Z[0], BOSS_Z[1], n=64), ga, "#7d848d", ks=0.5)
     # Stößel (aktive Station vorne): Spindel, Welle, Kupplung, Schlitten mit Stempel, Endschalter mit Nase
     g = "stoessel"
     sc.add(rs.cyl(0, SPINDEL_Y, WS_D / 2, *SPINDEL_Z, 20), g, "#b9bec5", frame=fr0, ks=0.5)
@@ -647,7 +624,7 @@ def build_station(sc, a, name):
 # ============================================================
 GRUPPEN = {
     1: {"ground", "fuss", "boden", "becher", "sockel", "rahmen", "mittel", "karussell", "ober", "kappe"},
-    2: {"ground", "fuss", "boden", "becher", "laufring", "karussell", "zahnkranz", "antrieb", "tray", "station", "stoessel",
+    2: {"ground", "fuss", "boden", "becher", "laufring", "karussell", "antrieb", "tray", "station", "stoessel",
         "bruecke", "motor"},
     3: {"fuss", "ober", "karussell", "station", "stoessel", "bruecke", "motor"},
 }
@@ -726,15 +703,16 @@ def overlays(ax, views):
              ("Führungswelle Ø8", v2.px(f0.w((0, WELLE_Y, 330)))),
              ("Karussellplatte Ø160", polar(v2, 80, 235, 252)),
              ("Abtropfring", polar(v2, 74, 250, 88)),
-             ("Zahnkranz", polar(v2, SKIRT_R[1], -125, 237)),
-             ("Antriebswelle", v2.px(np.array([M2_R * math.cos(math.radians(M2_A)), 0.0, 165.0]))),
-             ("Motor 2 Karussell", v2.px(np.array([M2_R * math.cos(math.radians(M2_A)), -NEMA / 2, 52.0]))),
-             ("Becher Ø60", v2.px(f0.w((0, 24, 70))))]
+             ("Antriebswelle", v2.px(np.array([0.0, 0.0, 106.0]))),
+             ("Motor 2 Karussell (zentral)", v2.px(np.array([0.0, -NEMA / 2, 52.0]))),
+             ("Becher Ø56", v2.px(f0.w((2, 24, 70))))]
     rechts = [("Motor NEMA 17", v2.px(f0.w((0, MOTOR_Y + 21, 446)))),
               ("Spindel T8", v2.px(f0.w((0, SPINDEL_Y, 330)))),
               ("Kolbenplatte", v2.px(f1.w((0, 12, PB_STAND['M'] + 2)))),
               ("Spritze 60 ml", v2.px(f1.w((0, 12, 160)))),
               ("Laufring", polar(v2, 76, 20, 241)),
+              ("Mittelrohr mit 608-Lager", v2.px(np.array([0.0, -ROHR_D / 2, 180.0]))),
+              ("Nabe", v2.px(np.array([0.0, -4.0, Z_RING1]))),
               ("Stempel Ø26", v2.px(f0.w((13, 0, 353)))),
               ("Düse, Station vorne", v2.px(f0.w((0, 0, 108))))]
     labels_seite(ax, links, 752, "right", soft, ink)
@@ -771,10 +749,10 @@ def overlays(ax, views):
     th = np.linspace(0, 2 * np.pi, 73)
     xy = [v3.px(np.array([ST_R + PL_D / 2 * math.cos(t), PL_D / 2 * math.sin(t), Z_BR1])) for t in th]
     ax.plot([q[0] for q in xy], [q[1] for q in xy], color="#2f6f9a", lw=1.0, ls=(0, (2, 2)))
-    xy = [v3.px(np.array([ST_R + BECHER_D / 2 * math.cos(t), BECHER_D / 2 * math.sin(t), Z_BR1])) for t in th]
+    xy = [v3.px(np.array([BECHER_R + BECHER_D / 2 * math.cos(t), BECHER_D / 2 * math.sin(t), Z_BR1])) for t in th]
     ax.plot([q[0] for q in xy], [q[1] for q in xy], color="#2f6f9a", lw=1.0, ls=(0, (6, 3)))
     ax.text(1500, 852, "gestrichelt, unter der Brücke: Flansch 45 x 32,", ha="center", va="center", fontsize=10.5, color=soft)
-    ax.text(1500, 868, "Kolbenplatte Ø30 vorne und Becherrand Ø60", ha="center", va="center", fontsize=10.5, color=soft)
+    ax.text(1500, 868, "Kolbenplatte Ø30 vorne und Becherrand Ø56", ha="center", va="center", fontsize=10.5, color=soft)
     ax.text(900, 888, "Durchmesser %.0f  |  Höhe %.0f  |  Fuß %.0f  |  Stationsradius %.0f, fünf Stationen im Abstand 72°"
             % (2 * R_A, Z_HAUBE1, FUSS_D, ST_R), ha="center", va="center", fontsize=11, color=ink)
 

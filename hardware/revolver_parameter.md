@@ -51,7 +51,7 @@ Gesamt: Ø 170 (Fuß 185), Höhe 480. Mit 30-ml-Spritzen 35 niedriger (445).
 | Antriebswelle | Stahl Ø 8 mit Abflachung, Z 72 bis 252, Länge 180, zentral |
 | Mittelrohr | gedrucktes Rohr Außen-Ø 20, Innen-Ø 12, von der Sockeloberseite Z 120 bis Z 236, oben ein 608-Lagersitz Ø 22,2 x 7 (Boss Ø 28) bei Z 229 bis 236, unten mit drei Stegen auf dem Sockel verschraubt. Die Spritzenzylinder beginnen bei Radius 35, das Rohr endet bei Radius 10 bzw. 14 am Boss |
 | Nabe | im Karussell, Ø 24, Bohrung 8, Abflachung, M3-Madenschraube, Z 245 bis 259. Die Welle ragt oben 7 mm in die Nabe hinein und endet bei Z 252 |
-| Durchlässe | Abtropfschale mit Mittelloch Ø 24 für Rohr und Boss, Sockeloberseite mit Loch Ø 12 für die Welle |
+| Durchlässe | Abtropfschale als C-Ring mit Mittelausschnitt Ø 24, der nach vorne (0°) als Schlitz 24 breit offen ist; die Schale wird nach vorne um das Rohr herum herausgezogen, der Boss Ø 28 oben am Rohr stört dann nicht. Sockeloberseite mit Loch Ø 12 für die Welle |
 | Übersetzung | 1:1, 72° = 40 Vollschritte, Mikroschritte entsprechend. Drehmoment 0,4 Nm gegen grob 0,25 Nm Reibung: Laufring mit Stahlkugeln empfohlen, dann unter 0,1 Nm |
 | Referenz | Magnet Ø 5 x 2 in der Plattenunterseite auf Radius 77,5 bei Station 1, Hall-Sensor fest im Laufring bei 0° |
 
