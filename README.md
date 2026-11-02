@@ -6,7 +6,7 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 
 - Acrylfarbe aus fünf 60-ml-Spritzen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
 - Günstige Studienacryl in 500-ml-Flaschen als Vorrat, nachgefüllt wird direkt in die Spritze
-- Bauform Revolver: runde Säule Ø 156 mm, 44 cm hoch, ein Schrittmotor, Spritzen im handgedrehten Karussell
+- Bauform Revolver: runde Säule Ø 170 mm, 48 cm hoch, ein Schrittmotor, Spritzen im handgedrehten Karussell
 - Bedienung nur im Browser, der ESP32 liefert die Seite selbst im WLAN aus
 - Gerät dosiert nur, kein Rührwerk
 - Elektronik auf Lochraster (ein Treiber), Druckteile aus dem eigenen Drucker (Anycubic Kobra 2 Pro)
@@ -64,7 +64,7 @@ Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Ko
 
 ## Stufe 1: Revolver (aktuelles Konzept)
 
-Ein Schrittmotor, fünf Spritzen in einem drehbaren Karussell. Der Stößel sitzt fest über der vorderen Station, zum Farbwechsel dreht man das Karussell von Hand weiter, bis die gewünschte Spritze vorne einrastet. Ein Hall-Sensor meldet der App, welche Station vorne steht. Säule Ø 156 mm, 44 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
+Ein Schrittmotor, fünf Spritzen in einem drehbaren Karussell. Der Stößel sitzt fest über der vorderen Station, zum Farbwechsel dreht man das Karussell von Hand weiter, bis die gewünschte Spritze vorne einrastet. Ein Hall-Sensor meldet der App, welche Station vorne steht. Säule Ø 170 mm, 48 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
 
 Vorbild aus der Recherche: das Hackaday-Projekt If Then Paint nutzt ein Spritzenkarussell mit fester Druckplatte (https://hackaday.io/project/166524). Zwei Lehren daraus: die Druckplatte darf nicht freitragend sein (dort hat sie sich bei 30-ml-Spritzen verbogen), und Acrylfarbe ist thixotrop, also nach dem Dosieren kurz warten, bevor der Stößel hochfährt. Einen Mechanismus, der mit einem Motor dreht und drückt (Malteserkreuz, Klinke), gibt es in der Literatur, aber kein DIY-Beispiel mit Spritzen; deshalb Handdrehung mit Rastung und Sensor.
 
