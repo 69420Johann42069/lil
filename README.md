@@ -42,6 +42,10 @@ Dann am Handy `http://<IP des Rechners>:8000` aufrufen.
 
 Funktionen: Farbwähler oder Hex-Wert, Farbe aus einem Foto antippen (Handykamera), Gesamtmenge in Gramm, Rezept mit Vorhersage-Swatch und Abweichung, Farben mit Namen merken und wieder laden, Primärfarben kalibrieren, Gerät steuern.
 
+### Hamster
+
+`web/hamster.png` ist ein Sprite mit zehn freigestellten Meme-Hamstern (160 px je Bild). Die Seite färbt im Browser nur die weißen Flächen in die Zielfarbe, Linien und Nase bleiben. Welche Stimmung erscheint, hängt von der Abweichung ab: zufrieden unter ΔE 3, skeptisch bis 8, Panik darüber. Das Einfärben braucht Canvas-Zugriff, darum die Seite immer über http öffnen (ESP32 oder `python3 -m http.server`), bei `file://` bleibt der Hamster weiß.
+
 ### Widmung und Home-Bildschirm
 
 Oben in `web/index.html` steht ein kleiner Block `WIDMUNG` mit Name, Vorname, Ort und Jahr. Der Name steht groß unter „Ein Geschenk, nur für“, der Vorname macht aus der Palette „<Vorname>s Palette“. Auf dem iPhone in Safari „Zum Home-Bildschirm“ wählen, dann startet die App wie eine eigene mit dem Icon `web/icon.png` und ohne Browserleiste.
