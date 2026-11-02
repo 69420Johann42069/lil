@@ -1,48 +1,52 @@
 # Revolver: Parameterblatt für Rendering und Druckteile
 
-Ein Schrittmotor, fünf Spritzen. Die Spritzen stecken in einem drehbaren Karussell, der Stößel sitzt fest über der vorderen Station. Zum Farbwechsel wird der Drehring von Hand weitergedreht, bis die gewünschte Spritze vorne einrastet. Die App weiß über einen Hall-Sensor, welche Station vorne steht, und drückt dann die Menge aus. Optik: schlanke Säule Ø 156 mm, 44 cm hoch, mit einem messingfarbenen Drehring in der Mitte und einem Fenster unten vorne.
+Ein Schrittmotor, fünf Spritzen. Die Spritzen stecken in einem drehbaren Karussell, der Stößel sitzt fest über der vorderen Station. Zum Farbwechsel wird der Drehring von Hand weitergedreht, bis die gewünschte Spritze vorne einrastet. Die App weiß über einen Hall-Sensor, welche Station vorne steht, und drückt dann die Menge aus. Optik: schlanke Säule Ø 170 mm, 48 cm hoch, mit einem messingfarbenen Drehring in der Mitte und einem Fenster unten vorne.
 
 Druckbett: Anycubic Kobra 2 Pro, 220 x 220 x 250 mm. Alle Teile passen liegend.
 
 Alle Maße in mm. Z nach oben, Z = 0 ist die Tischplatte. Winkel 0° zeigt nach vorne (Fenster, aktive Station). Stationen im Karussell bei 0°, 72°, 144°, 216°, 288°. Die Spritzen stehen senkrecht, keine Neigung.
 
+Stand 2: Stationsradius 50 statt 42 (gedrehte Flansche kollidierten bei 42), Säule Ø 170, Stößelfuß als 15 mm hoher Stempel unter dem Schlitten (Führungen enden über der Flanschplatte), Kupplung über dem Schlitten eingeplant, Brückenaussparungen nur an den hinteren drei Stationen, Führungen tangential ±20.
+
 ## Höhen
 
 | Z | Was |
 |---|---|
-| 0 bis 25 | Standfuß Ø 170, Elektronikfach 80 x 80 x 20 (ESP32 und ein Treiber), Buchse 12 V hinten |
-| 25 bis 120 | Sockelschale Ø 156, Wand 2,4. Becherraum Ø 64 unter der aktiven Station (Mitte bei Radius 42, Winkel 0°), Boden bei Z 30, Fenster vorne 70 breit, 80 hoch, Unterkante Z 28, oben halbrund, Rahmen 4 mm als eigenes Teil. Unter den vier anderen Stationen eine herausnehmbare Abtropfschale (Ring, 4 mm tief) in der Sockeloberseite |
+| 0 bis 25 | Standfuß Ø 185, Elektronikfach 80 x 80 x 20 (ESP32 und ein Treiber), Buchse 12 V hinten |
+| 25 bis 120 | Sockelschale Ø 170, Wand 2,4 (Innenradius 82,6). Becherraum Ø 64 unter der aktiven Station (Mitte bei Radius 50, Winkel 0°, Außenkante Radius 82), Boden bei Z 30, Fenster vorne 70 breit, 80 hoch, Unterkante Z 28, oben halbrund, Rahmen 4 mm als eigenes Teil. Unter den vier anderen Stationen eine herausnehmbare Abtropfschale (Ring, 4 mm tief) in der Sockeloberseite |
 | 30 bis 90 | Mischbecher Ø 60, Höhe 60 (Kaufteil, Glas oder Becher) |
 | 105 | Düsenspitzen, 15 über dem Becherrand |
-| 120 bis 245 | Mittelschale Ø 156, Wand 2,4, innen bei Z 238 ein Laufring für das Karussell |
-| 245 bis 259 | Karussellplatte (Halterplatte) Ø 162 x 14, ragt 3 mm über die Schale hinaus als Drehring, Außenkante gerändelt, messingfarben. Fünf Flanschtaschen von oben, Zylinderdurchlass Ø 31 |
-| 259 bis 380 | Oberschale Ø 156, Z 259 bis 380, unten Schlitz 15 hoch für den Drehring, trägt oben die Brücke |
+| 120 bis 245 | Mittelschale Ø 170, Wand 2,4, innen bei Z 238 ein Laufring für das Karussell |
+| 245 bis 259 | Karussellplatte (Halterplatte) Ø 160 x 14, Außenkante gerändelt, messingfarben, durch einen Schlitz in der Schale (20 hoch, 60 breit, bei -60°) mit dem Daumen drehbar. Fünf Flanschtaschen von oben auf Radius 50, Zylinderdurchlass Ø 31 |
+| 259 bis 418 | Oberschale Ø 170 (Mittel- und Oberschale dürfen ein Teil Z 120 bis 300 und ein Teil Z 300 bis 418 sein), trägt oben die Brücke |
 | 344 | Kolbenplatte oben bei voller Spritze (s 239 ab Düse) |
-| 350 bis 380 | Stößelschlitten in oberster Stellung |
-| 380 bis 388 | Brücke (Platte Ø 150 mit Aussparungen über den vier inaktiven Stationen zum Einsetzen der Spritzen von oben), trägt Motor, Spindel, Führungswelle, Endschalter |
-| 388 bis 428 | NEMA 17 auf der Brücke, Welle nach unten |
-| 428 bis 440 | Kappe Ø 156, abnehmbar, darunter LED-Ring Ø 50 |
+| 346 bis 361 | Stößelfuß (Stempel Ø 26, 15 hoch, mit Taster) in oberster Stellung, in unterster Stellung Z 250 bis 265 |
+| 361 bis 391 | Stößelschlitten (Block 30 hoch) in oberster Stellung, in unterster Stellung Z 265 bis 295; Führungen reichen von Z 262 bis 418 |
+| 393 bis 418 | Kupplung 5 auf 8 unter der Brücke, über dem Schlitten |
+| 418 bis 426 | Brücke (Platte Ø 164 mit Aussparungen Ø 50 nur über den hinteren drei Stationen 144°, 216°, 288° zum Einsetzen der Spritzen von oben; über 72° sitzt der Motor), trägt Motor, Spindel, Führungswelle, Endschalter |
+| 426 bis 466 | NEMA 17 auf der Brücke, Welle nach unten, 608-Lager in der Brücke |
+| 466 bis 480 | Kappe Ø 170 als Haube über Motor und Brücke (Z 426 bis 480, 54 hoch), abnehmbar, darunter LED-Ring Ø 50 |
 
-Gesamt: Ø 156 (Fuß 170, Drehring 162), Höhe 440. Mit 30-ml-Spritzen 35 niedriger (405).
+Gesamt: Ø 170 (Fuß 185), Höhe 480. Mit 30-ml-Spritzen 35 niedriger (445).
 
 ## Karussell
 
 | Größe | Wert |
 |---|---|
-| Stationsradius | 42 (Sehne 49,4, Zylinder Ø 30 hat 19 Luft, Flansch 45 x 32 tangential hat 4,4 Luft) |
+| Stationsradius | 50 (Sehne 58,8, Zylinder Ø 30 hat 29 Luft, gedrehte Flansche 45 x 32 haben 2,9 Luft, Taschen 2,2) |
 | Flanschtasche | 45,6 x 32,6, 3,6 tief, von oben offen, Zylinderdurchlass Ø 31, keine Rastlasche nötig (Spritze hängt im Flansch, der Stößel drückt nur) |
-| Lagerung | Platte liegt auf dem Laufring der Mittelschale (Ring Innen-Ø 120, Außen-Ø 150, Gleitlagerung PETG auf PETG, Rille mit 6-mm-Stahlkugeln als Option, 24 Stück) |
-| Rastung | fünf Kerben an der Plattenunterseite auf Radius 65, Federzunge 1,2 dick in der Mittelschale rastet ein |
-| Positionserkennung | fünf Magnete Ø 5 x 2 in der Plattenunterseite auf Radius 58 (eine je Station), ein Hall-Sensor fest in der Mittelschale bei 0°; Station 1 hat einen zweiten Magneten auf Radius 50, zweiter Hall-Sensor darüber als Referenz. Firmware zählt Rastschritte ab Referenz |
+| Lagerung | Platte liegt auf dem Laufring der Mittelschale (Ring Innen-Ø 130, Außen-Ø 158, Gleitlagerung PETG auf PETG, Rille mit 6-mm-Stahlkugeln als Option, 24 Stück) |
+| Rastung | fünf Kerben an der Plattenunterseite auf Radius 72, Federzunge 1,2 dick in der Mittelschale rastet ein |
+| Positionserkennung | fünf Magnete Ø 5 x 2 in der Plattenunterseite auf Radius 76 (eine je Station), ein Hall-Sensor fest in der Mittelschale bei 0°; Station 1 hat einen zweiten Magneten auf Radius 68, zweiter Hall-Sensor darüber als Referenz. Firmware zählt Rastschritte ab Referenz |
 | Mittelloch | Ø 40 für Kabel und Blick in den Becherraum |
 
 ## Stößel (eine Station, vorne)
 
 | Element | Wert |
 |---|---|
-| Spindel T8, 2 mm Steigung | senkrecht bei Radius 42, Winkel 0°, tangential +18 neben der Spritzenachse, Länge 150, oben Kupplung 5 auf 8 an der Motorwelle (Kupplung Z 355 bis 380, unter der Brücke), 608-Lager in der Brücke |
-| Führungswelle 8 mm | tangential -18 neben der Spritzenachse, Länge 150, Sackloch in der Brücke, unten frei |
-| Schlitten | Höhe 30, LM8UU auf der Welle, Flanschmutter auf der Spindel, dazwischen der Fuß: Teller Ø 26 mit federndem Taster (Mikroschalter) in der Mitte, erkennt den Kontakt mit der Kolbenplatte. Unterkante Fuß in oberster Stellung Z 350, in unterster Stellung Z 250 (Kolben ganz gedrückt, Platte bei Z 250 bis 254). Hub 100 |
+| Spindel T8, 2 mm Steigung | senkrecht bei Radius 50, Winkel 0°, tangential +20 neben der Spritzenachse, von Z 262 bis 400, Kaufmaß 200 gekürzt auf 150, oben Kupplung 5 auf 8 an der Motorwelle (Kupplung Z 393 bis 418, unter der Brücke, über dem Schlitten), 608-Lager in der Brücke |
+| Führungswelle 8 mm | tangential -20 neben der Spritzenachse, von Z 262 bis 424 (Sackloch 6 in der Brücke), Länge 162, Kaufmaß 200 gekürzt, unten frei. Beide Führungen enden 3 über der Karussellplatte, die Flansche drehen frei darunter durch |
+| Schlitten | Block 30 hoch, tangential höchstens 56 breit (Welle bei -20, Spindel bei +20), LM8UU auf der Welle, Flanschmutter auf der Spindel, mittig darunter der Stempel Ø 26, 15 hoch, mit federndem Taster (Mikroschalter) in der Stirnfläche, erkennt den Kontakt mit der Kolbenplatte. Stempelunterkante oben Z 346, unten Z 250 (Kolben ganz gedrückt, Platte bei Z 250 bis 254). Hub 96 |
 | Endschalter oben | an der Brückenunterseite, Nase am Schlitten, Referenz |
 | Motor | NEMA 17, 40 lang, auf der Brücke über der Spindel |
 
@@ -55,7 +59,7 @@ Der Stößel drückt nur. Vor dem Drehen des Karussells fährt er ganz nach oben
 3. Stößel fährt herunter, bis der Taster die Kolbenplatte berührt, dann die berechnete Strecke weiter, dann 2 mm hoch. Nächste Station, zurück zu Schritt 2.
 4. Becher durchs Fenster entnehmen, umrühren.
 
-Spritze wechseln: Kappe abnehmen, Karussell so drehen, dass die leere Station unter einer Brückenaussparung steht, Spritze nach oben herausziehen, volle einsetzen.
+Spritze wechseln: Haube abnehmen, Karussell so drehen, dass die leere Station hinten unter einer der drei Brückenaussparungen (144°, 216°, 288°) steht, Spritze nach oben herausziehen, volle einsetzen. Über 0° sitzt der Stößel, über 72° der Motor, dort geht es nicht.
 
 ## Elektronik
 
