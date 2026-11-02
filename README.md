@@ -66,9 +66,11 @@ Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Ko
 
 ### Mechanik
 
-Fünf Stationen im Abstand von 40 mm. Je Station: 60-ml-Luer-Lock-Spritze senkrecht in einem von vorne offenen Halter, dahinter eine T8-Spindel mit 2 mm Steigung und zwei 8-mm-Linearwellen, NEMA 17 unten im Sockel, Kolbenschlitten mit Arm, der die Kolbenplatte greift, Endschalter oben. Unter den Düsen ein Becherraum von 90 mm. Spritzenwechsel: Schlitten nach oben fahren, Spritze nach vorne herausziehen, neue einschieben.
+Fünf Stationen in einer Reihe im Abstand von 44 mm, Stellfläche etwa 23 x 11,5 cm, Höhe 30 cm. Je Station: 60-ml-Luer-Lock-Spritze senkrecht in einem von vorne offenen Halter, dahinter eine T8-Spindel mit 2 mm Steigung und eine 8-mm-Linearwelle, NEMA 17 unter der Motorplatte im Sockel, Kolbenschlitten mit zwei LM8UU und einem Arm, der die Kolbenplatte greift, Endschalter oben im Kopf. Unter allen fünf Düsen ein von vorne offener Schacht für eine flache Mischschale 200 x 90 x 35 mm (Lebensmitteldose oder Palette). Spritzenwechsel: Schlitten nach oben fahren, Spritze nach vorne herausziehen, neue einschieben.
 
-Druckteile: `hardware/spritzenpumpe.scad`, Variable `teil` auf `sockel`, `schlitten`, `spritzenhalter`, `kopf` oder `alle` setzen und als STL exportieren. Die Datei ist ungerendert entstanden, die nachzumessenden Maße stehen im Kommentarblock am Dateiende. Berechnete Wellen- und Spindellängen gibt OpenSCAD in der Konsole aus.
+Druckteile: `hardware/spritzenpumpe.scad`, Variable `teil` auf `sockel`, `bodenplatte`, `schlitten`, `spritzenhalter`, `kopf`, `montage` (nur Ansicht) oder `alle` setzen und als STL exportieren. Der Sockel braucht liegend ein Druckbett ab 235 mm, sonst teilen. Die Datei ist ungerendert entstanden, 15 `assert`-Prüfungen fangen Kollisionen ab, die nachzumessenden Maße stehen im Kommentarblock am Dateiende. Wellen- und Spindellängen gibt OpenSCAD in der Konsole aus (rechnerisch 215 mm Welle, 191 mm Spindel, also 220 bzw. 200 mm kaufen).
+
+Bekannte Schwachstellen des Entwurfs: Die Motoren haben nur 1,7 mm Abstand zueinander (Wärme, bei Dauerbetrieb Lüftungsschlitze), die Sockelwände sind 3 mm und tragen alle Motoren, und der Turm steht hinten, bei vollen Spritzen vorne Gewicht einplanen.
 
 ### Stückliste
 
@@ -78,9 +80,11 @@ Druckteile: `hardware/spritzenpumpe.scad`, Variable `teil` auf `sockel`, `schlit
 | TMC2209 StepStick (oder A4988) | 5 | Elektronikhändler |
 | NEMA 17, 40 mm | 5 | Elektronikhändler, 3D-Druck-Shop |
 | T8-Spindel 2 mm Steigung, 200 mm, mit Flanschmutter | 5 | 3D-Druck-Shop |
-| Linearwelle 8 mm, 200 mm | 10 | 3D-Druck-Shop |
+| Linearwelle 8 mm, 220 mm | 5 | 3D-Druck-Shop |
 | LM8UU | 10 | 3D-Druck-Shop |
+| Kugellager 608 | 5 | 3D-Druck-Shop, Skateshop |
 | Kupplung 5 auf 8 mm | 5 | 3D-Druck-Shop |
+| Flache Mischschale etwa 200 x 90 x 35 mm | 2 | Haushaltswaren |
 | Mikro-Endschalter mit Hebel | 5 | Elektronikhändler |
 | Spritze 60 ml Luer-Lock | 5 plus Ersatz | Apotheke |
 | Luer-Lock-Verschlusskappen | 10 | Apotheke |
