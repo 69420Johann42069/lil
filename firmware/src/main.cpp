@@ -432,6 +432,7 @@ void setup() {
   server.on("/", HTTP_GET, handleRoot);
   server.serveStatic("/farbmath.js", LittleFS, "/farbmath.js", "max-age=3600");
   server.serveStatic("/mixbox.js", LittleFS, "/mixbox.js", "max-age=86400");
+  server.serveStatic("/icon.png", LittleFS, "/icon.png", "max-age=86400");
   server.on("/status", HTTP_GET, handleStatus);
   server.on("/dispense", HTTP_POST, handleDispense);
   server.on("/home", HTTP_POST, handleHome);

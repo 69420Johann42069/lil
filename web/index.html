@@ -2,202 +2,225 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Farben">
+<meta name="theme-color" content="#f4ede2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon.png">
 <title>Farbmischer</title>
+<script>
+  // Widmung: hier den Namen eintragen, der Rest bleibt wie er ist.
+  var WIDMUNG = { name: '', ort: 'Hamburg', jahr: '2026' };
+</script>
 <style>
   :root {
-    --bg:#f3f1ec; --bg2:#e9e6df; --fg:#1b1b19; --muted:#6f6d66; --card:#ffffff; --line:#e4e0d7;
-    --accent:#2f6fd0; --accent-fg:#fff; --soft:#f6f4ef; --shadow:0 1px 2px rgba(20,20,10,.05), 0 8px 24px -12px rgba(20,20,10,.18);
-    --ok:#2f9e5a; --mid:#d9a21b; --bad:#d6473c; --radius:16px;
+    --paper:#f4ede2; --ink:#2a2420; --muted:#8a7f72; --hair:rgba(42,36,32,.14); --soft:rgba(42,36,32,.05);
+    --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, system-ui, "Helvetica Neue", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    --ok:#4f9a63; --mid:#d2a233; --bad:#c8503e;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#141413; --bg2:#1b1b1a; --fg:#ededea; --muted:#9b998f; --card:#1f1f1d; --line:#2e2e2b;
-      --accent:#5b93ea; --soft:#262624; --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -12px rgba(0,0,0,.7); }
+    :root { --paper:#1c1917; --ink:#efe8dd; --muted:#9a8f82; --hair:rgba(239,232,221,.16); --soft:rgba(239,232,221,.06); }
   }
-  * { box-sizing:border-box; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { -webkit-text-size-adjust:100%; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:
-    radial-gradient(1200px 500px at 50% -200px, var(--bg2), var(--bg)); color:var(--fg); line-height:1.4; }
-  main { max-width:560px; margin:0 auto; padding:20px 16px 48px; }
-  header { margin:4px 0 18px; }
-  h1 { font-size:1.7rem; margin:0; letter-spacing:-.02em; }
-  header .muted { display:block; font-size:.8rem; margin-top:2px; }
-  h2 { font-size:.78rem; margin:0 0 12px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:14px; box-shadow:var(--shadow); }
-  label { display:block; font-size:.82rem; color:var(--muted); margin-bottom:6px; }
-  input[type=text], input[type=number], input[type=url] { width:100%; padding:11px 12px; font-size:1rem; border:1px solid var(--line);
-    border-radius:10px; background:var(--soft); color:var(--fg); outline:none; transition:border-color .15s, box-shadow .15s; }
-  input:focus { border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-  input[type=color] { -webkit-appearance:none; appearance:none; border:none; padding:0; background:none; cursor:pointer; }
-  input[type=color]::-webkit-color-swatch-wrapper { padding:0; }
-  input[type=color]::-webkit-color-swatch { border:none; border-radius:inherit; }
-  input[type=color]::-moz-color-swatch { border:none; border-radius:inherit; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.45; }
+  main { max-width:440px; margin:0 auto; padding:calc(24px + env(safe-area-inset-top)) 22px calc(32px + env(safe-area-inset-bottom)); }
+  input, button { font:inherit; color:inherit; }
 
-  /* Zielfarbe: großes Farbfeld, der Farbwähler liegt unsichtbar darüber */
-  .hero { position:relative; height:150px; border-radius:14px; overflow:hidden; border:1px solid rgba(0,0,0,.08);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12); margin-bottom:14px; }
-  .hero input[type=color] { position:absolute; inset:0; width:100%; height:100%; opacity:0; }
-  .hero .hint { position:absolute; left:12px; bottom:10px; font-size:.8rem; padding:4px 9px; border-radius:999px;
-    background:rgba(0,0,0,.38); color:#fff; backdrop-filter:blur(6px); pointer-events:none; }
-  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .hexwrap { position:relative; }
-  .hexwrap input { padding-left:34px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; text-transform:lowercase; }
-  .hexwrap .dot { position:absolute; left:11px; top:50%; width:16px; height:16px; margin-top:-8px; border-radius:50%; border:1px solid rgba(0,0,0,.15); }
-  .unit { position:relative; }
-  .unit input { padding-right:36px; }
-  .unit span { position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:.9rem; pointer-events:none; }
+  /* Widmung */
+  header { text-align:center; margin:8px 0 34px; }
+  .eyebrow { margin:0 0 6px; font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); }
+  h1 { font-family:var(--serif); font-weight:500; font-size:2.3rem; letter-spacing:-.01em; margin:0; line-height:1.1; }
+  .dedi { font-family:var(--serif); font-style:italic; font-size:1.15rem; margin:8px 0 0; color:var(--ink); }
+  .dedi .n { border-bottom:1px solid var(--hair); padding-bottom:1px; }
 
-  .filebtn { display:flex; align-items:center; gap:10px; margin-top:14px; padding:11px 12px; border:1px dashed var(--line); border-radius:10px;
-    color:var(--muted); font-size:.9rem; cursor:pointer; background:var(--soft); }
-  .filebtn:hover { border-color:var(--accent); color:var(--fg); }
-  .filebtn svg { flex:none; }
-  .filebtn input { display:none; }
-  #canvas { display:none; width:100%; border-radius:10px; margin-top:10px; touch-action:none; cursor:crosshair; }
+  /* Farbklecks */
+  .blob-wrap { display:flex; justify-content:center; margin:0 0 18px; }
+  .blob { position:relative; width:230px; height:230px; cursor:pointer;
+    border-radius:58% 42% 55% 45% / 48% 56% 44% 52%;
+    animation:morph 14s ease-in-out infinite alternate; transition:background .25s, box-shadow .25s; }
+  .blob input { position:absolute; inset:0; width:100%; height:100%; opacity:0; -webkit-appearance:none; appearance:none; border:none; padding:0; cursor:pointer; }
+  .blob .hint { position:absolute; left:50%; bottom:-30px; transform:translateX(-50%); white-space:nowrap; font-family:var(--serif); font-style:italic;
+    font-size:.95rem; color:var(--muted); pointer-events:none; }
+  @keyframes morph {
+    0%   { border-radius:58% 42% 55% 45% / 48% 56% 44% 52%; }
+    50%  { border-radius:45% 55% 48% 52% / 56% 44% 56% 44%; }
+    100% { border-radius:52% 48% 42% 58% / 44% 52% 48% 56%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .blob { animation:none; } }
 
-  /* Rezept */
-  .swatches { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-  .swatch { height:72px; border-radius:12px; border:1px solid rgba(0,0,0,.08); display:flex; align-items:flex-end; padding:8px 10px;
-    font-size:.78rem; font-weight:600; color:#fff; text-shadow:0 0 6px rgba(0,0,0,.6); letter-spacing:.02em; }
-  .list { display:flex; flex-direction:column; gap:10px; }
-  .ing { display:grid; grid-template-columns:26px 1fr auto; gap:0 12px; align-items:center; }
-  .ing .chip { width:26px; height:26px; border-radius:8px; border:1px solid rgba(0,0,0,.12); }
-  .ing .name { font-size:.95rem; }
-  .ing .g { font-variant-numeric:tabular-nums; font-weight:700; font-size:1.05rem; text-align:right; }
-  .ing .g small { font-weight:400; color:var(--muted); font-size:.78rem; margin-left:6px; }
-  .ing .bar { grid-column:2 / 4; height:5px; border-radius:999px; background:var(--soft); overflow:hidden; margin-top:4px; }
-  .ing .bar i { display:block; height:100%; border-radius:inherit; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); transition:width .25s ease; }
-  .rating { display:flex; align-items:center; gap:8px; margin:16px 0 0; font-size:.9rem; padding:8px 12px 8px 10px;
-    border-radius:12px; background:var(--soft); }
-  .rating::before { content:""; width:10px; height:10px; border-radius:50%; background:var(--muted); flex:none; }
-  .rating.ok::before { background:var(--ok); } .rating.mid::before { background:var(--mid); } .rating.bad::before { background:var(--bad); }
-  .rating b { font-variant-numeric:tabular-nums; white-space:nowrap; }
-  .muted { color:var(--muted); font-size:.85rem; }
-  p.muted { margin:12px 0 0; }
+  .hexline { text-align:center; margin:28px 0 14px; }
+  .hexline input { width:9ch; text-align:center; border:none; background:none; font-family:var(--mono); font-size:1rem; letter-spacing:.06em;
+    color:var(--muted); border-bottom:1px solid transparent; outline:none; padding:2px 0; }
+  .hexline input:focus { color:var(--ink); border-bottom-color:var(--hair); }
 
-  button { padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); font-size:.95rem;
-    cursor:pointer; font-weight:500; transition:background .15s, transform .05s; }
-  button:hover { background:var(--soft); } button:active { transform:scale(.98); }
-  button.primary { background:var(--accent); color:var(--accent-fg); border-color:transparent; }
-  button.primary:hover { filter:brightness(1.08); background:var(--accent); }
-  button.danger { color:var(--bad); }
-  .btnrow { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 0; }
+  .controls { display:flex; justify-content:center; align-items:center; gap:14px; }
+  .round { width:46px; height:46px; border-radius:50%; border:1px solid var(--hair); background:none; display:inline-flex; align-items:center;
+    justify-content:center; cursor:pointer; font-size:1.3rem; font-weight:300; line-height:1; transition:background .15s; }
+  .round:active { background:var(--soft); }
+  .round svg { width:20px; height:20px; }
+  .round input { display:none; }
+  .grams { display:inline-flex; align-items:baseline; gap:4px; font-family:var(--serif); font-size:1.5rem; min-width:88px; justify-content:center; }
+  .grams input { width:3.2ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:0; }
+  .grams input::-webkit-inner-spin-button, .grams input::-webkit-outer-spin-button { -webkit-appearance:none; }
+  .grams small { font-size:1rem; color:var(--muted); font-family:var(--sans); }
+  .sep { width:1px; height:28px; background:var(--hair); margin:0 4px; }
+  #canvas { display:none; width:100%; border-radius:18px; margin-top:18px; touch-action:none; }
+  .photohint { display:none; text-align:center; font-size:.82rem; color:var(--muted); margin:8px 0 0; }
 
-  /* Gespeicherte Farben */
-  #recipes { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
-  #recipes:empty { display:none; }
-  .rc { display:grid; grid-template-columns:30px 1fr auto auto; gap:10px; align-items:center; padding:8px 10px; border-radius:10px; background:var(--soft); }
-  .rc .chip { width:30px; height:30px; border-radius:8px; border:1px solid rgba(0,0,0,.12); }
-  .rc .n { font-size:.95rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .rc .n small { display:block; color:var(--muted); font-size:.75rem; font-family:ui-monospace, Menlo, monospace; }
-  .rc button { padding:7px 11px; font-size:.85rem; }
-  .rc .del { color:var(--muted); padding:7px 9px; }
+  /* Abschnitte */
+  section { margin-top:38px; padding-top:26px; border-top:1px solid var(--hair); }
+  h2 { font-family:var(--serif); font-weight:500; font-size:1.35rem; margin:0 0 16px; }
+  h2 small { font-family:var(--sans); font-size:.8rem; color:var(--muted); margin-left:10px; font-weight:400; }
 
-  .prim { display:grid; grid-template-columns:40px 1fr auto; gap:12px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line); }
-  .prim:last-child { border-bottom:none; }
-  .prim input[type=color] { width:40px; height:40px; border-radius:10px; border:1px solid rgba(0,0,0,.12); }
-  .prim .muted { font-family:ui-monospace, Menlo, monospace; }
-  details summary { cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  /* Rezept als Farbtupfer */
+  .ing { display:grid; grid-template-columns:84px 1fr auto; align-items:center; gap:12px; min-height:52px; }
+  .ing .dab { display:block; justify-self:center; border-radius:50% 50% 48% 52% / 52% 48% 52% 48%; box-shadow:inset 0 0 0 1px var(--hair); transition:width .3s, height .3s; }
+  .ing .name { font-size:1rem; }
+  .ing .g { font-family:var(--serif); font-size:1.45rem; font-variant-numeric:tabular-nums; }
+  .ing .g small { font-family:var(--sans); font-size:.85rem; color:var(--muted); margin-left:3px; }
+  .compare { display:flex; align-items:center; gap:14px; margin-top:20px; padding:12px 14px; border-radius:16px; background:var(--soft); }
+  .twin { flex:none; width:44px; height:44px; border-radius:50%; overflow:hidden; display:flex; box-shadow:inset 0 0 0 1px var(--hair); }
+  .twin span { flex:1; }
+  .rating { margin:0; font-family:var(--serif); font-style:italic; font-size:1rem; line-height:1.3; }
+  .rating b { font-style:normal; font-family:var(--sans); font-size:.78rem; display:block; color:var(--muted); letter-spacing:.04em; margin-bottom:2px; }
+  .rating b::before { content:""; display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; background:var(--muted); vertical-align:1px; }
+  .rating.ok b::before { background:var(--ok); } .rating.mid b::before { background:var(--mid); } .rating.bad b::before { background:var(--bad); }
+  .tip { font-size:.85rem; color:var(--muted); margin:16px 0 0; }
+
+  /* Palette */
+  .dabs { display:flex; flex-wrap:wrap; gap:18px 14px; }
+  .dabs:empty + .empty { display:block; }
+  .empty { display:none; font-family:var(--serif); font-style:italic; color:var(--muted); margin:0; }
+  .rc { position:relative; width:74px; text-align:center; background:none; border:none; padding:0; cursor:pointer; }
+  .rc .chip { display:block; width:56px; height:56px; margin:0 auto 6px; border-radius:50% 50% 46% 54% / 54% 46% 54% 46%; box-shadow:inset 0 0 0 1px var(--hair); transition:transform .15s; }
+  .rc:active .chip { transform:scale(.94); }
+  .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.75rem; line-height:1.25; color:var(--muted); }
+  .rc .del { position:absolute; top:-6px; right:-2px; width:22px; height:22px; border-radius:50%; border:none; background:var(--paper); color:var(--muted);
+    box-shadow:0 0 0 1px var(--hair); font-size:.9rem; line-height:22px; cursor:pointer; padding:0; }
+  .save { display:flex; gap:10px; margin-top:22px; }
+  .save input { flex:1; min-width:0; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; }
+  .save input:focus { border-bottom-color:var(--ink); }
+  .btn { padding:10px 18px; border-radius:999px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); font-size:.95rem; cursor:pointer; }
+  .btn.ghost { background:none; color:var(--ink); }
+  .btn.warn { border-color:var(--bad); color:var(--bad); background:none; }
+  .btn:active { opacity:.8; }
+
+  /* Einstellungen, zugeklappt */
+  footer { margin-top:44px; text-align:center; }
+  details { text-align:left; }
+  details summary { list-style:none; cursor:pointer; font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; padding:8px; }
   details summary::-webkit-details-marker { display:none; }
-  details summary::after { content:"+"; color:var(--muted); font-size:1.3rem; font-weight:400; }
-  details[open] summary::after { content:"–"; }
-  details[open] summary { margin-bottom:10px; }
-  .notice { background:#fff4e5; color:#5a3b00; border:1px solid #f0c48a; padding:12px 14px; border-radius:12px; margin-bottom:14px; }
-  pre { background:var(--soft); padding:10px 12px; border-radius:10px; overflow:auto; font-size:.8rem; margin:12px 0 0; }
+  details[open] summary { margin-bottom:14px; }
+  .set { padding:16px 0; border-top:1px solid var(--hair); }
+  .set h3 { font-family:var(--serif); font-weight:500; font-size:1.1rem; margin:0 0 6px; }
+  .set p { font-size:.85rem; color:var(--muted); margin:0 0 12px; }
+  .prim { display:grid; grid-template-columns:38px 1fr auto; gap:12px; align-items:center; padding:5px 0; }
+  .prim input[type=color] { width:38px; height:38px; border:none; padding:0; background:none; border-radius:50%; -webkit-appearance:none; appearance:none; overflow:hidden; box-shadow:inset 0 0 0 1px var(--hair); }
+  .prim input[type=color]::-webkit-color-swatch-wrapper { padding:0; }
+  .prim input[type=color]::-webkit-color-swatch { border:none; border-radius:50%; }
+  .prim .muted { font-family:var(--mono); font-size:.82rem; color:var(--muted); }
+  .field { width:100%; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; margin-bottom:12px; }
+  .btnrow { display:flex; gap:8px; flex-wrap:wrap; }
+  #devStatus { font-size:.85rem; color:var(--muted); margin:12px 0 0; }
+  pre { background:var(--soft); padding:10px 12px; border-radius:12px; overflow:auto; font-size:.78rem; margin:12px 0 0; }
   pre:empty { display:none; }
-  @media (max-width:400px) { .row { grid-template-columns:1fr; } }
+  .sig { margin:30px 0 0; font-family:var(--serif); font-style:italic; color:var(--muted); font-size:.95rem; }
+  .notice { background:#fff4e5; color:#5a3b00; border:1px solid #f0c48a; padding:12px 14px; border-radius:14px; margin-bottom:18px; font-size:.9rem; }
 </style>
 </head>
 <body>
 <main>
   <header>
+    <p class="eyebrow">Unikat · Nr. 1 von 1</p>
     <h1>Farbmischer</h1>
-    <span class="muted">Cyan · Magenta · Gelb · Weiß · Schwarz</span>
+    <p class="dedi">gemacht für <span class="n" id="dediName">dich</span></p>
   </header>
   <div id="notice" class="notice" hidden>
     <strong>mixbox.js fehlt.</strong> Die Datei <code>mixbox.js</code> muss neben dieser Seite liegen. Download-Anleitung steht in der README.
   </div>
 
-  <section class="card">
-    <h2>Zielfarbe</h2>
-    <div class="hero" id="hero">
+  <div class="blob-wrap">
+    <div class="blob" id="hero">
       <input type="color" id="color" value="#e08a3c" aria-label="Farbe wählen">
-      <span class="hint">Antippen zum Wählen</span>
+      <span class="hint">tippen und Farbe wählen</span>
     </div>
-    <div class="row">
-      <div>
-        <label for="hex">Hex-Wert</label>
-        <div class="hexwrap"><span class="dot" id="hexDot"></span><input type="text" id="hex" value="#e08a3c" spellcheck="false" autocomplete="off"></div>
-      </div>
-      <div>
-        <label for="grams">Gesamtmenge</label>
-        <div class="unit"><input type="number" id="grams" value="20" min="1" max="500" step="1" inputmode="decimal"><span>g</span></div>
-      </div>
-    </div>
-    <label class="filebtn" for="photo">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-      <span id="photoLabel">Farbe aus einem Foto antippen</span>
+  </div>
+  <div class="hexline"><input type="text" id="hex" value="#e08a3c" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Hex-Wert"></div>
+  <div class="controls">
+    <button class="round" id="gMinus" aria-label="weniger">−</button>
+    <span class="grams"><input type="number" id="grams" value="20" min="1" max="500" step="1" inputmode="numeric"><small>g</small></span>
+    <button class="round" id="gPlus" aria-label="mehr">+</button>
+    <span class="sep"></span>
+    <label class="round" for="photo" aria-label="Farbe aus Foto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
       <input type="file" id="photo" accept="image/*" capture="environment">
     </label>
-    <canvas id="canvas"></canvas>
-  </section>
+  </div>
+  <canvas id="canvas"></canvas>
+  <p class="photohint" id="photohint">Ins Bild tippen, um die Farbe zu übernehmen.</p>
 
-  <section class="card">
-    <h2>Rezept</h2>
-    <div class="swatches">
-      <div class="swatch" id="swTarget">Ziel</div>
-      <div class="swatch" id="swPred">Vorhersage</div>
+  <section>
+    <h2>Rezept<small>für <span id="gramsShow">20</span> g</small></h2>
+    <div id="rows"></div>
+    <div class="compare">
+      <span class="twin"><span id="swTarget" title="Ziel"></span><span id="swPred" title="Vorhersage"></span></span>
+      <p class="rating" id="rating"></p>
     </div>
-    <div class="list" id="rows"></div>
-    <p class="rating" id="rating"></p>
-    <p class="muted">Abwiegen auf einer Waage mit 0,1 g Auflösung. Erst die hellen Farben in den Becher, dunkle zuletzt in kleinen Schritten.</p>
+    <p class="tip">Erst die hellen Farben in den Becher, dunkle zuletzt in kleinen Schritten.</p>
   </section>
 
-  <section class="card">
-    <h2>Gespeicherte Farben</h2>
-    <div class="row">
-      <input type="text" id="recipeName" placeholder="Name, z. B. Himmel Bild 3">
-      <button class="primary" id="saveRecipe">Farbe merken</button>
+  <section>
+    <h2>Deine Palette</h2>
+    <div class="dabs" id="recipes"></div>
+    <p class="empty">Noch leer. Mische eine Farbe und merke sie dir hier.</p>
+    <div class="save">
+      <input type="text" id="recipeName" placeholder="Name, z. B. Himmel über Hamburg">
+      <button class="btn" id="saveRecipe">merken</button>
     </div>
-    <div id="recipes"></div>
-    <p class="muted">Gemerkte Farben lassen sich später exakt nachmischen, zum Beispiel wenn ein Bild weitergemalt wird.</p>
   </section>
 
-  <section class="card">
+  <footer>
     <details>
-      <summary>Primärfarben kalibrieren</summary>
-      <p class="muted" style="margin:0 0 10px">Jede Farbe satt auf weißes Papier streichen, trocknen lassen, bei Tageslicht fotografieren und den Farbwert hier eintragen. Wird im Browser gespeichert.</p>
-      <div id="prims"></div>
-      <div class="btnrow"><button id="resetPrims">Zurücksetzen</button></div>
-    </details>
-  </section>
-
-  <section class="card">
-    <details>
-      <summary>Gerät (Stufe 1)</summary>
-      <p class="muted" style="margin:0 0 10px">Schickt das Rezept als JSON an den ESP32. Erst nutzbar, wenn die Spritzenpumpen stehen. Vor dem ersten Dosieren eine Referenzfahrt machen.</p>
-      <label for="devUrl">Adresse des Geräts</label>
-      <input type="url" id="devUrl" value="http://farbmixer.local">
-      <div class="btnrow">
-        <button class="primary" id="send">Rezept dosieren</button>
-        <button id="home">Referenzfahrt</button>
-        <button class="danger" id="stop">Stopp</button>
+      <summary>Einstellungen</summary>
+      <div class="set">
+        <h3>Primärfarben</h3>
+        <p>Jede Farbe satt auf weißes Papier streichen, trocknen lassen, bei Tageslicht fotografieren und den Farbwert hier eintragen.</p>
+        <div id="prims"></div>
+        <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="resetPrims">Zurücksetzen</button></div>
       </div>
-      <p id="devStatus" class="muted"></p>
-      <pre id="json"></pre>
+      <div class="set">
+        <h3>Gerät</h3>
+        <p>Schickt das Rezept an den Farbmischer im WLAN. Vor dem ersten Dosieren eine Referenzfahrt machen.</p>
+        <input class="field" type="url" id="devUrl" value="http://farbmixer.local" aria-label="Adresse des Geräts">
+        <div class="btnrow">
+          <button class="btn" id="send">Rezept dosieren</button>
+          <button class="btn ghost" id="home">Referenzfahrt</button>
+          <button class="btn warn" id="stop">Stopp</button>
+        </div>
+        <p id="devStatus"></p>
+        <pre id="json"></pre>
+      </div>
     </details>
-  </section>
+    <p class="sig" id="sig"></p>
+  </footer>
 </main>
 
 <script src="mixbox.js"></script>
-
 <script src="farbmath.js"></script>
 <script>
 (function () {
+  var $ = function (id) { return document.getElementById(id); };
+  if (WIDMUNG.name) $('dediName').textContent = WIDMUNG.name;
+  $('sig').textContent = 'Handgemacht' + (WIDMUNG.ort ? ' in ' + WIDMUNG.ort : '') + (WIDMUNG.jahr ? ', ' + WIDMUNG.jahr : '');
   if (typeof mixbox === 'undefined' || typeof farbmath === 'undefined') {
-    document.getElementById('notice').hidden = false;
+    $('notice').hidden = false;
     return;
   }
-  var $ = function (id) { return document.getElementById(id); };
   var KEY = 'farbmischer.primaries';
 
   function loadPrims() {
@@ -224,33 +247,35 @@
     });
   }
 
+  var KURZ = { C: 'Cyan', M: 'Magenta', Y: 'Gelb', W: 'Wei\u00df', K: 'Schwarz' };
+  function rgba(rgb, a) { return 'rgba(' + rgb.map(Math.round).join(',') + ',' + a + ')'; }
   var last = null;
   function update() {
     var rgb = farbmath.hexToRgb($('hex').value);
     if (!rgb) return;
     var grams = Math.max(1, parseFloat($('grams').value) || 20);
+    $('gramsShow').textContent = String(grams).replace('.', ',');
     var sol = farbmath.solve(rgb, prims);
     var rec = farbmath.recipe(sol.weights, prims, grams);
     last = rec;
     var hex = farbmath.rgbToHex(rgb);
     $('swTarget').style.background = hex;
     $('hero').style.background = hex;
-    $('hexDot').style.background = hex;
+    $('hero').style.boxShadow = '0 24px 48px -18px ' + rgba(rgb, .55);
     $('swPred').style.background = farbmath.rgbToHex(rec.predictedRgb);
     var tb = $('rows'); tb.innerHTML = '';
     rec.rows.forEach(function (r) {
       if (r.grams <= 0) return;
-      var c = farbmath.rgbToHex(r.rgb);
+      var size = Math.round(16 + r.percent * 0.64);
       var div = document.createElement('div'); div.className = 'ing';
-      div.innerHTML = '<span class="chip" style="background:' + c + '"></span>' +
-        '<span class="name">' + r.name + '</span>' +
-        '<span class="g">' + r.grams.toFixed(1).replace('.', ',') + ' g<small>' + r.percent.toFixed(0) + ' %</small></span>' +
-        '<span class="bar"><i style="width:' + Math.max(1, r.percent).toFixed(0) + '%;background:' + c + '"></i></span>';
+      div.innerHTML = '<span class="dab" style="width:' + size + 'px;height:' + size + 'px;background:' + farbmath.rgbToHex(r.rgb) + '"></span>' +
+        '<span class="name">' + (KURZ[r.id] || r.name) + '</span>' +
+        '<span class="g">' + r.grams.toFixed(1).replace('.', ',') + '<small>g</small></span>';
       tb.appendChild(div);
     });
     var dE = farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb));
     var rt = $('rating');
-    rt.innerHTML = '<b>ΔE ' + dE.toFixed(1).replace('.', ',') + '</b> ' + farbmath.rating(dE);
+    rt.innerHTML = '<b>Ziel · Vorhersage · ΔE ' + dE.toFixed(1).replace('.', ',') + '</b>' + farbmath.rating(dE);
     rt.className = 'rating ' + (dE < 3 ? 'ok' : dE < 8 ? 'mid' : 'bad');
     var payload = { total_g: grams, grams: {} };
     rec.rows.forEach(function (r) { payload.grams[r.id] = r.grams; });
@@ -263,6 +288,14 @@
     if (rgb) { $('color').value = farbmath.rgbToHex(rgb); update(); }
   });
   $('grams').addEventListener('input', update);
+  function stepGrams(d) {
+    var g = Math.max(1, parseFloat($('grams').value) || 20);
+    var step = g >= 50 ? 10 : 5;
+    g = d > 0 ? Math.ceil((g + 0.01) / step) * step : Math.max(1, Math.floor((g - 0.01) / step) * step);
+    $('grams').value = Math.min(500, g); update();
+  }
+  $('gMinus').addEventListener('click', function () { stepGrams(-1); });
+  $('gPlus').addEventListener('click', function () { stepGrams(1); });
   $('resetPrims').addEventListener('click', function () {
     prims = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES)); savePrims(); renderPrims(); update();
   });
@@ -300,7 +333,6 @@
   $('photo').addEventListener('change', function () {
     var file = $('photo').files[0];
     if (!file) return;
-    $('photoLabel').textContent = file.name + ' · ins Bild tippen';
     var img = new Image();
     img.onload = function () {
       var scale = Math.min(1, 1000 / img.width);
@@ -308,6 +340,7 @@
       canvas.height = Math.round(img.height * scale);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.style.display = 'block';
+      $('photohint').style.display = 'block';
       URL.revokeObjectURL(img.src);
     };
     img.src = URL.createObjectURL(file);
@@ -327,26 +360,30 @@
   var RKEY = 'farbmischer.recipes';
   function loadRecipes() { try { return JSON.parse(localStorage.getItem(RKEY) || '[]'); } catch (e) { return []; } }
   function saveRecipes(list) { try { localStorage.setItem(RKEY, JSON.stringify(list)); } catch (e) {} }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function renderRecipes() {
     var tb = $('recipes'); tb.innerHTML = '';
     loadRecipes().forEach(function (rc, i) {
-      var div = document.createElement('div'); div.className = 'rc';
-      div.innerHTML = '<span class="chip" style="background:' + rc.hex + '"></span>' +
-        '<span class="n">' + rc.name + '<small>' + rc.hex + ' · ' + rc.grams + ' g</small></span>' +
-        '<button data-i="' + i + '" class="load">Laden</button><button data-i="' + i + '" class="del" title="Löschen">×</button>';
-      tb.appendChild(div);
+      var b = document.createElement('div'); b.className = 'rc';
+      b.innerHTML = '<span class="chip load" data-i="' + i + '" style="background:' + rc.hex + '"></span>' +
+        '<span class="n load" data-i="' + i + '">' + esc(rc.name) + '</span>' +
+        '<button class="del" data-i="' + i + '" aria-label="Löschen">×</button>';
+      tb.appendChild(b);
     });
   }
   $('saveRecipe').addEventListener('click', function () {
     var name = $('recipeName').value.trim() || $('hex').value;
     var list = loadRecipes();
     list.unshift({ name: name, hex: $('hex').value, grams: parseFloat($('grams').value) || 20 });
-    saveRecipes(list.slice(0, 50)); $('recipeName').value = ''; renderRecipes();
+    saveRecipes(list.slice(0, 50)); $('recipeName').value = ''; $('recipeName').blur(); renderRecipes();
   });
   $('recipes').addEventListener('click', function (ev) {
-    var b = ev.target.closest('button'); if (!b) return;
-    var list = loadRecipes(), i = parseInt(b.dataset.i, 10);
-    if (b.classList.contains('del')) { list.splice(i, 1); saveRecipes(list); renderRecipes(); return; }
+    var t = ev.target.closest('.del, .load'); if (!t) return;
+    var list = loadRecipes(), i = parseInt(t.dataset.i, 10);
+    if (t.classList.contains('del')) {
+      if (!confirm('„' + list[i].name + '“ aus der Palette entfernen?')) return;
+      list.splice(i, 1); saveRecipes(list); renderRecipes(); return;
+    }
     $('hex').value = list[i].hex; $('color').value = list[i].hex; $('grams').value = list[i].grams; update();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });

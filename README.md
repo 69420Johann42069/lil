@@ -42,6 +42,10 @@ Dann am Handy `http://<IP des Rechners>:8000` aufrufen.
 
 Funktionen: Farbwähler oder Hex-Wert, Farbe aus einem Foto antippen (Handykamera), Gesamtmenge in Gramm, Rezept mit Vorhersage-Swatch und Abweichung, Farben mit Namen merken und wieder laden, Primärfarben kalibrieren, Gerät steuern.
 
+### Widmung und Home-Bildschirm
+
+Oben in `web/index.html` steht ein kleiner Block `WIDMUNG` mit Name, Ort und Jahr. Den Namen dort eintragen, dann steht „gemacht für <Name>“ unter dem Titel. Auf dem iPhone in Safari „Zum Home-Bildschirm“ wählen, dann startet die App wie eine eigene mit dem Icon `web/icon.png` und ohne Browserleiste.
+
 Die Farbmathematik liegt in `web/farbmath.js`: Mixbox mischt die Primärfarben im Latentraum, ein projizierter Gradientenabstieg sucht die Anteile mit kleinster Lab-Abweichung zur Zielfarbe.
 
 ### Primärfarben kalibrieren
