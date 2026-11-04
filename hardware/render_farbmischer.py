@@ -2042,9 +2042,9 @@ def tafel(ss=1.5, verbose=True):
     top.text(92, y0 + 31, "Das Gerät in Ruhe auf dem Schreibtisch, Lichtfuge warmweiß", fontsize=13.5, color="white", ha="left", va="center",
             zorder=7)
     top.add_patch(Rectangle((40, y0 + hh - 66), 900, 66, fc=(0, 0, 0, 0.45), ec="none", zorder=6))
-    top.text(64, y0 + hh - 44, "Sockel hochglanz, Körper und Krone seidenmatt, Gold, Rauchglas, ein Portal und sechs Rundbogenfenster.", fontsize=12, color="white",
+    top.text(64, y0 + hh - 44, "Sockel hochglanz, Körper und Krone seidenmatt, Gold, Rauchglas, Portal, sechs Fenster.", fontsize=12, color="white",
             ha="left", va="center", zorder=7)
-    top.text(64, y0 + hh - 20, "Durch die Fenster sind Weiß 1 und Gelb zu sehen (Vitrinenlicht). Auf der Bühne leuchtet der Becher in der Zielfarbe.",
+    top.text(64, y0 + hh - 20, "In den Fenstern Weiß 1 und Gelb im Vitrinenlicht, auf der Bühne der Becher in der Zielfarbe.",
             fontsize=12, color="#E8E2D2", ha="left", va="center", zorder=7)
 
     # ---- 2) Schnitt

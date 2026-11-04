@@ -6,7 +6,7 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 
 - Acrylfarbe aus fünf 60-ml-Spritzen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
 - Günstige Studienacryl in 500-ml-Flaschen als Vorrat, nachgefüllt wird direkt in die Spritze
-- Bauform Revolver: runde Säule Ø 170 mm, 48 cm hoch, ein Schrittmotor, Spritzen im handgedrehten Karussell
+- Bauform Stand 5.1: schwarzer Flakon mit Goldlinien, Ø 204 mm, 407 mm hoch, sechs Spritzen im Karussell, zwei Schrittmotoren, Dosieren nach Gewicht mit Wägezelle, Becher in einer Schublade
 - Bedienung nur im Browser, der ESP32 liefert die Seite selbst im WLAN aus
 - Gerät dosiert nur, kein Rührwerk
 - Elektronik auf Lochraster (ein Treiber), Druckteile aus dem eigenen Drucker (Anycubic Kobra 2 Pro)
@@ -62,7 +62,11 @@ Fünf Flaschen reichen für alles. Gesucht wird in Studienqualität (Flasche 250
 
 Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Kolben wieder einsetzen, Düse nach oben, Luft rausdrücken. Flaschenfarbe ist dünner als Tubenfarbe und pumpt sich leichter.
 
-## Stufe 1: Revolver (aktuelles Konzept)
+## Stand 5.1: Flakon (aktuelles Konzept)
+
+Entstanden aus der Kritik von vier Rollen (Kosten, Design, Ingenieur, Kunstliebhaberin), drei Konzepten und deren Bewertung. Maßgeblich ist `hardware/farbmischer_parameter.md` mit Stückliste, Verdrahtung und dem Abschnitt für die Firmware. Rendering: `hardware/rendering_farbmischer.png`, Kollisionsprüfung: `python3 hardware/render_farbmischer.py --pruefung`, Druckteile: `hardware/farbmischer.scad`. Gerät etwa 200 Euro.
+
+## Stufe 1: Revolver (Stand 4, abgelöst)
 
 Zwei Schrittmotoren, fünf Spritzen in einem Karussell. Der Stößel sitzt fest über der vorderen Station, ein zweiter Motor zentral im Sockel dreht das Karussell direkt über eine Welle in der Mitte. Die Nutzerin wählt die Farbe, das Gerät dreht und dosiert alle Stationen nacheinander, am Ende nimmt sie den Becher heraus und rührt um. Säule Ø 170 mm, 48 cm hoch, Fenster unten vorne für den Becher, Rändelrand des Karussells durch einen Schlitz drehbar. Parameterblatt: `hardware/revolver_parameter.md`, Druckteile: `hardware/revolver.scad`, Rendering: `hardware/rendering_revolver.png`.
 
