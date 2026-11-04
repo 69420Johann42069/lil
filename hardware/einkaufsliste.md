@@ -4,7 +4,7 @@ Stand: 2026-11-04. PETG zu **10 Euro je kg** (Angabe Johann). Umrechnung AliExpr
 
 ## Wie belastbar die Preise sind
 
-AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 209,14 Euro sind **179,35 Euro belegt** und **29,79 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
+AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 201,15 Euro sind **168,36 Euro belegt** und **32,79 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
 
 ## Kaufteile
 
@@ -20,7 +20,7 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 | Elektronik | Step-down Mini-360 oder MP1584 | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
 | Elektronik | Mikroschalter mit Rollenhebel (10er-Pack, 1 genutzt) | 1 | 1,75 EUR | 1,75 | belegt | eBay.de |
 | Elektronik | Hall A3144 (Pack) | 1 | 1,17 EUR | 1,17 | belegt | eBay.de, Zuordnung unsicher |
-| Elektronik | Lochraster-Set mit Schraubklemmen und Stiftleisten (68 Teile) | 1 | 10,99 EUR | 10,99 | belegt | Amazon.de B09N28GWSV |
+| Elektronik | Dupont-Kabel (Buchse auf Buchse) und Stiftleisten, statt Lochraster | 1 | 3,00 EUR | 3,00 | Schätzung | kein belegter Preis. Module stecken direkt, Stiftleisten am ESP32 und an den Modulen anlöten, falls nicht vorgelötet |
 | Elektronik | 2 x 100 µF, Widerstände, 100 nF | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
 | Mechanik | T8-Spindel 200 mm, Steigung 2, Messingmutter (2er-Pack) | 1 | 9,99 EUR | 9,99 | belegt | Amazon.de B0C5M5SD2C |
 | Mechanik | Linearwelle Ø 10 x 200 (AliExpress, Stück) | 2 | 1,09 USD | 2,01 | belegt | Suchseite, Länge 200 mm wählbar, Verchromung nicht belegt. eBay.de 7,22 EUR je Stück |
@@ -50,13 +50,13 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 
 | Gruppe | EUR |
 |---|---|
-| Elektronik | 72,71 |
+| Elektronik | 64,72 |
 | Mechanik | 40,18 |
 | Filament | 15,56 |
-| **Gerät** | **128,45** |
+| **Gerät** | **120,46** |
 | Startpaket (6 Spritzen, Ventile, Becher) | 16,64 |
 | Farbe (5 Flaschen Marabu 500 ml) | 64,05 |
-| **Alles zusammen** | **209,14** |
+| **Alles zusammen** | **201,15** |
 
 Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studienqualität) kostet 7,85 Euro je Liter-Packung, die Farbtöne sind nicht belegt: sie wären bei fünf Flaschen etwa 39 Euro statt 64.
 
@@ -79,3 +79,38 @@ Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studi
 Druckteile: 23 Zeilen (Stand 6: 33). Filament netto 1,297 kg (Stand 6: 1,488 kg).
 
 Nicht gebaut: Karussell direkt am Motor (spart Riemen, Scheibe, 70-Z-Rad, Pancake, aber ein neues Wellen- und Motorlayout mit neuer Kollisionsprüfung, etwa 6 Euro). Das Rendering `rendering_farbmischer.png` zeigt noch Stand 6, in `farbmischer.scad` stellt `budget = 1` den Stand 7 ein.
+
+## Ergebnis der 20 Optimierungsläufe (alle Vorschläge geprüft, nur das Einfache übernommen)
+
+**Übernommen:** Lochraster-Set weg, Module per Dupont-Kabel stecken (spart etwa 8 Euro).
+
+**Optionen, die du selbst entscheidest**
+
+| Option | Ersparnis | Voraussetzung |
+|---|---|---|
+| Handy-Ladegerät mit 12 V per PD plus PD-Trigger-Modul statt Netzteil und Einbaubuchse | etwa 13 Euro (Trigger etwa 3 Euro, unbelegt) | Ladegerät liefert 12 V per PD (Aufdruck prüfen), mindestens 36 W. Laptop-Netzteile liefern meist 19 V und gehen nicht |
+| Altteile ausbauen (NEMA 17, T8-Spindel, Wägezelle, Welle Ø 8, 608-Lager, GT2-Riemen) | etwa 30 bis 37 Euro (Schätzung) | Typenschild prüfen, Maße der Teile passen zum Blatt |
+| Hall-Sensor am Karussell weglassen | etwa 2 Euro | Park per App bestätigen, nach Riemenschlupf falsche Farbe möglich |
+| Dünnere Krone (Wand 1,6, Deckel 1,2) | 0,75 Euro | ungeprüft am Probestück |
+| Lagerbock, Hallhalter, Klebering, Fugenhalter in andere Teile legen | 5 Druckjobs | SCAD-Änderung nötig |
+| 30-ml-Spritzen, Gerät 35 mm kürzer | wenig | Spritzen doppelt so oft tauschen, Höhenkette neu rechnen |
+
+**Geprüft und abgelehnt**
+
+| Vorschlag | Grund |
+|---|---|
+| Ein Treiber für beide Motoren | spart höchstens 2 Euro, Karussell verliert beim Umschalten das Haltemoment |
+| ESP32-C3 Super Mini | spart etwa 3,50 Euro (Preis unbelegt), zu wenige Pins, Firmware portieren |
+| Dosieren ohne Wägezelle | zu ungenau (Dichte, Luft), keine Kontakterkennung |
+| M8-Stange mit gedruckter Mutter | spart 3 bis 5 Euro, Motor passt nicht, Moment zu knapp |
+| Zahnradpaar statt Riemen | spart etwa 3 Euro, neue Kollisionsprüfung nötig |
+| Gleitring statt sieben 608 | spart höchstens 3 Euro, Moment reicht nicht |
+| Drei statt vier Zuganker | spart nichts (zwei 1-m-Stangen bleiben) |
+| Ein Weiß weniger | spart 1 Euro, Karussell ändert sich nicht |
+| Ohne Entenschnabelventile | Nachtropfen, Klemme bräuchte eigenen Antrieb |
+| Schublade weglassen | spart kaum Geld, Tropfen auf Waage |
+| Mikroschalter am Stößel weglassen | ohne StallGuard kein Kollisionsschutz |
+| Billigere Farbe | keine belegte Alternative, Boesner Scene (7,85 Euro je Liter) nur nach Test in der Spritze |
+| Krone oder Gold weglassen | spart etwa 2 Euro, Mechanik läge offen |
+
+**Drei billige Tests vor dem Großeinkauf:** (1) ein Motor mit A4988 unter Last (Strom per Poti), (2) drei Ventile mit verdünnter Farbe 48 Stunden offen stehen lassen, dann drücken, (3) eine Riemenscheibe und einen Riemen bestellen und mit dem Messschieber prüfen (Breite 6 mm, Bohrung 5 oder 8 mm). Erster Prototyp: 10 Teile, etwa 540 g, 35 bis 45 Stunden Druck (Ausleger zuerst, Karussellplatte, Rollenböcke, Laufring, Schlitten, Brücke, GT2-Rad, Lagerbock, Grundplatte, Rinne).

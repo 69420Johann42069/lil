@@ -44,4 +44,4 @@ Mit freigegebener Domain amazon.de (Umgebungsmenü in der Titelleiste, Edit, All
 
 **Nicht aus einem Shop machbar:** Cyan und Gelb in 500 ml (bei Amazon nicht gefunden), das Gummipad Ø 25, der Schraub- und Widerstandssatz. Das PETG kaufst du ohnehin selbst (10 Euro je kg, 1,56 kg gebraucht).
 
-Die gesamte Liste ohne Shop-Bindung, mit den belegten Preisen aus eBay, AliExpress und anderen Shops: `hardware/einkaufsliste.md` (Gerät 128,45 Euro, alles zusammen 209,14 Euro, davon 29,79 Euro geschätzt, ohne Kleber).
+Die gesamte Liste ohne Shop-Bindung, mit den belegten Preisen aus eBay, AliExpress und anderen Shops: `hardware/einkaufsliste.md` (Gerät 120,46 Euro, alles zusammen 201,15 Euro, ohne Kleber).
