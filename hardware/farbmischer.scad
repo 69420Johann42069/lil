@@ -36,6 +36,7 @@ teil = "montage";
 // Gold-PETG: goldring goldband kronenring rahmen_unten rahmen_seite rahmen_oben lippe buchsenring
 // Scheiben (Rauch- oder Klar-PETG): portalscheibe_unten portalscheibe_oben fensterscheibe
 // Ansicht: montage
+budget = 1;              // 1 = Stand 7 Budget: ohne Portalscheibe, Fensterscheiben, Portalrahmen, Feuchtrinne mit Zubehör, Goldlippe, Buchsenring, Kabelclips
 schnitt = 0;             // 1 = Montage in der XZ-Ebene aufgeschnitten (Y > 0 entfernt)
 kaufteile_zeigen = 1;    // 1 = Kaufteile als Platzhalter in der Montage
 stempel_dosieren = 0;    // 0 = Park (oben), 1 = ganz unten (S_min)
@@ -669,7 +670,7 @@ module t_sockel() {
         }
         griff_form(0, 0, 0);
         portal_cut();
-        portal_magnete();
+        if (budget == 0) portal_magnete();
         // Buchsenloch Ø 8,2 hinten (Einbaubuchse M8), Goldring Ø 16 außen aufgeklebt
         translate([-140, 0, buchse_z]) rotate([0, 90, 0]) cylinder(d = buchse_d, h = 60);
     }
@@ -695,12 +696,16 @@ module t_koerper_unten() {
         union() {
             rotate_extrude() polygon(koerper_unten_profil);
             koerper_rippen(z_kor0 + falz_h, z_kor_teil - 5);
-            portal_pad(z_kor0 + falz_h, z_kor_teil);
-            for (p = fenster_winkel) fenster_pad(p * teilung);
+            if (budget == 0) {
+                portal_pad(z_kor0 + falz_h, z_kor_teil);
+                for (p = fenster_winkel) fenster_pad(p * teilung);
+            }
         }
         portal_cut();
-        scheibe_falz_cut();
-        portal_magnete();
+        if (budget == 0) {
+            scheibe_falz_cut();
+            portal_magnete();
+        }
         for (p = fenster_winkel) {
             fenster_cut(p * teilung);
             fenster_fuge_cut(p * teilung);
@@ -713,11 +718,13 @@ module t_koerper_oben() {
         union() {
             rotate_extrude() polygon(koerper_oben_profil);
             koerper_rippen(z_kor_teil + falz_h + 5, z_kor1);
-            portal_pad(z_kor_teil + falz_h, z_kor1);
+            if (budget == 0) portal_pad(z_kor_teil + falz_h, z_kor1);
         }
         portal_cut();
-        scheibe_falz_cut();
-        portal_magnete();
+        if (budget == 0) {
+            scheibe_falz_cut();
+            portal_magnete();
+        }
     }
 }
 
@@ -1480,18 +1487,22 @@ module montage() {
             color("#C9A44C") t_goldband();
             color("#C9A44C") t_goldring();
             color("#C9A44C") t_kronenring();
-            color("#C9A44C") rahmen_haut(rb_in, rb_out, portal_z0 - rahmen_bb, rahmen_naht_unten);
-            color("#C9A44C") rahmen_haut(fw_in, fw_out, rahmen_z_seite0, rahmen_z_oben1);
-            color("#C9A44C") t_lippe();
-            color([0.18, 0.18, 0.2, 0.55]) { t_portalscheibe(0); t_portalscheibe(1); }
-            color([0.93, 0.95, 0.96, 0.4]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) fensterscheibe_montage();
+            if (budget == 0) {
+                color("#C9A44C") rahmen_haut(rb_in, rb_out, portal_z0 - rahmen_bb, rahmen_naht_unten);
+                color("#C9A44C") rahmen_haut(fw_in, fw_out, rahmen_z_seite0, rahmen_z_oben1);
+                color("#C9A44C") t_lippe();
+                color([0.18, 0.18, 0.2, 0.55]) { t_portalscheibe(0); t_portalscheibe(1); }
+                color([0.93, 0.95, 0.96, 0.4]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) fensterscheibe_montage();
+            }
             color("#1C1C1E") t_grundplatte();
             color("#1C1C1E") t_lagerbock();
-            color("#1C1C1E") t_rinne();
-            color("#1C1C1E") for (sd = [-1, 1]) t_rinnendeckel(sd);
-            color("#1C1C1E") for (a = saeule_winkel) rotate([0, 0, a]) translate([st_r, 0, 0]) t_saeule();
-            color("#1C1C1E") for (vz = [-1, 1]) t_abstreifhalter(vz);
-            color("#DAD6CC") for (vz = [-1, 1]) rotate([0, 0, vz * lippe_winkel]) translate([lippe_r0, -lippe_t / 2, 58]) cube([lippe_r1 - lippe_r0, lippe_t, lippe_z1 - 58]);
+            if (budget == 0) {
+                color("#1C1C1E") t_rinne();
+                color("#1C1C1E") for (sd = [-1, 1]) t_rinnendeckel(sd);
+                color("#1C1C1E") for (a = saeule_winkel) rotate([0, 0, a]) translate([st_r, 0, 0]) t_saeule();
+                color("#1C1C1E") for (vz = [-1, 1]) t_abstreifhalter(vz);
+                color("#DAD6CC") for (vz = [-1, 1]) rotate([0, 0, vz * lippe_winkel]) translate([lippe_r0, -lippe_t / 2, 58]) cube([lippe_r1 - lippe_r0, lippe_t, lippe_z1 - 58]);
+            }
             color("#1C1C1E") t_laufring();
             color("#1C1C1E") rotate([0, 0, phi]) t_karussell();
             color("#1C1C1E") rotate([0, 0, phi]) for (j = [0:6]) rotate([0, 0, (j + 0.5) * teilung]) t_rollenbock();
@@ -1507,12 +1518,12 @@ module montage() {
             color("#1C1C1E") t_motor2_winkel();
             color("#1C1C1E") t_hallhalter();
             color("#1C1C1E") t_platinenhalter();
-            color("#1C1C1E") rotate([0, 0, -2.5 * teilung]) for (z = [20, 100, 160, 250, 320, 370]) translate([0, 0, z]) t_kabelclip();
+            if (budget == 0) color("#1C1C1E") rotate([0, 0, -2.5 * teilung]) for (z = [20, 100, 160, 250, 320, 370]) translate([0, 0, z]) t_kabelclip();
             color("#141417") t_klebering();
             color("#C9A44C") translate([0, 0, z_hoehe - 1.2]) rotate([0, 0, 90]) t_namensschild();
             color("#1C1C1E") for (a = zug_winkel) rotate([0, 0, a]) t_fugenhalter();
             color("#1C1C1E") for (s = [-1, 1]) t_schiene(s);
-            color("#C9A44C") translate([-(sock_r(buchse_z) + 3), 0, buchse_z]) rotate([0, 90, 0]) t_buchsenring();
+            if (budget == 0) color("#C9A44C") translate([-(sock_r(buchse_z) + 3), 0, buchse_z]) rotate([0, 90, 0]) t_buchsenring();
             if (kaufteile_zeigen == 1) kaufteile();
         }
         if (schnitt == 1) translate([-300, 0, -10]) cube([600, 300, 600]);
