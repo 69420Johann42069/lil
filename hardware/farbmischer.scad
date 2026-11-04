@@ -36,7 +36,8 @@ teil = "montage";
 // Gold-PETG: goldring goldband kronenring rahmen_unten rahmen_seite rahmen_oben lippe buchsenring
 // Scheiben (Rauch- oder Klar-PETG): portalscheibe_unten portalscheibe_oben fensterscheibe
 // Ansicht: montage
-budget = 1;              // 1 = Stand 7 Budget: ohne Portalscheibe, Fensterscheiben, Portalrahmen, Feuchtrinne mit Zubehör, Goldlippe, Buchsenring, Kabelclips
+budget = 1;              // 1 = Stand 7 Budget: ohne Feuchtrinne mit Zubehör, Kabelclips, Ballast, Reed, Magnete an den Scheiben (Scheiben und Goldteile werden geklebt)
+scheiben = 1;            // 1 = gedruckte Portal- und Fensterscheiben, Goldrahmen, Goldlippe, Buchsenring (Druckteile, kein Kaufteil, von außen schön)
 schnitt = 0;             // 1 = Montage in der XZ-Ebene aufgeschnitten (Y > 0 entfernt)
 kaufteile_zeigen = 1;    // 1 = Kaufteile als Platzhalter in der Montage
 stempel_dosieren = 0;    // 0 = Park (oben), 1 = ganz unten (S_min)
@@ -696,16 +697,14 @@ module t_koerper_unten() {
         union() {
             rotate_extrude() polygon(koerper_unten_profil);
             koerper_rippen(z_kor0 + falz_h, z_kor_teil - 5);
-            if (budget == 0) {
+            if (scheiben == 1) {
                 portal_pad(z_kor0 + falz_h, z_kor_teil);
                 for (p = fenster_winkel) fenster_pad(p * teilung);
             }
         }
         portal_cut();
-        if (budget == 0) {
-            scheibe_falz_cut();
-            portal_magnete();
-        }
+        if (scheiben == 1) scheibe_falz_cut();
+        if (budget == 0) portal_magnete();
         for (p = fenster_winkel) {
             fenster_cut(p * teilung);
             fenster_fuge_cut(p * teilung);
@@ -718,13 +717,11 @@ module t_koerper_oben() {
         union() {
             rotate_extrude() polygon(koerper_oben_profil);
             koerper_rippen(z_kor_teil + falz_h + 5, z_kor1);
-            if (budget == 0) portal_pad(z_kor_teil + falz_h, z_kor1);
+            if (scheiben == 1) portal_pad(z_kor_teil + falz_h, z_kor1);
         }
         portal_cut();
-        if (budget == 0) {
-            scheibe_falz_cut();
-            portal_magnete();
-        }
+        if (scheiben == 1) scheibe_falz_cut();
+        if (budget == 0) portal_magnete();
     }
 }
 
@@ -1487,7 +1484,7 @@ module montage() {
             color("#C9A44C") t_goldband();
             color("#C9A44C") t_goldring();
             color("#C9A44C") t_kronenring();
-            if (budget == 0) {
+            if (scheiben == 1) {
                 color("#C9A44C") rahmen_haut(rb_in, rb_out, portal_z0 - rahmen_bb, rahmen_naht_unten);
                 color("#C9A44C") rahmen_haut(fw_in, fw_out, rahmen_z_seite0, rahmen_z_oben1);
                 color("#C9A44C") t_lippe();
@@ -1523,7 +1520,7 @@ module montage() {
             color("#C9A44C") translate([0, 0, z_hoehe - 1.2]) rotate([0, 0, 90]) t_namensschild();
             color("#1C1C1E") for (a = zug_winkel) rotate([0, 0, a]) t_fugenhalter();
             color("#1C1C1E") for (s = [-1, 1]) t_schiene(s);
-            if (budget == 0) color("#C9A44C") translate([-(sock_r(buchse_z) + 3), 0, buchse_z]) rotate([0, 90, 0]) t_buchsenring();
+            if (scheiben == 1) color("#C9A44C") translate([-(sock_r(buchse_z) + 3), 0, buchse_z]) rotate([0, 90, 0]) t_buchsenring();
             if (kaufteile_zeigen == 1) kaufteile();
         }
         if (schnitt == 1) translate([-300, 0, -10]) cube([600, 300, 600]);

@@ -4,7 +4,7 @@ Stand: 2026-11-04. PETG zu **10 Euro je kg** (Angabe Johann). Umrechnung AliExpr
 
 ## Wie belastbar die Preise sind
 
-AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 201,15 Euro sind **168,36 Euro belegt** und **32,79 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
+AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 202,07 Euro sind **169,28 Euro belegt** und **32,79 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
 
 ## Kaufteile
 
@@ -36,7 +36,7 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 | Mechanik | Magnet 5 x 2 für den Hall-Sensor | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
 | Mechanik | Gewindeeinsätze M4 (200er-Pack, 2 genutzt) | 1 | 6,29 USD | 5,79 | belegt | AliExpress Suchseite |
 | Mechanik | Gummi- oder Filzfüße, Gummiauflage | 1 | 1,00 EUR | 1,00 | Schätzung | Möbelgleiter aus dem Haushalt möglich |
-| Gehäuse | PETG 1,556 kg (1,297 kg netto plus 20 Prozent) zu 10 Euro je kg | 1 | 15,56 EUR | 15,56 | belegt | Angabe Johann |
+| Gehäuse | PETG 1,648 kg (1,373 kg netto plus 20 Prozent) zu 10 Euro je kg | 1 | 16,48 EUR | 16,48 | belegt | Angabe Johann |
 | Startpaket | Wund- und Blasenspritze 50/60 ml Luer (6 im Gerät) | 6 | 0,94 EUR | 5,64 | belegt | medikamente-per-klick.de, Versand nicht genannt, Luer statt Katheteransatz |
 | Startpaket | Silikon-Entenschnabelventile (Pack) | 1 | 5,00 EUR | 5,00 | Schätzung | kein belegter Preis |
 | Startpaket | Portionsbecher 60 ml mit Deckel, 100er | 1 | 6,00 EUR | 6,00 | Schätzung | kein belegter Preis |
@@ -52,11 +52,11 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 |---|---|
 | Elektronik | 64,72 |
 | Mechanik | 40,18 |
-| Filament | 15,56 |
-| **Gerät** | **120,46** |
+| Filament | 16,48 |
+| **Gerät** | **121,38** |
 | Startpaket (6 Spritzen, Ventile, Becher) | 16,64 |
 | Farbe (5 Flaschen Marabu 500 ml) | 64,05 |
-| **Alles zusammen** | **201,15** |
+| **Alles zusammen** | **202,07** |
 
 Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studienqualität) kostet 7,85 Euro je Liter-Packung, die Farbtöne sind nicht belegt: sie wären bei fünf Flaschen etwa 39 Euro statt 64.
 
@@ -68,7 +68,7 @@ Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studi
 
 | Weggelassen | Wirkung |
 |---|---|
-| Portalscheibe (2), Fensterscheiben, Portalrahmen, Goldlippe, Buchsenring | Portal und Fenster offen, Goldteile nur Ring, Band und Kronenring. 7 Druckteile weniger |
+| Vier Magnete und Stahlscheiben an den Portalscheiben | Scheiben werden mit Klebepunkten (Heißkleber oder 2K) eingeklebt statt eingeklickt, die Optik von außen bleibt wie Stand 6 (Scheiben, Goldrahmen, Goldlippe, Buchsenring bleiben, sie sind Druckteile ohne Kaufteil) |
 | Feuchtrinne mit Deckel, Säulen, Abstreifhalter, Silikonlippen, Schwamm | 4 Teile weniger. **Risiko:** Düsen trocknen an, nur das Ventil schützt, Ventiltest aus 17.2 ist Pflicht, im Zweifel Luer-Kappen oder Spülen vor jeder Session |
 | Spritzenablage, Einführzunge, Kabelclips | 3 Druckteile weniger (Kabelbinder statt Clips) |
 | Reed-Kontakt | die Waage erkennt die Schublade (Taraebene) |
@@ -76,7 +76,7 @@ Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studi
 | TMC2209 gegen A4988 | A4988 kostet etwa 4 Euro für den Pack gegen 16 Euro für zwei TMC2209, ist aber hörbar lauter und hat weder UART noch StallGuard (kein Überlastschutz am Stößel, Strom per Poti einstellen, 0,5 A Stößel). Wer leise will: zwei TMC2209 für etwa 12 bis 16 Euro mehr |
 | Gewindeeinsätze | bleiben (2 Stück aus dem 200er-Pack), M4 direkt in PETG hält 195 N nicht |
 
-Druckteile: 23 Zeilen (Stand 6: 33). Filament netto 1,297 kg (Stand 6: 1,488 kg).
+Druckteile: 30 Zeilen (Stand 6: 33). Filament netto 1,373 kg (Stand 6: 1,488 kg), Körper-Hinterlegungen für die Scheiben nicht nachgerechnet.
 
 Nicht gebaut: Karussell direkt am Motor (spart Riemen, Scheibe, 70-Z-Rad, Pancake, aber ein neues Wellen- und Motorlayout mit neuer Kollisionsprüfung, etwa 6 Euro). Das Rendering `rendering_farbmischer.png` zeigt noch Stand 6, in `farbmischer.scad` stellt `budget = 1` den Stand 7 ein.
 
