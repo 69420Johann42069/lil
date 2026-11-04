@@ -4,7 +4,7 @@ Stand: 2026-11-04. PETG zu **10 Euro je kg** (Angabe Johann). Umrechnung AliExpr
 
 ## Wie belastbar die Preise sind
 
-AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 220,75 Euro sind **189,46 Euro belegt** und **31,29 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
+AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 218,34 Euro sind **188,55 Euro belegt** und **29,79 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
 
 ## Kaufteile
 
@@ -32,11 +32,9 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 | Mechanik | GT2-Riemen geschlossen 158 mm (10er-Mix) | 1 | 0,99 USD | 0,91 | belegt | AliExpress Zusammenfassung |
 | Mechanik | GT2-Riemen geschlossen 210 mm | 1 | 2,00 EUR | 2,00 | Schätzung | nicht gefunden, eBay.de 158 und 200 mm je 4,29 EUR |
 | Mechanik | Gewindestange M5 1 m verzinkt | 2 | 1,00 EUR | 2,00 | belegt | eBay.de, Versand extra |
-| Mechanik | Muttern M5 (30 Stück) | 1 | 1,50 EUR | 1,50 | Schätzung | kein belegter Preis |
 | Mechanik | Magnete 6 x 2 (10er) für Krone und Schublade | 1 | 0,99 USD | 0,91 | belegt | AliExpress Suchseite (Amazon.de 4,20 EUR) |
 | Mechanik | Magnet 5 x 2 für den Hall-Sensor | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
 | Mechanik | Gewindeeinsätze M4 (200er-Pack, 2 genutzt) | 1 | 6,29 USD | 5,79 | belegt | AliExpress Suchseite |
-| Mechanik | Schraubensortiment M3 und M4 (2510 Teile) | 1 | 0,99 USD | 0,91 | belegt | AliExpress Suchseite |
 | Mechanik | Gummi- oder Filzfüße, Gummiauflage | 1 | 1,00 EUR | 1,00 | Schätzung | Möbelgleiter aus dem Haushalt möglich |
 | Gehäuse | PETG 1,556 kg (1,297 kg netto plus 20 Prozent) zu 10 Euro je kg | 1 | 15,56 EUR | 15,56 | belegt | Angabe Johann |
 | Kleber | 2K-Epoxid 25 ml (APP EP4) | 1 | 6,95 EUR | 6,95 | belegt | eBay.de |
@@ -55,15 +53,17 @@ AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auc
 | Gruppe | EUR |
 |---|---|
 | Elektronik | 72,71 |
-| Mechanik | 42,59 |
+| Mechanik | 40,18 |
 | Filament | 15,56 |
 | Kleber | 9,20 |
-| **Gerät** | **140,06** |
+| **Gerät** | **137,65** |
 | Startpaket (6 Spritzen, Ventile, Becher) | 16,64 |
 | Farbe (5 Flaschen Marabu 500 ml) | 64,05 |
-| **Alles zusammen** | **220,75** |
+| **Alles zusammen** | **218,34** |
 
 Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studienqualität) kostet 7,85 Euro je Liter-Packung, die Farbtöne sind nicht belegt: sie wären bei fünf Flaschen etwa 39 Euro statt 64.
+
+**Aus dem Arbeitsvorrat (kein Kauf):** Standard-Schrauben, Muttern und Unterlegscheiben (M3, M4, M5, Passscheiben 5 x 10 und 8 x 14). Zu besorgen bleiben die Gewindestangen M5, die Gewindeeinsätze M4 und alles Besondere. Mitnehmen: etwa 40 Zylinderkopfschrauben M3 (6 bis 16 mm), 10 M4 (8 bis 25 mm), 30 Muttern M5 und 8 Scheiben 5 x 10 (Zuganker), 2 Passscheiben 8 x 14 x 0,5, Schraubensicherung mittelfest falls vorhanden.
 
 ## Was Stand 7 gegenüber Stand 6 weglässt
 
