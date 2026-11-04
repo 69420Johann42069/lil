@@ -72,13 +72,14 @@
     justify-content:center; cursor:pointer; font-size:1.4rem; font-weight:500; line-height:1; transition:transform .1s; }
   .round:active { transform:scale(.92); }
   .round svg { width:20px; height:20px; }
-  .round input { display:none; }
+  .round input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; }
+  label.round { position:relative; }
   .grams { display:inline-flex; align-items:baseline; gap:4px; font-family:var(--serif); font-size:1.5rem; min-width:88px; justify-content:center; }
   .grams input { width:3.2ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:0; }
   .grams input::-webkit-inner-spin-button, .grams input::-webkit-outer-spin-button { -webkit-appearance:none; }
   .grams small { font-size:1rem; color:var(--muted); font-family:var(--round); }
   .sep { width:1px; height:28px; background:var(--hair); margin:0 4px; }
-  #canvas { display:none; width:100%; border-radius:22px; margin-top:18px; touch-action:none; }
+  #canvas { display:none; width:100%; border-radius:22px; margin-top:18px; touch-action:pan-y; cursor:crosshair; }
   .photohint { display:none; text-align:center; font-size:.85rem; color:var(--muted); margin:8px 0 0; }
 
   /* Abschnitte */
@@ -173,7 +174,7 @@
     <span class="sep"></span>
     <label class="round" for="photo" aria-label="Farbe aus Foto">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-      <input type="file" id="photo" accept="image/*" capture="environment">
+      <input type="file" id="photo" accept="image/*">
     </label>
   </div>
   <canvas id="canvas"></canvas>
@@ -228,6 +229,7 @@
 
 <script src="mixbox.js"></script>
 <script src="farbmath.js"></script>
+<script src="hamster.js"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -271,7 +273,7 @@
   var FRAMES = { ok: [0, 1, 2], mid: [3, 4, 5], bad: [6, 7, 8], neutral: [9] };
   var sheet = new Image(), sheetReady = false;
   sheet.onload = function () { sheetReady = true; update(); renderRecipes(); };
-  sheet.src = 'hamster.png';
+  sheet.src = window.HAMSTER_SPRITE || 'hamster.png';
   function pick(mood, hex) {
     var pool = FRAMES[mood], h = 0;
     for (var i = 1; i < hex.length; i++) h = (h * 31 + hex.charCodeAt(i)) & 0xffff;
@@ -302,6 +304,15 @@
       p[i + 2] = line[2] + (rgb[2] - line[2]) * L;
     }
     x.putImageData(d, 0, 0);
+    // Unten und seitlich weich ausblenden, die Vorlage ist dort abgeschnitten.
+    x.globalCompositeOperation = 'destination-in';
+    var gv = x.createLinearGradient(0, 0, 0, 160);
+    gv.addColorStop(0, '#000'); gv.addColorStop(0.84, '#000'); gv.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = gv; x.fillRect(0, 0, 160, 160);
+    var gh = x.createLinearGradient(0, 0, 160, 0);
+    gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(0.08, '#000'); gh.addColorStop(0.92, '#000'); gh.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = gh; x.fillRect(0, 0, 160, 160);
+    x.globalCompositeOperation = 'source-over';
   }
   var lastFrame = -1;
   function rgba(rgb, a) { return 'rgba(' + rgb.map(Math.round).join(',') + ',' + a + ')'; }
@@ -405,7 +416,7 @@
     };
     img.src = URL.createObjectURL(file);
   });
-  canvas.addEventListener('pointerdown', function (ev) {
+  canvas.addEventListener('click', function (ev) {
     var r = canvas.getBoundingClientRect();
     var x = Math.round((ev.clientX - r.left) * canvas.width / r.width);
     var y = Math.round((ev.clientY - r.top) * canvas.height / r.height);

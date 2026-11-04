@@ -4,7 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 mkdir -p data
-cp ../web/index.html ../web/farbmath.js ../web/icon.png ../web/hamster.png data/
+cp ../web/index.html ../web/farbmath.js ../web/icon.png ../web/hamster.js data/
 if [ -f ../web/mixbox.js ]; then
   cp ../web/mixbox.js data/
 else
