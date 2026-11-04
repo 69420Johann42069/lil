@@ -328,7 +328,9 @@
     gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(0.07, '#000'); gv.addColorStop(0.84, '#000'); gv.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = gv; x.fillRect(0, 0, 160, 160);
     var gh = x.createLinearGradient(0, 0, 160, 0);
-    gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(0.08, '#000'); gh.addColorStop(0.92, '#000'); gh.addColorStop(1, 'rgba(0,0,0,0)');
+    // Die zwei breiten Bilder sind in der Vorlage seitlich abgeschnitten: dort breiter ausblenden.
+    var fw = frame === 1 ? [0.08, 0.3] : frame === 2 ? [0.22, 0.22] : [0.08, 0.08];
+    gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(fw[0], '#000'); gh.addColorStop(1 - fw[1], '#000'); gh.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = gh; x.fillRect(0, 0, 160, 160);
     x.globalCompositeOperation = 'source-over';
   }
