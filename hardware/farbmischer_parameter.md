@@ -1,12 +1,33 @@
-# Farbmischer Stand 5.1: maßgebliches Parameterblatt
+# Farbmischer Stand 6: maßgebliches Parameterblatt
 
-Dieses Blatt ist ab Stand 5 (hier Stand 5.1) die einzige Vorlage für Rendering, OpenSCAD-Druckteile, Stückliste, Verdrahtung und Firmware. Es ersetzt `hardware/revolver_parameter.md` (Stand 4). Rendering und Prüfskript (`hardware/render_farbmischer.py`, Aufruf mit `--pruefung`) und `hardware/farbmischer.scad` folgen diesem Blatt. README und Netzliste sind noch auf Stand 4 und müssen vor jeder Bestellung nach diesem Blatt nachgezogen werden, sonst wird falsch eingekauft. Die Ordner `web/` und `firmware/` gehören einer anderen Sitzung, Abschnitt 14 ist nur ein Hinweis an sie.
+Dieses Blatt ist ab Stand 5 (hier Stand 6) die einzige Vorlage für Rendering, OpenSCAD-Druckteile, Stückliste, Verdrahtung und Firmware. Es ersetzt `hardware/revolver_parameter.md` (Stand 4). Rendering und Prüfskript (`hardware/render_farbmischer.py`, Aufruf mit `--pruefung`) und `hardware/farbmischer.scad` folgen diesem Blatt. Die README ist auf Stand 6 nachgezogen, die Netzliste (`electronics/`) gehört noch zum Fünf-Motor-Entwurf und ist für dieses Gerät nicht maßgeblich. Die Ordner `web/` und `firmware/` gehören einer anderen Sitzung, Abschnitt 14 ist nur ein Hinweis an sie.
 
-**Kurz:** Ein schwarzer Flakon mit Goldlinien, Körper Ø 196 mm, Fuß und Krone Ø 204, 407 mm hoch. Innen stehen sechs 60-ml-Spritzen senkrecht in einem Karussell (Cyan, Magenta, Gelb, zweimal Titanweiß, Schwarz). Ein fester Stößel in der Gerätemitte drückt über einen Ausleger die Spritze, die vorne steht. Eine Wägezelle unter dem Becher misst in Gramm. Sie wählt die Farbe im Handy-Browser, das Gerät dosiert alles allein, sie zieht die leuchtende Schublade auf und nimmt den Becher. Zwei Motoren, sechs beleuchtete Fenster, eine Lichtfuge, ihr Name in der Krone.
+**Kurz:** Ein schwarzer Flakon mit Goldlinien, Körper Ø 196 mm, Fuß und Krone Ø 204, 407 mm hoch. Innen stehen sechs 60-ml-Spritzen senkrecht in einem Karussell (Cyan, Magenta, Gelb, zweimal Titanweiß, Schwarz). Ein fester Stößel in der Gerätemitte drückt über einen Ausleger die Spritze, die vorne steht. Eine Wägezelle unter dem Becher misst in Gramm. Sie wählt die Farbe im Handy-Browser, das Gerät dosiert alles allein, sie zieht die Schublade auf und nimmt den Becher. Zwei Motoren, sechs Fenster, ein Goldband, ihr Name in der Krone. **Stand 6: ohne Licht und fast vollständig aus PETG gedruckt.** Kaufteile sind nur noch Motoren, Elektronik, Wellen, Spindel, Lager, Riemen, Gewindestangen, Schrauben, Magnete, Silikonteile und das Spritzenzubehör.
 
-Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026). Höhenkette und alle Kollisionen rechnet `python3 hardware/render_farbmischer.py --pruefung` (51 Prüfungen, etwa 4 s, Exit-Code 1 bei einem Fehler). Die Werte in Abschnitt 15 sind dessen Ausgabe. Die Kraft-, Strom- und Massenrechnungen in Abschnitt 16 sind für Stand 5.1 von Hand nachgerechnet, wo sich Maße geändert haben.
+Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026). Höhenkette und alle Kollisionen rechnet `python3 hardware/render_farbmischer.py --pruefung` (Exit-Code 1 bei einem Fehler). Die Werte in Abschnitt 15 sind dessen Ausgabe. Die Druckteile in `hardware/farbmischer.scad` haben eigene `assert`-Prüfungen (Höhenkette, Passungen, Druckbett, Ausleger-Spannung); alle Teile und die Montage rechnen fehlerfrei durch (OpenSCAD 2021.01). Die Kraft- und Massenrechnungen in Abschnitt 16 sind für Stand 6 nachgerechnet, wo sich Maße geändert haben.
 
-## 0. Änderungen in Stand 5.1 (Abnahme durch die vier Rollen)
+## 0. Änderungen in Stand 6 (druckbar aus PETG, ohne Licht)
+
+Wunsch: die Funktion bleibt, das Gerät bleibt schön, aber fast alles soll sich 3D-drucken lassen, die LEDs entfallen, gedruckt wird mit PETG. Höhe, Durchmesser, Karussell, Stößel, Waage, Schublade und alle Kollisionsmaße bleiben unverändert, nur Teile und Oberflächen ändern sich.
+
+| Was | Stand 5.1 | Stand 6 | Folge |
+|---|---|---|---|
+| Licht | 99 WS2812 (Bühnenring, Vitrinen-LEDs, Lichtfuge), 74AHCT125, 1000 µF, 5-A-Wandler | **entfällt komplett**, auch LED-Träger, LED-Ringhalter, Laufring-Nut, Opalfenster, GPIO 25 | 15 Euro weniger Elektronik, drei Druckteile weniger. Fortschritt und „Fertig“ zeigt nur die App (optional ein Piezo-Summer) |
+| Lichtfuge (Z 338 bis 341) | Opalring, leuchtet | **Goldband**, Gold-PETG | Die waagrechte Goldlinie am Hals bleibt, sie leuchtet nicht |
+| Hülle | PLA, Füller, Schliff, Lack hochglanz und seidenmatt | **PETG direkt gedruckt**, nichts gespachtelt, nichts lackiert | Sockel und Front glänzen vom Filament, Körper und Krone matt (Matt-PETG oder 0,2 mm). PETG lässt sich kaum schleifen, deshalb ist die Oberfläche das Druckbild |
+| Körperteilung Z 235 | verklebt, gespachtelt, überlackiert, unsichtbar | **gewollte Schattenfuge** 1,0 breit, 0,5 tief (zwei Fasen 0,5 x 45 Grad) | die einzige Stelle, wo man die Teilung sieht, als saubere Linie |
+| Gold | Anreibewachs und Lackmarker auf erhabenen Linien | **gedruckte Gold-PETG-Teile**: Goldring, Goldband, Kronenring (Fase), Portalrahmen in drei Leistenarten, Goldlippe, Buchsenring, Namensschild-Schrift | kein Wachs, keine Maske. Rahmenleisten werden flach in der Abwicklung gedruckt und um die Hülle gebogen aufgeklebt |
+| Portalscheibe | Rauchacryl 2 mm, 78 x 234 | **Rauch-PETG 2 mm**, zwei Hälften mit Überlappung hinter der Karussellplatte (Bett 220 x 220 erlaubt 234 am Stück nicht) | eine Haarlinie bei Z 215 vor der schwarzen Platte |
+| Fensterscheiben | Rauchacryl 2 mm | **Klar-PETG 1,6 mm** | ohne Licht gibt es keinen Grund mehr, abzudunkeln. Bleibt das Druckbild zu trüb, die Scheiben weglassen (Fenster 22 breit, Spritzen sind dann offen) |
+| Ausleger | Winkelstahl 40 x 40 x 4 mit Stempelscheibe | **ein PETG-Teil**: Platte 8, Arm 8 dick, Stempelfuß Ø 25, zwei Rippen, liegend gedruckt | Spannung 16 MPa bei 250 N (Grenze 20), Zug am oberen M4-Einsatz 195 N. Entfällt: Winkelstahl, Stempelschraube |
+| Podest | opal | schwarz | |
+| Schublade | PETG natur mit Opalfenster | **PETG weiß**, ohne Fenster | der Becher steht auf Weiß, die Farbe lässt sich ohne Licht beurteilen |
+| Stationskennung | Lackmarker-Ring in Stationsfarbe | **Buchstabe C, M, Y, W, K, W** 0,6 tief neben jeder Tasche | |
+| Kosten | Gerät 210 Euro | **Gerät etwa 160 Euro** (Abschnitt 13) | |
+
+Was dabei bewusst schwächer wird: Ohne Licht sind die Farben in den sechs Fenstern nur bei Tageslicht oder Raumlicht zu sehen. Dafür sind die Fenster klar statt rauchgrau. Die Bühne ist nicht mehr beleuchtet, der Becher ist weiß hinterlegt. Der Körper hat jetzt sichtbare Schichtlinien (0,16 mm), die matt-schwarze Hülle verbirgt sie weitgehend.
+
+## 0b. Änderungen in Stand 5.1 (Abnahme durch die vier Rollen, zur Information)
 
 | Befund | Änderung |
 |---|---|
@@ -46,12 +67,12 @@ Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026
 | Höhe deutlich unter 400 (Künstlerin) gegen 50 ml Vorrat, Waage und 10 mm Reserve (Ingenieur) | 406,8 | Weniger geht nur mit 30-ml-Spritzen (doppelt so oft tauschen), ohne Waage oder mit abgedrehten GT2-Naben. Die 7,5 mm über Stand 5 kommen von der GT2-Scheibe, die als Kaufteil 16 hoch ist (Stand 5 hatte nur den Zahnkranz gerechnet). Gegenüber Stand 4 sind es 73 mm weniger, Höhe zu Durchmesser 2,0 statt 2,8 |
 | Drei Rollen (Kosten) gegen Kugelring oder 6808 (Ingenieur) | sieben 608 als Laufrollen an der Platte, fester Laufring mit Höhenbeilagen | Drei Rollen fallen in die Entnahmelücke. Sieben kosten 2,80 Euro. 6808 auf einer Hülse bleibt die Rückfallebene |
 | Wellen Ø 8 (Konzept 1) gegen Ø 10 (Ingenieur) | Ø 10 mit LM10LUU | Stempel senkt sich 0,24 statt 0,58 mm, Mehrkosten etwa 4 Euro |
-| Kosten 175 bis 185 (Controllerin) gegen Lack, Licht, Waage, Feuchtrinne | Gerät 210 Euro, mit Startpaket 246, mit Farbe 296, ehrlich ausgewiesen, Sparpfad in Abschnitt 13 (Gerät 188) | Lack, Waage und Licht verlangen drei Rollen als Muss. Gespart wird bei Platine, Kupplungen, Vitrinen-LEDs, Reservespritzen |
+| Kosten 175 bis 185 (Controllerin) gegen Waage, Feuchtrinne (Stand 6: ohne Lack und Licht) | Stand 6: Gerät, Startpaket und Farbe in Abschnitt 13 ehrlich ausgewiesen | Mit Stand 6 entfallen Lack, Füller, Licht und Rauchacryl, das Gerät wird billiger als gefordert. Gespart wird bei Platine, Kupplungen, Reservespritzen |
 | Schlüssellochfenster (Konzept 1) gegen einheitliches Motiv (Designerin) | ein Portal vorne als Rechteck mit großen oberen Radien, sechs schmale Rundbogenfenster | Die Entnahme braucht eine durchgehende Öffnung von der Bühne bis zur Kolbenplatte. Ohne 45-Grad-Schräge lässt sie sich spachteln und lackieren |
 | Schublade (Konzept 1 und 3) gegen direkter Griff (Konzept 2, Ingenieur) | Schublade, die geschlossen lose auf dem Wägepodest liegt | Die Künstlerin will kein Fischen im Loch. Der Ingenieur verlangt, dass die Führung nicht auf der Waage liegt: Die Laufschienen senken sich auf den letzten 5 mm um 1 mm ab, die geschlossene Schublade ruht nur auf dem Podest |
-| Gold gedruckt (Konzept 3) gegen Lack | Gold nur als Anreibewachs (Rub n Buff) auf erhabenen Linien, Lackmarker nur zum Ausbessern | Silk-Gold ist streifig und nicht bündig mit Lack zu bekommen, Lackmarker auf 640 mm langen Linien wird ebenfalls streifig (Designerin). Kein Messing (Controllerin), Messingband 4 mm nur als Rückfallebene |
+| Gold: Anreibewachs (Stand 5.1) gegen gedruckt (Stand 6) | Gold-PETG als eigene Teile: Ringe flach, Rahmenleisten flach in der Abwicklung, danach geklebt | PETG nimmt Füller, Schliff und Lack schlecht an, Anreibewachs braucht eine geschliffene Fläche. Gedruckte Goldteile sind sauber kantig, brauchen keine Maske und kein Nacharbeiten. Seidige Gold-PETG-Sorte nehmen (Silk), die Teile sind klein. Messingband 4 mm bleibt Rückfallebene für den Rahmen |
 | Becher 60 ml (Kosten) gegen 50 bis 100 ml Mischungen (Künstlerin) | Portionsbecher 60 ml mit Deckel im 100er-Pack, Mischmenge bis 50 g, für mehr „Nochmal“ in der App | Ein höherer Becher kostet Gerätehöhe, ein breiterer passt nicht in die Schublade. 50 g Farbe sind etwa 38 ml und füllen den Becher zu zwei Dritteln, Rühren mit Pinsel geht. 100 ml sind zwei gleiche Läufe |
-| Gleiche Motoren (Konzept 2) gegen Pancake (Kosten) | Karussell Pancake 23 mm, Stößel NEMA 17 34 mm | Mit 1 : 3,5 braucht das Karussell 0,018 Nm am Motor. Der Pancake liefert bei 0,4 A etwa 0,05 Nm, Reserve etwa 2,8-fach, bei 0,6 A etwa 4-fach. Der kurze Stößelmotor lässt den LED-Träger darunter frei und reicht für 150 N |
+| Gleiche Motoren (Konzept 2) gegen Pancake (Kosten) | Karussell Pancake 23 mm, Stößel NEMA 17 34 mm | Mit 1 : 3,5 braucht das Karussell 0,018 Nm am Motor. Der Pancake liefert bei 0,4 A etwa 0,05 Nm, Reserve etwa 2,8-fach, bei 0,6 A etwa 4-fach. Der kurze Stößelmotor reicht für 150 N |
 
 ## 2. Koordinatensystem und Konventionen
 
@@ -79,9 +100,9 @@ Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026
 | 3 bis 7 | Grundplatte Ø 200 x 4 (Rippen nach oben bis Z 15), trägt alles im Sockel und die vier Zuganker |
 | 7 bis 28 | Ballast, vier Stapel zu sieben Scheiben M20 |
 | 7,5 bis 20,2 | Wägezelle 500 g, 80 x 12,7 x 12,7, liegt entlang Y bei X 57 |
-| 20,7 bis 23,7 | LED-Ring 12 x WS2812 (Kaufteil 3 dick, fest, um den Podeststiel) |
-| 24,4 bis 26,0 | Podestscheibe Ø 60 x 1,6 aus PETG natur (opal) auf Stiel Ø 14 |
-| 26,0 bis 27,5 | Schubladenboden (liegt geschlossen auf der Podestscheibe), Opalfenster Ø 50 x 1 |
+| 20,2 bis 24,4 | Podeststiel Ø 14 (die 3 mm Platz des früheren LED-Rings bleiben frei) |
+| 24,4 bis 26,0 | Podestscheibe Ø 60 x 1,6 aus PETG schwarz auf Stiel Ø 14 |
+| 26,0 bis 27,5 | Schubladenboden aus PETG weiß (liegt geschlossen auf der Podestscheibe) |
 | 27,5 | Becherboden |
 | 60,5 | Becherrand (Portionsbecher 60 ml, oben Ø 62, unten Ø 47, 33 hoch) |
 | 54 bis 65,2 | Feuchtrinne mit Deckel (Z 64 bis 65,2, sechs Löcher Ø 14), Schwamm nass in den Löchern bis 65,5 |
@@ -89,9 +110,8 @@ Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026
 | 67,5 | Ventilspitze, 7,0 über dem Becherrand |
 | 77,5 | Spritzenspitze (Ende Katheterkonus) |
 | 97,5 bis 219,5 | Spritzenzylinder Ø 30 |
-| 97 bis 101 | Goldring außen |
-| 108 bis 180 | Seitenfenster (ganz unter dem Laufring) |
-| 180,5 bis 182,5 | Vitrinen-LEDs, zwei je Fenster, unter dem Laufring |
+| 97 bis 101 | Goldring außen (Gold-PETG, eigenes Teil auf dem Sockel) |
+| 108 bis 180 | Seitenfenster (ganz unter dem Laufring), Klar-PETG 1,6 dahinter |
 | 182,5 bis 188,5 | Laufring (fest) |
 | 188,5 bis 210,5 | Laufrollen 608 (drehen mit dem Karussell), Achse Z 199,5 |
 | 211,0 bis 223,0 | Karussellplatte Ø 171 x 12 |
@@ -100,12 +120,11 @@ Alle Maße in mm, Winkel in Grad, Massen in g, Preise in Euro (Stand Herbst 2026
 | 235,1 | Oberkante Kolbenplatte bei 2 ml Rest (tiefster Stempel S_min) |
 | 320,8 | Oberkante Kolbenplatte bei 50 ml (Nutzfüllung) |
 | 330,8 | Stempelunterkante S_park (höchste Stellung), 10,0 über der 50-ml-Platte |
-| 320,8 bis 378,8 | Schlitten in Parkstellung (S - 10 bis S + 48) |
+| 320,8 bis 378,8 | Schlitten in Parkstellung (S - 10 bis S + 48), Ausleger mit Stempel Z S + 2 bis S + 48 |
 | 330 | Oberkante Portalöffnung |
-| 334,5 bis 344,5 | LED-Streifen der Lichtfuge (144 LED/m) auf Trägerring r 82 bis 83,5 |
-| 338 bis 341 | Lichtfuge (Opalring) |
-| 346,8 bis 380,8 | Motor 1 (NEMA 17, 34 mm) hängt unter der Brücke bei θ 180, Radius 59 |
-| 341 bis 406,8 | Krone |
+| 338 bis 341 | Goldband (Gold-PETG) |
+| 346,8 bis 380,8 | Motor 1 (NEMA 17, 34 mm) hängt unter der Brücke bei θ 180, Radius 59 (ohne LED-Träger wäre darunter Platz, die Höhe ändert das nicht: sie wird von Stößelweg und Brücke bestimmt) |
+| 341 bis 406,8 | Krone (Fase Z 400,8 bis 406,8 als Kronenring aus Gold-PETG) |
 | 372,8 bis 380,8 | Stellring auf der Spindel unter der Brücke (taucht in eine Tasche des Schlittens) |
 | 380,8 bis 387,8 | Brücke mit 608 für die Spindel |
 | 387,8 bis 388,3 | Passscheibe 8 x 14 x 0,5 auf dem Lagerinnenring |
@@ -122,44 +141,48 @@ Stempelweg S_min bis S_park 95,7 mm.
 
 | Zone | Z | Durchmesser | Oberfläche |
 |---|---|---|---|
-| Sockel (Schulter) | 3 bis 97 | Kegel von Ø 204 (unten) auf Ø 196 (oben), Neigung 2,4 Grad | Hochglanz schwarz |
-| Goldring | 97 bis 101 | Ø 202, steht 3 mm über Körper und Sockeloberkante, unten 1 mm Schattenfuge | Gold (Anreibewachs) |
-| Körper | 101 bis 338 | Ø 196 zylindrisch, Wand 1,6 | seidenmatt schwarz |
-| Lichtfuge | 338 bis 341 | Ø 196, Opalring | leuchtet |
-| Krone | 341 bis 406,8 | Ø 204 (4 mm Überstand je Seite wie eine Lippenstiftkappe), oben 6 mm Fase 45 Grad, Namensschild im Deckel | seidenmatt schwarz (sie wird beim Abheben angefasst), Fase gold |
+| Sockel (Schulter) | 3 bis 97 | Kegel von Ø 204 (unten) auf Ø 196 (oben), Neigung 2,4 Grad | PETG schwarz glänzend (Filament, 0,12 bis 0,16 mm) |
+| Goldring | 97 bis 101 | Ø 202, steht 3 mm über Körper und Sockeloberkante, unten 0,8 x 45 Grad Fase als Schattenfuge, eigenes Teil auf dem Sockel | Gold-PETG |
+| Körper | 101 bis 338 | Ø 196 zylindrisch, Wand 1,6, Teilungsfuge bei Z 235 | PETG schwarz matt |
+| Goldband | 338 bis 341 | Ø 196, Ring mit Steckern in Körper und Krone | Gold-PETG |
+| Krone | 341 bis 406,8 | Ø 204 (4 mm Überstand je Seite wie eine Lippenstiftkappe), oben 6 mm Fase 45 Grad als Kronenring, Namensschild im Deckel | PETG schwarz matt (sie wird beim Abheben angefasst), Fase Gold-PETG |
 
 Proportion Sockel : Körper : Krone = 98 : 237 : 66, also etwa 1 : 2,4 : 0,7. Eine steilere Schulter bräuchte unten mehr als Ø 204 und verletzt die Druckgrenze von etwa 200 mm. 2,4 Grad sind flach, die Taille entsteht durch Goldring (Ø 202) und Krone (Ø 204) über dem Körper Ø 196. Ob die Krone mit 66 mm zu mächtig wirkt, entscheidet die Pappattrappe (17.5). Kürzer geht sie nur mit abgedrehten GT2-Naben (Abschnitt 18).
 
-Höchstens vier waagrechte Linien: Fußschatten, Goldring, Lichtfuge, Kronenkante. Die Druckteilung des Körpers (Z 235) wird verklebt, gespachtelt und überlackiert und ist nicht sichtbar. Alle sichtbaren Kanten 1 mm Radius, außer der Kronenfase. Z-Naht aller Schalen hinten bei θ 180. Keine sichtbare Schraube: Sockel von unten verschraubt, Krone mit Magneten.
+Waagrechte Linien: Fußschatten, Goldring, Teilungsfuge (Z 235, nur 1 mm breit und dunkel), Goldband, Kronenkante. Das sind fünf statt vier, die Fuge ist aber ein Schatten und keine Farblinie. Die Druckteilung des Körpers wird nicht mehr gespachtelt: die Ränder bekommen 0,5 mm Fasen und sind gewollt sichtbar. Alle sichtbaren Kanten 1 mm Radius, außer den Fasen. Z-Naht aller Schalen hinten bei θ 180. Keine sichtbare Schraube: Sockel von unten verschraubt, Krone mit Magneten.
 
 ### 4.2 Öffnungen
 
-**Portal vorne (θ 0):** Rechteck 72 breit (Y ± 36, als Sehne gemessen) von Z 16 bis Z 330, obere Ecken R 24, untere Ecken R 8. Es geht durch Sockel, Goldring und Körper. Ein Goldrahmen 4 breit und 1,5 erhaben läuft ringsum, der Goldring mündet links und rechts in den Rahmen (ein Element). Unten (Z 16 bis 97) ist die Bühne mit der Schublade, darüber (Z 101 bis 330) sitzt eine plane Rauchglasscheibe.
+**Portal vorne (θ 0):** Rechteck 72 breit (Y ± 36, als Sehne gemessen) von Z 16 bis Z 330, obere Ecken R 24, untere Ecken R 8. Es geht durch Sockel, Goldring und Körper. Ein Goldrahmen 3 breit und 1,5 erhaben läuft ringsum (drei Leistenarten, siehe unten), der Goldring endet links und rechts an der Rahmenkante (bei |Y| 39). Unten (Z 16 bis 97) ist die Bühne mit der Schublade, darüber (Z 101 bis 330) sitzt eine plane Scheibe aus Rauch-PETG.
 
-**Portalscheibe:** Rauchacryl (PMMA) 2 mm, eben, 78 x 234 (Y ± 39, Z 99 bis 333, oben 3 mm Auflage über der Öffnung), Ecken passend R 26 oben und R 3 unten. Sie liegt außen in einem Falz 3 breit und 2,2 tief am Portalrand, ihre Außenfläche liegt in der Ebene X 90,5 (Mitte 7,5 hinter der Zylinderfläche, an den Kanten bündig). Wo der Falzboden hinter der Wandinnenfläche liegt, trägt eine innen angesetzte Hinterlegung (3 breit). Falz und Laibung bleiben matt schwarz: von schräg vorne ist die Stufe zwischen Scheibe und Hülle als Schattenkante sichtbar, das ist gewollt. Gehalten von 4 Magneten 6 x 2 in den Falzecken (Gegenstück: 4 Stahlscheiben 8 x 0,5 auf die Scheibe geklebt, verdeckt durch den Rahmen). Unten eine Fingerkerbe 12 x 3 im Rahmen.
+**Portalscheibe (gedruckt):** Rauch-PETG (transparent, grau oder schwarz getönt) 2 mm, eben, 78 x 234 (Y ± 39, Z 99 bis 333, oben 3 mm Auflage über der Öffnung), Ecken passend R 26 oben und R 3 unten. 234 am Stück passt nicht aufs 220er-Bett, deshalb **zwei Hälften**: unten Z 99 bis 219, oben Z 215 bis 333, im Überlappbereich Z 215 bis 219 jeweils nur die halbe Dicke (unten innen, oben außen). Die Außenfläche bleibt bündig, außen ist eine Haarlinie bei Z 215, innen bei Z 219, beide vor der schwarzen Karussellplatte (Z 211 bis 223). Jede Hälfte wird flach gedruckt (Außenseite auf dem Bett, 0,2 mm, 100 Prozent Füllung). Sie liegt außen in einem Falz 3 breit und 2,2 tief am Portalrand, ihre Außenfläche liegt in der Ebene X 90,5 (Mitte 7,5 hinter der Zylinderfläche, an den Kanten bündig). Wo der Falzboden hinter der Wandinnenfläche liegt, trägt eine innen angesetzte Hinterlegung (3 breit). Falz und Laibung bleiben matt schwarz: von schräg vorne ist die Stufe zwischen Scheibe und Hülle als Schattenkante sichtbar, das ist gewollt. Gehalten von 4 Magneten 6 x 2 in den Falzecken (Gegenstück: 4 Stahlscheiben 8 x 0,5 auf die Scheibe geklebt, je zwei auf jede Hälfte, bei Z 111 und Z 303). Eine Fingerkerbe entfällt: die Unterkante der Scheibe (Z 99) ist von der Bühne aus frei greifbar.
 
-**Sechs Seitenfenster:** bei θ = p · 51,43 (p = 1 bis 6), je 22 breit (als Sehne), Z 108 bis 180, oben Rundbogen R 11 (Mittelpunkt Z 169), also ganz unter dem Laufring (Z 182,5): kein schwarzes Band im Fenster. Sichtbar ist der Farbstand von etwa 6 bis 46 ml. Kein Goldrahmen, ringsum 1 mm breite, 1 mm tiefe Schattenfuge (Wand darunter 0,6). Innen ein Streifen Rauchacryl 2 mm, 26 x 76, eingeklebt in einen innen aufgesetzten Rahmen 32 x 78 (ein Falz in der 1,6-mm-Wand ginge nicht). In Ruhe steht hinter jedem Fenster genau eine Spritze, von oben beleuchtet durch zwei Vitrinen-LEDs unter dem Laufring. Die Zuganker stehen mittig zwischen den Fenstern und sind in keinem Fenster zu sehen.
+**Portalrahmen (Gold-PETG, drei Leistenarten, 3 breit, 1,5 dick):** Er ist ein eigenes Teil und liegt nicht mehr in der Hülle. Die Leisten werden **flach in der Abwicklung der Hülle** gedruckt (Bogenlänge s = r · arcsin(Y / r) statt Sehne, `dev_s` in `farbmischer.scad`) und beim Aufkleben um die Hülle gebogen: 1,5 mm PETG biegt sich über r 98 ohne Mühe (0,8 Prozent Randdehnung), die senkrechten Leisten laufen auf einer Mantellinie und biegen sich gar nicht. Bühnenrahmen (`rahmen_unten`, 80 x 84): Boden und beide Seiten von Z 13 bis 97, Innenkante = Portalkante (|Y| 36). Fensterrahmen: zwei gerade Seitenleisten (`rahmen_seite`, 3,3 x 206, Z 101 bis 307, gleich links und rechts) und ein oberes Stück (`rahmen_oben`, 88 x 29) mit beiden Bögen R 26,4 innen und dem oberen Balken bis Z 336,4. Die Innenkante des Fensterrahmens liegt bei |Y| 39,4, also 0,4 außerhalb der Falzkante, damit die Leiste nicht über die Scheibe läuft. Die Nähte bei Z 97/101 (unter dem Goldring) und Z 307 bleiben Stoßfugen in Gold. Kleben mit Sekundenkleber (Gel) oder dünnem 2K-Epoxid, zuerst ohne Kleber anlegen und mit Malerkrepp fixieren.
+
+**Sechs Seitenfenster:** bei θ = p · 51,43 (p = 1 bis 6), je 22 breit (als Sehne), Z 108 bis 180, oben Rundbogen R 11 (Mittelpunkt Z 169), also ganz unter dem Laufring (Z 182,5): kein schwarzes Band im Fenster. Sichtbar ist der Farbstand von etwa 6 bis 46 ml. Kein Goldrahmen, ringsum 1 mm breite, 1 mm tiefe Schattenfuge (Wand darunter 0,6). Innen eine Fensterscheibe aus Klar-PETG 1,6 mm, 26 x 76, flach gedruckt, eingeklebt in einen innen aufgesetzten Rahmen 32 x 78 (ein Falz in der 1,6-mm-Wand ginge nicht), sie sitzt flach bei X 94,0 bis 95,6 und hat in der Mitte 0,8 Luft zur Wand. In Ruhe steht hinter jedem Fenster genau eine Spritze, im Tageslicht oder Raumlicht zu sehen. Das gedruckte Klar-PETG ist milchig-klar, die Farbe schimmert durch. Ist es zu trüb, wird die Scheibe weggelassen (Fenster 22 breit). Die Zuganker stehen mittig zwischen den Fenstern und sind in keinem Fenster zu sehen.
 
 **Griffmulde:** hinten (θ 180) im Sockel, 24 breit, 60 hoch (Z 20 bis 80), 8 tief, Kanten R 4. Eine zweite Griffkante bildet der Kronenüberstand.
 
-**Hinten:** Hohlsteckerbuchse 5,5/2,1 bei θ 180, Z 30, unterhalb der Griffmulde, mit gedrucktem Goldring Ø 16 (lackiert).
+**Hinten:** Hohlsteckerbuchse 5,5/2,1 bei θ 180, Z 30, unterhalb der Griffmulde, mit gedrucktem Buchsenring Ø 16 aus Gold-PETG.
 
-**Krone:** Namensschild als Einlage im Deckel: ihr Spitzname plus „Atelier“, Schrift Didot oder ähnliche Antiqua, Versalhöhe 9, mittig, Leserichtung von vorne. Das Schild (etwa 90 x 16 x 1,2, PLA, Schrift 0,6 erhaben, 0,12 mm Schicht) wird separat flach gedruckt, mit Gold-Anreibewachs eingefärbt und in eine 1,2 tiefe Tasche im Deckel geklebt, so wird die Schrift schärfer als eine Gravur im ersten Layer. Alternative: Goldvinyl geplottet. Der Spitzname fehlt noch, Johann trägt ihn in `farbmischer.scad` (`name_gravur`) ein. Unter der Grundplatte Datum und Widmung, 0,6 tief graviert, gold ausgelegt.
+**Krone:** Namensschild als Einlage im Deckel: ihr Spitzname plus „Atelier“, Schrift Didot oder ähnliche Antiqua, Versalhöhe 9, mittig, Leserichtung von vorne. Das Schild (etwa 90 x 16 x 1,2, Schrift 0,6 erhaben, 0,12 mm Schicht) wird separat flach gedruckt, **zweifarbig durch einen Filamentwechsel**: Basis 0,6 in Schwarz, bei Schichthöhe 0,6 im Slicer pausieren (Farbwechsel), Schrift in Gold. Es wird in eine 1,2 tiefe Tasche im Deckel geklebt. Der Spitzname fehlt noch, Johann trägt ihn in `farbmischer.scad` (`name_gravur`) ein. Unter der Grundplatte Datum und Widmung, 0,6 tief graviert (ungefärbt).
 
 ### 4.3 Farben, Materialien, Oberflächen (CMF, Hex-Werte für das Rendering)
 
+Alles ist PETG. Keine Nachbearbeitung außer Entgraten, Kleben und dem Einsetzen der Magnete. PETG lässt sich nur schlecht schleifen (schmiert), also wird auf Druckbild und Filamentwahl gesetzt.
+
 | Element | Material, Verfahren | Hex | Rendering |
 |---|---|---|---|
-| Sockel, Schubladenfront | PLA schwarz, Füller, Schliff 240/400/800, Lack schwarz hochglanz | #0A0A0C | Rauheit 0,08, Klarlackschicht |
-| Körper, Krone | PLA schwarz, Füller, Schliff, Lack schwarz seidenmatt | #141417 | Rauheit 0,45 |
-| Gold (Goldring, Portalrahmen, Kronenfase, Namensschild, Buchsenring) | Gold-Anreibewachs (Rub n Buff) auf erhabener Linie, Lackmarker nur zum Ausbessern | #C9A44C, Licht #E8CB7A, Schatten #8A6A22 | Metall 1,0, Rauheit 0,25 |
-| Rauchglas (Portal, Seitenfenster) | PMMA grau getönt 2 mm, etwa 50 Prozent Transmission | #2E2E33, Deckkraft 0,5 | glänzend, Brechung 1,49 |
-| Lichtfuge, Podestscheibe, Opalfenster | PETG natur, 1,2 bis 2 mm, Lichtfuge innen mit 240 matt geschliffen | #F2EFE8, durchscheinend | Volumenstreuung, selbstleuchtend nach Lichtzustand |
-| Schublade | PETG natur (opal), Front PLA schwarz hochglanz mit Goldlippe | #EDEAE3 / #0A0A0C | wie Opal |
-| Innenteile (Karussell, Rollenböcke, Schlitten, Rinne, Brücke) | PETG schwarz matt | #1C1C1E | Rauheit 0,7 |
+| Sockel, Schubladenfront | PETG schwarz glänzend, 0,12 bis 0,16 mm, Außenwand langsam (30 bis 40 mm/s) | #0A0A0C | Rauheit 0,15, Schichtlinien nur andeuten |
+| Körper, Krone | PETG schwarz matt (Matt-PETG) oder normales Schwarz mit 0,2 mm und 50 Prozent Lüfter, damit es matt bleibt | #141417 | Rauheit 0,5 |
+| Gold (Goldring, Goldband, Kronenring, Portalrahmen, Goldlippe, Buchsenring, Schildschrift) | Gold-PETG (Silk oder metallic), flach oder stehend nach 12, Kanten gratfrei | #C9A44C, Licht #E8CB7A, Schatten #8A6A22 | Metall 1,0, Rauheit 0,25 |
+| Portalscheibe | Rauch-PETG transparent (grau getönt), 2 mm, zwei Hälften, etwa 40 bis 50 Prozent Transmission | #2E2E33, Deckkraft 0,45 | glänzend, Brechung 1,49 |
+| Fensterscheiben | Klar-PETG 1,6 mm, milchig-klar | #E9ECEE, Deckkraft 0,25 | |
+| Schublade (Korpus) | PETG weiß | #F4F2EE | Rauheit 0,5 |
+| Innenteile (Karussell, Rollenböcke, Schlitten, Ausleger, Rinne, Brücke, Podest, Grundplatte) | PETG schwarz (beliebige Sorte) | #1C1C1E | Rauheit 0,7 |
 | Spritzen | PP klar | #E9ECEE, Deckkraft 0,25 | Skala zur Mitte gedreht, Aufdruck unsichtbar |
-| Ventile, Lippen | Silikon transluzent | #DAD6CC, Deckkraft 0,6 | |
-| Stahl (Wellen, Spindel, Zuganker, Winkelstahl) | blank, verzinkt | #8C8D91 | Metall 1,0, Rauheit 0,35 |
+| Ventile, Lippen, Gummiauflage | Silikon transluzent, Gummi | #DAD6CC, Deckkraft 0,6 | |
+| Stahl (Wellen, Spindel, Zuganker) | blank, verzinkt | #8C8D91 | Metall 1,0, Rauheit 0,35 |
 | Messingmutter | Messing | #B08D57 | |
 | Füße | Silikon | #1A1A1A | |
 | Becher | PP transluzent | #EEEEEE, Deckkraft 0,55 | |
@@ -168,17 +191,14 @@ Höchstens vier waagrechte Linien: Fußschatten, Goldring, Lichtfuge, Kronenkant
 | Farbe Gelb | Primärgelb | #FFD200 | |
 | Farbe Titanweiß | | #F6F4EE | |
 | Farbe Schwarz | Mars- oder Elfenbeinschwarz | #1B1A19 | |
-| Licht warmweiß (Ruhe) | 2700 K | #FFC58F | |
-| Licht neutral (Dosieren, Bühne) | 4000 K | #FFD9B3 | |
-| Licht Gold (Fertig) | | #FFB000 | |
 
-Nie sichtbar: unbehandeltes PLA oder PETG an der Hülle, Beige, Grau, mehr als eine Metallfarbe, Gold als Fläche.
+Nie sichtbar: unbehandeltes Beige oder Grau an der Hülle, mehr als eine Metallfarbe, Gold als Fläche. Fingerabdrücke und Staub zeigen sich auf Glanz-Schwarz deutlich, deshalb sind Körper und Krone, die sie anfasst, matt.
 
-Standardansicht für das Rendering: Gerät in Ruhe (φ = 0) auf einem hellen Holzschreibtisch, Kamera 30 Grad von vorne rechts, 15 Grad von oben, Lichtfuge warmweiß, Bühne mit Becher in der Zielfarbe, durch die Seitenfenster bei 51 und 103 Grad sind Weiß 1 und Gelb im Vitrinenlicht zu sehen. Dazu eine Ansicht beim Dosieren (Bühne 4000 K, Fuge als Fortschrittsring) und ein Schnitt in der XZ-Ebene.
+Standardansicht für das Rendering: Gerät auf einem hellen Holzschreibtisch, Kamera 30 Grad von vorne rechts, 15 Grad von oben, Raumlicht (Softboxen, Decke), kein Eigenlicht. Bühne mit Becher in der Zielfarbe auf weißem Schubladenboden, durch die Seitenfenster bei 51 und 103 Grad sind Weiß 1 und Gelb zu sehen. Dazu ein Schnitt in der XZ-Ebene.
 
 ## 5. Bauteile
 
-### 5.1 Grundplatte und Sockelinneres
+### 5.1 Grundplatte und Sockelinneres (Stand 6: LED-Ring und LED-Ringhalter entfallen)
 
 | Element | Lage und Maße |
 |---|---|
@@ -190,18 +210,17 @@ Standardansicht für das Rendering: Gerät in Ruhe (φ = 0) auf einem hellen Hol
 | Motor 2 | NEMA 17 Pancake 23 mm (42,3 x 42,3), Achse bei θ 180, r 57,8 (Achsabstand für Riemen 210), Körper Z 17 bis 40, Welle nach oben, auf Winkel mit Langlöchern ± 3 und Silikondämpfern. GT2-Scheibe 20 Z (Bohrung 5) Z 43 bis 51 |
 | Hall-Sensor | A3144 auf Halter am Lagerbock, Stirnfläche 1,5 unter dem 70er-Rad bei θ 0, r 15 |
 | Wägezelle | 500 g, 80 x 12,7 x 12,7, entlang Y bei X 50,65 bis 63,35, Y -70 bis +10, Z 7,5 bis 20,2. Festes Ende Y -70 bis -50 auf einem Bock 0,5 hoch (2 x M4), Lastende Y -10 bis +10 genau unter der Bechermitte (X 57, Y 0). Unter dem Lastende ein fester Überlastanschlag mit 0,8 Luft. Auf Silikonscheiben 1 mm entkoppelt |
-| Podest | Stiel Ø 14, Z 20,2 bis 24,4 auf dem Lastende (2 x M4), Scheibe Ø 60 x 1,6 opal Z 24,4 bis 26 |
-| LED-Ring Bühne | 12 x WS2812, außen Ø 50, innen Ø 36, Kaufteil 3 dick, Z 20,7 bis 23,7, LEDs nach oben, auf einem festen Halter mit zwei Säulen bei X 30 und X 84 (Y 0), berührt Podest und Wägezelle nicht (0,5 Luft unten, 0,7 oben) |
+| Podest | Stiel Ø 14, Z 20,2 bis 24,4 auf dem Lastende (2 x M4), Scheibe Ø 60 x 1,6 PETG schwarz Z 24,4 bis 26 |
 | Schubladenschienen | zwei L-Schienen bei \|Y\| 32 bis 35 (genau unter den Schubladenwänden Y 33 bis 35), X 20 bis 98, Oberkante Z 26,5, als Balken Z 22,5 bis 26,5 über die Wägezelle geführt (2,3 Luft), auf je zwei Pfosten. Auf den hinteren 5 mm (X 20 bis 25) um 1 mm abgesenkt (Rampe 1 : 5). Höhe je Pfosten mit Beilagen 0,1 bis 0,5 justierbar. **Einstellmaß:** Kufenluft über der Schiene bei geschlossener Schublade 0,5 ± 0,2, mit Fühlerlehre prüfen. Reed-Kontakt in der rechten Schiene bei X 30 |
 | Platine | Lochraster 70 x 90 senkrecht in der Ebene Y -81, X -45 bis +45, Z 30 bis 100 (über den Ballaststapeln), Bauteile nach innen: unter Z 52 bis Y -66, darüber höchstens bis Y -70 (Feuchtrinne r 69). ESP32 unten einsetzen. Ecke r 93,5, 2,9 zur Hülle |
-| Kabelkanal | gedruckte Clips am Zuganker θ -128,6 von Z 15 bis zur Brücke, alle festen Leitungen nach oben (Vitrinen-LEDs zweigen am Laufring ab) |
+| Kabelkanal | gedruckte Clips am Zuganker θ -128,6 von Z 15 bis zur Brücke, alle festen Leitungen nach oben (Motor 1 und Endschalter, vier plus zwei Adern) |
 
 ### 5.2 Bühne und Schublade
 
 | Element | Lage und Maße |
 |---|---|
-| Schublade | PETG natur, außen 70 breit (Y ± 35), X 22 bis zur Front, Seitenwände 2 dick bis Z 45, Boden 1,5 dick (Z 26 bis 27,5) mit Opalfenster Ø 50 x 1 unter der Bechermitte. Bechersitz konisch: innen Ø 48 unten auf Ø 52 in 3 mm Höhe, zentriert den Becherboden Ø 47 auf etwa 0,5 genau unter dem Ventil. Hinten offen. Kufen nur hinten (X 22 bis 25), sonst 1 mm Freistich über den Schienen |
-| Front | PLA schwarz hochglanz, folgt der Sockelkontur (Kegel), 68 breit, Z 17 bis 45, oben eine Goldlippe 3 x 1,5 als Daumenauflage, mit der Schublade verschraubt |
+| Schublade | PETG weiß, außen 70 breit (Y ± 35), X 22 bis zur Front, Seitenwände 2 dick bis Z 45, Boden 1,5 dick (Z 26 bis 27,5), ohne Fenster. Bechersitz konisch: innen Ø 48 unten auf Ø 52 in 3 mm Höhe, zentriert den Becherboden Ø 47 auf etwa 0,5 genau unter dem Ventil. Hinten offen. Kufen nur hinten (X 22 bis 25), sonst 1 mm Freistich über den Schienen |
+| Front | PETG schwarz glänzend, folgt der Sockelkontur (Kegel), 68 breit, Z 17 bis 45, mit der Schublade verschraubt. Oben aufgeklebt die Goldlippe (Gold-PETG, 3 hoch, 1,5 über der Front, 4,5 tief für die Klebefläche) als Daumenauflage |
 | Wägeprinzip | Geschlossen fällt die Schublade über die Schienenrampe 1 mm ab und liegt nur noch auf der Podestscheibe (Kufen 0,5 über den Schienen). Gewogen werden Schublade, Becher und Farbe, die Waage tariert. Beim Herausziehen hebt die Rampe die Schublade 0,5 über das Podest. Die Firmware prüft vor jeder Dosierung das Tara-Fenster (leere Schublade plus 2 bis 15 g) und ob der Wert ruhig steht, sonst Meldung „Schublade ganz schließen“ (Druck auf die Front oder ein schief stehender Becher würde die Schublade auf die Schienen drücken) |
 | Rastung | Magnet 6 x 2 in der Front gegen Stahlscheibe im Sockel, horizontal, Klick beim Schließen |
 | Auszug | 50, dann steht die Bechermitte bei X 107, also vor dem Sockel, und der Becher ist von beiden Seiten greifbar. Ganz herausnehmbar zum Spülen |
@@ -214,7 +233,7 @@ Standardansicht für das Rendering: Gerät in Ruhe (φ = 0) auf einem hellen Hol
 | Feuchtrinne | fester C-Ring r 45 bis 69, Z 54 bis 64, Boden 2 dick, offen vorne zwischen θ -38 und +38. Getragen von vier Säulen Ø 8 bei θ ± 95 (r 57) und ± 145 (r 57) von der Grundplatte. Innen zwei Kammern (links, rechts, Trennsteg bei 180) |
 | Rinnendeckel | zwei Hälften PETG 1,2 (je Kammer eine), Z 64 bis 65,2, auf Stiften gesteckt. Sechs Löcher Ø 14 genau unter den Parkstellungen der Düsen (θ = p · 51,43), dazwischen geschlossen. Die offene Schwammfläche sinkt von etwa 5800 auf 920 mm², die Verdunstung etwa auf ein Sechstel. Ventil beim Drehen 2,3 über dem Deckel |
 | Schwammstreifen | je Kammer ein Streifen Zellulose-Schwammtuch 20 x 145, zwei Lagen, unter dem Deckel, nass in den Löchern bis Z 65,5, 2,0 unter den Ventilspitzen. Wasservorrat je Kammer etwa 30 ml. Ziel: 4 Wochen je Füllung, am Prototyp durch Wiegen der Rinne prüfen |
-| Abstreiflippen | zwei Lippen aus Silikon 1,5 dick (aus Backmatte geschnitten) bei θ ± 40, radial r 50 bis 64, Oberkante Z 68,5 (1,0 über der Ventilspitze), in gedruckten Haltern auf den Rinnenenden. Jede Düse wird gewischt, bevor sie über den Becher fährt, der Abrieb fällt in die Rinne |
+| Abstreiflippen | zwei Lippen aus Silikon 1,5 dick (aus Backmatte geschnitten, einziges nicht gedrucktes Teil der Rinne; Rückfallebene gedruckte PETG-Lippe 0,6 dick, wischt aber härter) bei θ ± 40, radial r 50 bis 64, Oberkante Z 68,5 (1,0 über der Ventilspitze), in gedruckten Haltern auf den Rinnenenden. Jede Düse wird gewischt, bevor sie über den Becher fährt, der Abrieb fällt in die Rinne |
 | Wechsel der Streifen | Schublade ziehen, Portalscheibe ab, Karussell in Parkstellung. Streifen am vorderen Ende unter dem Deckel greifen und herausziehen. Den neuen Streifen mit der gedruckten Einführzunge (PETG 0,8 x 16 x 160, vorne Haken) einschieben |
 
 ### 5.4 Spritze (Kaufteil, Maße nachmessen)
@@ -241,10 +260,10 @@ Standardansicht für das Rendering: Gerät in Ruhe (φ = 0) auf einem hellen Hol
 | Zylinderschlitz | 32 breit, von r 41 (Mitte r 57, Halbkreis R 16) radial nach außen durchgehend, Einlaufschrägen 1 x 45 Grad. Steg zwischen Nachbarschlitzen 17,5 (kürzester Abstand der Halbkreise) |
 | Flanschauflage | Der Flansch (32 breit) liegt über dem 32 breiten Schlitz nur innen auf, auf dem Halbmond zwischen r 34,5 und dem Halbkreis R 16, der an den Seiten bis r 57 reicht. Damit die Dosierkraft sicher innerhalb dieser Auflage liegt, drückt der Stempel 4 mm innen von der Spritzenachse (X 53, Prüfung 51). Bei der Funktionsprobe beobachten, dass die Spritze unter 100 N nicht kippt |
 | Rastzunge | je Station eine gedruckte Federzunge 1,5 dick in der Taschenwand außen, Rastnase 1,0, hält den Flansch radial, klickt beim Einschieben |
-| Kennring | je Station ein schmaler Farbring (Lackmarker in Stationsfarbe) auf der Plattenoberseite außen, sichtbar durchs Portal |
+| Stationsbuchstabe | je Station ein Buchstabe (W, Y, M, C, K, W für Platz 1 bis 6), Größe 8, 0,6 tief eingraviert, bei r 76, 24,7 seitlich der Stationsachse (auf dem Steg neben der Tasche), lesbar von vorne, sichtbar durchs Portal. Statt eines Lackfarbrings (er braucht kein Farbfilament) |
 | Rollenböcke | sieben gedruckte Gabeln unter der Platte bei θ = (j + 0,5) · 51,43 + φ (j = 0 bis 6), radial r 74,5 bis 85,5, Außenfläche als Bogen r 85,5 (keine Ecke darüber, 2,5 zu den Zugankern), tangential ± 12, Z 193,5 bis 211, je 2 x M3 von oben verschraubt (Ohren tangential außen). Wangen 2 dick, Raum für die 608 7,0. Achse M8 radial bei r 80, Z 199,5 |
 | Laufrollen | sieben Kugellager 608 (22 x 8 x 7), Achse radial, Lauffläche r 76,5 bis 83,5, Unterkante Z 188,5 |
-| Laufring | fest, PETG, r 74,5 bis 86,5, Z 182,5 bis 188,5, Lauffläche oben eben, offen vorne zwischen θ -15 und +15, Enden mit Rampe 1,5 auf 10 mm. Vier Laschen bis zu den Zugankern (r 90,5) bei ± 32 und ± 128,6, Laschenende r 94,5 (1,9 zur Körperwand) mit außen offenen Sechskanttaschen, Muttern M5 oben und unten, Höhe über Passscheiben 5 x 10 (0,1 bis 0,5) unter der Lasche justierbar. An der Unterseite sechs Vitrinen-LED-Stücke (je 2 LED aus dem 144/m-Streifen) bei θ = p · 51,43, Leitung in einer Nut |
+| Laufring | fest, PETG, r 74,5 bis 86,5, Z 182,5 bis 188,5, Lauffläche oben eben, offen vorne zwischen θ -15 und +15, Enden mit Rampe 1,5 auf 10 mm. Vier Laschen bis zu den Zugankern (r 90,5) bei ± 32 und ± 128,6, Laschenende r 94,5 (1,9 zur Körperwand) mit außen offenen Sechskanttaschen, Muttern M5 oben und unten, Höhe über Passscheiben 5 x 10 (0,1 bis 0,5) unter der Lasche justierbar. Die Unterseite ist glatt (keine Nut, keine LEDs mehr) |
 | Mittelstift oben | Die Plattenmitte (r unter 30) ist oben eben, darüber hängt der Stößel. Nichts ragt über Z 223 |
 
 ### 5.6 Stößel (fest in der Mitte, Motor 1)
@@ -254,30 +273,28 @@ Standardansicht für das Rendering: Gerät in Ruhe (φ = 0) auf einem hellen Hol
 | Spindel | T8, Steigung 2 (eingängig), Achse X 0, Y 0, Z 250 bis 403, Länge 153 (Kaufmaß 200, gekürzt). Die Mutter sitzt im Schlitten bei S + 20,5 bis S + 35,5, bei S_min also ab Z 255,6, die Spindel reicht dort noch 5,6 tiefer. Hängt im 608 der Brücke. Ein Stellring Ø 8 (16 x 8) unter dem Lager, Z 372,8 bis 380,8, nimmt die Dosierkraft nach oben auf. Oben auf dem Lagerinnenring liegt eine Passscheibe 8 x 14 x 0,5, darauf die GT2-Scheibe 20 Z (Bohrung 8, Kaufteil 16 hoch, Zahnkranz unten, Nabe oben) mit Madenschraube auf einer angeschliffenen Fläche der Spindel, sie hält das Eigengewicht. Keine Kupplung, die Motorwelle trägt nur Riemenzug |
 | Führungswellen | zwei Stahlwellen Ø 10 h6, bei X 0, Y ± 22, Z 225,1 bis 395,1 (Länge 170, Kaufmaß 200), oben 14,3 tief eingespannt in Brücke (7) und geschlitzter Klemmnabe Ø 20 x 10 auf der Brückenoberseite (M3), unten frei |
 | Schlitten | PETG, zylindrisch r 34 mit einer ebenen Fläche bei X 28 (vorne, volle Höhe) für den Winkel, 58 hoch, Z S - 10 bis S + 48. Zwei Bohrungen Ø 19 H7 für je ein LM10LUU (19 x 55) bei Y ± 22, eingeklebt und mit Madenschraube gesichert. Mittig von oben eine Stufenbohrung: Ø 23 x 12,5 tief, darin unten der Flansch der Messingmutter (Ø 22 x 3,5, 4 x M3), oben 9 mm freier Raum für den Stellring. Spindeldurchgang Ø 12 |
-| Ausleger | Winkelstahl 40 x 40 x 4 (Baumarkt), 25 breit abgesägt (Y ± 12,5). Senkrechter Schenkel X 28 bis 32, Z S + 8 bis S + 48, an der Schlittenfläche mit 2 x M4 in Gewindeeinsätzen bei S + 16 und S + 42 verschraubt (34 mm Hebel zur Kippkante). Waagrechter Schenkel X 28 bis 68, Z S + 8 bis S + 12, trägt den Stempel. Nachweis Abschnitt 16 |
-| Stempel | PETG Ø 28 x 6 unter dem Ausleger bei X 53 (4 mm innen von der Spritzenachse, siehe Flanschauflage), mit 2 mm Gummiauflage, Unterkante S |
+| Ausleger mit Stempel | **ein Teil aus PETG schwarz** (ersetzt Winkelstahl und Stempelscheibe). Senkrechte Platte X 28 bis 36, Y ± 12,5, Z S + 8 bis S + 48, an der ebenen Schlittenfläche X 28 mit 2 x M4 (Zylinderkopf, Senkung Ø 7,6 x 4) in Gewindeeinsätzen bei S + 24 und S + 40 (32 mm Hebel zur Kippkante). Waagrechter Arm X 28 bis 68, Z S + 8 bis S + 16 (8 dick). Stempelfuß Ø 25 x 6 unter dem Arm bei X 53 (Z S + 2 bis S + 8), 4 mm innen von der Spritzenachse, liegt ganz auf der Kolbenplatte Ø 38 (Rand 5,5). Zwei Stützrippen 3 dick bei \|Y\| 9,5 bis 12,5, Dreieck 22 x 20 zwischen Platte und Arm. Darunter klebt eine 2 mm Gummi- oder Silikonauflage Ø 25 (Unterkante S). **Druck liegend auf der Seite (Y nach oben):** das L-Profil steht dann in jeder Schicht, die Last liegt in der Schichtebene, nicht quer dazu. 4 Perimeter, 100 Prozent Füllung. Nachweis Abschnitt 16 |
 | Endschalter oben | Mikroschalter in einer Tasche der Brückenunterseite bei X -26, Y 0 (zwischen Schlitten in Park und Brücke sind nur 2 mm), die Schlittenoberkante löst bei S = S_park + 0,5 aus |
-| Motor 1 | NEMA 17, 34 lang (etwa 0,26 Nm), 42,3 x 42,3, hängt unter der Brücke bei θ 180, r 59 (X -59), Körper Z 346,8 bis 380,8 (2,3 über dem LED-Träger), Welle nach oben durch ein Langloch ± 3 (Riemenspannung), auf 23 gekürzt, auf 4 Silikonscheiben 1 mm |
+| Motor 1 | NEMA 17, 34 lang (etwa 0,26 Nm), 42,3 x 42,3, hängt unter der Brücke bei θ 180, r 59 (X -59), Körper Z 346,8 bis 380,8, Welle nach oben durch ein Langloch ± 3 (Riemenspannung), auf 23 gekürzt, auf 4 Silikonscheiben 1 mm |
 | Riementrieb | GT2 20 : 20, geschlossener Riemen 158, 6 breit, Achsabstand 59, Riemenebene Z 388,3 bis 396,3, beide Scheiben mit Nabe oben (bis 404,3) |
 | Kein Sensor am Schlitten | Den Kontakt zur Kolbenplatte erkennt die Waage, es gibt keine bewegte Leitung |
 
-### 5.7 Brücke, Lichtfuge, Krone
+### 5.7 Brücke, Goldband, Krone
 
 | Element | Lage und Maße |
 |---|---|
 | Brücke | PETG, Ø 196 x 7, Z 380,8 bis 387,8, sechs Radialrippen 2 x 12 nach oben bis Z 399,8 (5 unter dem Kronendeckel, am Riemen ausgespart), Lagersitz 608 mittig, zwei Klemmnaben Ø 20 x 10, Langloch für Motor 1, Tasche für den Mikroschalter unten, vier Bohrungen für die Zuganker: oben Mutter in 4,5 tiefer Sechskanttasche (Stange endet bündig bei 387,8), unten eine Mutter, beide mit Schraubensicherung mittelfest |
-| LED-Träger | Ring r 82 bis 83,5, Z 334,5 bis 344,5, an drei Stegen unter der Brücke. Außen 75 LEDs WS2812B aus einem Streifen 144/m (Teilung 6,94, 521 mm), LED-Oberkante r 85,5, Abstrahlung nach außen, Stoß hinten bei θ 180. Abstand LED zu Opalring 11,3, Verhältnis Abstand zu Teilung 1,6: das ergibt ein gleichmäßiges Band (Stand 5 mit 60/m hatte 0,6 und Punkte). Kein Ausschnitt nötig, die Zuganker stehen 2,5 außerhalb |
-| Lichtfuge | Opalring PETG natur, außen Ø 196, Wand 1,2, Innenseite mit 240 matt geschliffen (Streuer), sichtbar Z 338 bis 341, oben und unten je 2 mm Steckfalz. Vor dem Hüllendruck ein Musterstück testen (17.6), bei sichtbaren Punkten innen eine Lage Pergamin. Ein Teil des Lichts fällt durch die offene Körperoberkante nach innen und hellt die Spritzen von oben auf (Vitrine) |
-| Krone | PLA, Ø 204, Z 341 bis 406,8, Wand 2, Deckel 2 (Z 404,8 bis 406,8), Fase 6 x 45 Grad oben außen, Tasche für das Namensschild im Deckel. Innen vier Magnete 6 x 2 gegen vier Magnete in der Brücke, zwei Zentrierstifte. Abnehmbar nur für die Wartung, nicht für das Nachfüllen |
-| Körperbefestigung | Körper steckt unten mit 3 mm Falz (Zapfen und Muffe je 0,7) auf dem Sockel und wird oben vom Lichtfugenring gehalten, den vier Haltewinkel an den Zugankern (Z 333 bis 336) tragen. Die zwei Körperhälften (Teilung Z 235) werden über einen innen liegenden Klebering PLA 8 hoch x 1,2 (je 4 mm in beide Hälften) verklebt, außen sitzt der Stoß 3 x 0,7 |
+| Goldband | Gold-PETG (ersetzt die Lichtfuge), außen Ø 196, Wand 1,6, sichtbar Z 338 bis 341, oben und unten je 2 mm Stecker (Wand 1,2) in Körper und Krone. Es leuchtet nicht. Die offene Körperoberkante ist damit zu (kein Licht, kein Staub von oben) |
+| Krone | PETG schwarz matt, Ø 204, Z 341 bis 406,8, Wand 2,4 bis Z 400,8, Deckel 2 (Z 404,8 bis 406,8). Die Fase 6 x 45 Grad oben außen ist ein eigener **Kronenring** (Gold-PETG, Parallelogramm 2 mm waagrecht dick, r 102 bei Z 400,8 bis r 96 bei Z 406,8), der auf die um 2 mm zurückgesetzte Fase des Kronenkörpers geklebt wird (Außenmaß bleibt Ø 204). Der Kronenkörper hat dazu einen Absatz bei Z 400,8 und eine Schale entlang der Fase (2,4 waagrecht) mit Innenkragen Z 397,8 bis 400,8. Tasche für das Namensschild im Deckel. Innen vier Magnete 6 x 2 gegen vier Magnete in der Brücke, zwei Zentrierstifte. Abnehmbar nur für die Wartung, nicht für das Nachfüllen. Gedruckt kopfüber (Deckel auf dem Bett), Fase und Absatz sind 45 Grad und 2 mm Brücke |
+| Körperbefestigung | Körper steckt unten mit 3 mm Falz (Zapfen und Muffe je 0,7) auf dem Sockel, der Goldring liegt dazwischen (der Sockelfalz geht durch den Ring), und wird oben vom Goldband gehalten, auf dem vier Haltewinkel an den Zugankern (Z 333 bis 336, 3,0 hoch) aufliegen. Die zwei Körperhälften (Teilung Z 235) werden über einen innen liegenden Klebering PETG 8 hoch x 1,2 (je 4 mm in beide Hälften) verklebt (2K-Epoxid), außen sitzt der Stoß 3 x 0,7 mit der Schattenfuge (0,5 x 45 Grad Fasen) |
 
 ### 5.8 Kraftpfad
 
-Stempel, Kolbenplatte, Kolben, Farbe und Zylinder, Flansch, Karussellplatte, Rollenbock, vordere Rollen (θ ± 25,7), Laufring, vier Zuganker M5 (verzinkt, r 90,5, θ ± 32 und ± 128,6), Brücke, 608, Stellring, Spindel, Messingmutter, Schlitten, Winkel, Stempel. Die Schalen liegen nicht im Kraftfluss. Die Muttern M5 (DIN 934) sitzen in Sechskanttaschen der PETG-Teile, Schlüsselfläche radial außen (r 94,5, 1,9 zur Körperwand). Die Karosseriescheiben Ø 20 aus Stand 5 passen nicht in die Hülle und entfallen: die Auflage einer Mutter (etwa 33 mm²) trägt höchstens 50 N, das sind 1,5 MPa, für PETG unkritisch. Gegen Lösen Schraubensicherung mittelfest statt Kontermutter. Spannung im Zuganker 1,8 MPa bei 100 N.
+Stempel, Kolbenplatte, Kolben, Farbe und Zylinder, Flansch, Karussellplatte, Rollenbock, vordere Rollen (θ ± 25,7), Laufring, vier Zuganker M5 (verzinkt, r 90,5, θ ± 32 und ± 128,6), Brücke, 608, Stellring, Spindel, Messingmutter, Schlitten, Ausleger mit Stempel. Die Schalen liegen nicht im Kraftfluss. Die Muttern M5 (DIN 934) sitzen in Sechskanttaschen der PETG-Teile, Schlüsselfläche radial außen (r 94,5, 1,9 zur Körperwand). Die Karosseriescheiben Ø 20 aus Stand 5 passen nicht in die Hülle und entfallen: die Auflage einer Mutter (etwa 33 mm²) trägt höchstens 50 N, das sind 1,5 MPa, für PETG unkritisch. Gegen Lösen Schraubensicherung mittelfest statt Kontermutter. Spannung im Zuganker 1,8 MPa bei 100 N.
 
-### 5.9 Licht
+### 5.9 Licht (entfällt in Stand 6)
 
-Eine WS2812-Kette mit 99 LEDs an einer Datenleitung: zuerst der Bühnenring (12, Index 0 bis 11), dann die Vitrinen-LEDs unter dem Laufring (6 x 2, Index 12 bis 23, Paar k gehört zu Fenster k), dann die Lichtfuge (75, Index 24 bis 98, Index 24 bei θ 182,4 hinten neben dem Stoß, aufsteigend gegen den Uhrzeigersinn in Schritten von 4,8 Grad, Index 61 steht vorne bei θ 0). Helligkeit in der Firmware auf 30 Prozent begrenzt. Vitrinen-LEDs und Lichtfuge kommen aus einem 1-m-Streifen 144/m (87 von 144 LEDs genutzt). Sie lassen die Farben hinter dem Rauchglas leuchten (Wunsch der Künstlerin).
+Es gibt kein Licht mehr: keine LEDs, keinen Pegelwandler, keinen 1000-µF-Kondensator, keine Datenleitung. Der Fortschritt einer Dosierung und die Meldung „Fertig“ erscheinen nur in der App. Wer ein Signal am Gerät will, steckt einen aktiven Piezo-Summer 5 V (etwa 1 Euro) an einen freien Pin (GPIO 25 ist durch den Wegfall der LED-Daten frei) und lässt ihn bei „Fertig“ kurz piepen. Das ist optional und nicht in der Stückliste.
 
 ## 6. Kaufteile mit Maßen (für Rendering und Konstruktion)
 
@@ -294,21 +311,19 @@ Eine WS2812-Kette mit 99 LEDs an einer Datenleitung: zuerst der Bühnenring (12,
 | GT2-Scheibe 20 Z | Teilkreis Ø 12,7, außen Ø 16, Bund Ø 16, Höhe 16 (Zahnkranz mit Bund 8, Nabe 8), Bohrung 5 (2 x) und 8 (1 x), dazu Passscheibe 8 x 14 x 0,5 (DIN 988) |
 | GT2-Riemen | geschlossen 158 (Stößel) und 210 (Karussell), 6 breit |
 | Gewindestange M5 | 4 x 385 (Z 3 bis 387,8), 28 Muttern M5 DIN 934, Passscheiben 5 x 10, Schraubensicherung mittelfest |
-| Winkelstahl | 40 x 40 x 4, 25 lang, 2 x M4 mit Gewindeeinsätzen im Schlitten |
 | Wägezelle 500 g | Aluminiumbalken 80 x 12,7 x 12,7, je Ende 2 x M4 (bei manchen Typen M5), Typ YZC-133 oder ähnlich, mit HX711-Modul 21 x 34 |
-| LED-Ring | 12 x WS2812B, außen Ø 50, innen Ø 36, Dicke 3 |
-| LED-Streifen | WS2812B 144/m, 1 m, 10 bis 12 breit, 5 V (75 LEDs Lichtfuge, 12 Vitrine, Rest Reserve) |
 | Hall-Sensor | A3144 im TO-92, Magnet Neodym Ø 5 x 2 |
 | Reed-Kontakt | Glas 2 x 14 mit Magnet 6 x 2 |
 | Mikroschalter | 20 x 10 x 6 mit Rollenhebel |
 | Spritze | siehe 5.4 |
 | Entenschnabelventil | Silikon, Ø 8 bis 9, 10 lang |
 | Becher | PP 60 ml, oben Ø 62, unten Ø 47, 33 hoch, mit Deckel |
-| Rauchacryl | 2 mm, grau, Zuschnitt 78 x 234 (Portal) und 6 x 26 x 76 |
 | Silikonfüße | Ø 12 x 3, selbstklebend |
-| Magnete | Neodym Ø 6 x 2 (10 Stück: 4 Portal, 4 Krone, 1 Schublade, 1 Reserve) |
+| Gummiauflage | Ø 25 x 2, selbstklebend, unter dem Stempel (Gummi oder Silikon, Rest einer Backmatte genügt) |
+| Gewindeeinsätze M4 | 2 Stück, Messing, zum Einschmelzen oder Einkleben in den Schlitten (Ausleger) |
+| Magnete | Neodym Ø 6 x 2 (10 Stück: 4 Portal, 4 Krone, 1 Schublade, 1 Reserve), dazu 4 Stahlscheiben 8 x 0,5 (auf die Portalscheiben geklebt) |
 | Netzteil | 12 V 3 A Steckernetzteil, Hohlstecker 5,5/2,1, Einbaubuchse M8 |
-| Step-down | XL4015, 5 A, 51 x 26 |
+| Step-down | MP1584 oder Mini-360, 12 V auf 5 V, 1 A (5 V brauchen nur noch ESP32 und Hall-Sensor, rund 0,3 A) |
 | Ballast | 28 Unterlegscheiben M20 (DIN 125, Ø 37 x 3), zusammen etwa 0,48 kg |
 
 ## 7. Kinematik und Schrittzahlen
@@ -339,7 +354,7 @@ Eine WS2812-Kette mit 99 LEDs an einer Datenleitung: zuerst der Bühnenring (12,
 | 5 | 257,1 | Schwarz K | links |
 | 6 | 308,6 | Titanweiß W2 | vorne links |
 
-Die zwei Weißspritzen rahmen das Portal, Gelb und Schwarz stehen seitlich, Magenta und Cyan hinten.
+Die zwei Weißspritzen rahmen das Portal, Gelb und Schwarz stehen seitlich, Magenta und Cyan hinten. Auf der Karussellplatte steht neben jeder Tasche der Buchstabe der Station (W, Y, M, C, K, W).
 
 ### 7.3 Stößel
 
@@ -368,7 +383,7 @@ Ein Sensor je Aufgabe, keiner bewegt sich mit, kein Kabel am Schlitten oder am K
 
 ## 9. Verdrahtung (ESP32 DevKit 30 Pin)
 
-Verfügbare GPIOs auf diesem Board: 0, 2, 4, 5, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33 sowie die reinen Eingänge 34, 35, 36 (VP), 39 (VN). GPIO 15 ist nicht herausgeführt. Die Eingänge 34 bis 39 haben keinen internen Pullup. Die Strapping-Pins 0, 2, 5 und 12 bleiben frei. STEP, DIR, ENABLE, Endschalter und Hall bleiben wie im README von Stand 4, damit die Firmware wenig ändern muss.
+Verfügbare GPIOs auf diesem Board: 0, 2, 4, 5, 12, 13, 14, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33 sowie die reinen Eingänge 34, 35, 36 (VP), 39 (VN). GPIO 15 ist nicht herausgeführt. Die Eingänge 34 bis 39 haben keinen internen Pullup. Die Strapping-Pins 0, 2, 5 und 12 bleiben frei. STEP, DIR, ENABLE, Endschalter und Hall bleiben wie im README von Stand 4, damit die Firmware wenig ändern muss. Stand 6 hat keine LEDs mehr, GPIO 25 ist frei.
 
 | Signal | GPIO | Beschaltung |
 |---|---|---|
@@ -384,20 +399,19 @@ Verfügbare GPIOs auf diesem Board: 0, 2, 4, 5, 12, 13, 14, 16, 17, 18, 19, 21, 
 | Hall A3144 | 21 | offener Kollektor: 4,7 kΩ nach 3,3 V und 100 nF nach GND an der Platine, interner Pullup zusätzlich an. Sensor an 5 V |
 | Endschalter Stößel oben | 18 | Schließer gegen GND, interner Pullup, 100 nF |
 | Reed Schublade | 19 | Schließer gegen GND, interner Pullup, 100 nF |
-| WS2812 Daten | 25 | über 74AHCT125 (an 5 V, Eingang 3,3-V-tauglich) und 330 Ω in Reihe am ersten LED-Eingang |
-| frei | 22, 26, 27, 35, 36, 39 | Reserve (z. B. I2C 21/22 entfällt, da 21 belegt; Farbsensor später auf 26/27) |
+| frei | 22, 25, 26, 27, 35, 36, 39 | Reserve (z. B. aktiver Summer auf 25 für „Fertig“, Farbsensor später auf 26/27; I2C 21/22 entfällt, da 21 belegt) |
 
-**Versorgung:** Netzteil 12 V 3 A an VMOT beider TMC2209 (je 100 µF direkt am Treiber) und an den Step-down XL4015 (5 V, 5 A). 5 V an ESP32 VIN, Hall, 74AHCT125 und LEDs. HX711 (VCC und VDD) an 3,3 V vom ESP32, nicht an 5 V. An der LED-Einspeisung 1000 µF. Bühnenring, Vitrinen-LEDs und Lichtfuge in Reihe an einer Datenleitung, 5 V und GND zusätzlich am Anfang der Fuge eingespeist. Strombedarf: 99 LEDs bei 30 Prozent höchstens 1,8 A, 5 V gesamt etwa 2,1 A, aus 12 V gesamt etwa 1,6 A von 3 A. Ohne Helligkeitsgrenze wären es 5,9 A nur für die LEDs, deshalb der 5-A-Wandler und die feste Grenze in der Firmware.
+**Versorgung:** Netzteil 12 V 3 A an VMOT beider TMC2209 (je 100 µF direkt am Treiber) und an einen kleinen Step-down 12 V auf 5 V (MP1584, 1 A reicht). 5 V an ESP32 VIN und Hall-Sensor. HX711 (VCC und VDD) an 3,3 V vom ESP32, nicht an 5 V. Strombedarf: Motoren beim Fahren und Dosieren etwa 0,5 bis 0,65 A je Motor bei 12 V (Ströme siehe unten), ESP32 und Sensoren etwa 0,3 A bei 5 V, aus 12 V gesamt unter 1,2 A von 3 A. Ohne die 99 LEDs (bisher 1,8 A bei 5 V) entfallen der 5-A-Wandler, der 74AHCT125, der 330-Ω-Widerstand und der 1000-µF-Kondensator.
 
 **Treiber:** TMC2209 StepStick, MS1/MS2 als UART-Adresse, Mikroschritt 1/16 über UART gesetzt, StealthChop. Ströme (Effektivwert): Stößel 0,5 A fahren, bis 0,65 A dosieren (Grenze 150 N), 0,3 A halten. Karussell 0,4 A fahren (bis 0,6 A, falls die Reibungsmessung es verlangt), 0,2 A halten.
 
-**Leitungen:** Motor 1 (4), Endschalter (2), LED-Daten und 5 V/GND zur Fuge (3) laufen fest im Kabelkanal am Zuganker θ -128,6 nach oben, die Vitrinen-LEDs zweigen am Laufring ab. Motor 2, Hall, Reed, HX711, Bühnenring bleiben im Sockel. Motorleitungen paarweise verdrillt, HX711-Leitungen kurz (unter 15 cm) und getrennt von den Motorleitungen.
+**Leitungen:** Motor 1 (4) und Endschalter (2) laufen fest im Kabelkanal am Zuganker θ -128,6 nach oben. Motor 2, Hall, Reed und HX711 bleiben im Sockel. Motorleitungen paarweise verdrillt, HX711-Leitungen kurz (unter 15 cm) und getrennt von den Motorleitungen.
 
 ## 10. Ablauf einer Dosierung
 
 1. **Browser:** Farbe wählen, Menge in Gramm (10 bis 50 g), Start. Die App schickt das Rezept in Gramm je Farbe. „Nochmal“ wiederholt die letzte Mischung (für 100 ml zwei Becher).
-2. **Prüfen:** Schublade zu (Reed), Becher da (Waage zeigt gegenüber leerer Schublade 2 bis 15 g mehr und steht ruhig, sonst „Schublade ganz schließen“), Vorrat jeder Station reicht laut Buchführung. Sonst Meldung, die Bühne blinkt zweimal rot, nichts wird dosiert.
-3. **Vorbereiten:** Referenzfahrt Stößel (hoch bis Endschalter), Referenzfahrt Karussell (Hall). Lichtfuge wechselt auf Zielfarbe mit Fortschritt 0, Bühne 4000 K.
+2. **Prüfen:** Schublade zu (Reed), Becher da (Waage zeigt gegenüber leerer Schublade 2 bis 15 g mehr und steht ruhig, sonst „Schublade ganz schließen“), Vorrat jeder Station reicht laut Buchführung. Sonst Meldung in der App, nichts wird dosiert.
+3. **Vorbereiten:** Referenzfahrt Stößel (hoch bis Endschalter), Referenzfahrt Karussell (Hall). Die App zeigt den Fortschritt 0 und die Zielfarbe.
 4. **Je Farbe**, sortiert hell nach dunkel (W, Y, C, M, K, nur die benötigten). Bei Weiß zuerst W1 bis 2 ml Rest, dann W2.
    1. Stößel steht auf S_park. Karussell fährt die Station auf kürzestem Weg nach vorne. Dabei wischt die Lippe bei θ ± 40 die Düse ab.
    2. Waage beruhigen (0,5 s), tarieren.
@@ -408,8 +422,8 @@ Verfügbare GPIOs auf diesem Board: 0, 2, 4, 5, 12, 13, 14, 16, 17, 18, 19, 21, 
    7. Warten auf Fließende: weniger als 0,01 g/s über 1 s, höchstens 20 s.
    8. Fehlt mehr als 0,1 g: Nachstoß 0,1 ml, Schritte 6 und 7 wiederholen. Nachlauf aus Ist minus Stopp-Wert lernen.
    9. Stempel auf S_park, Kolbenplattenhöhe und Rest-ml der Station speichern.
-5. **Fertig:** Karussell fährt auf Park (q = 0, Platz 0 vorne), alle Düsen über der Feuchtrinne. Lichtfuge 3 s gold, dann warmweiß atmen. Bühne zeigt die Zielfarbe. Browser zeigt Ist-Gramm je Farbe und Abweichung.
-6. **Becher nehmen:** Schublade 50 mm aufziehen (Magnetklick), Becher greifen, Deckel drauf oder umrühren. Reed meldet offen, Bühnenlicht dimmt nach 60 s aus.
+5. **Fertig:** Karussell fährt auf Park (q = 0, Platz 0 vorne), alle Düsen über der Feuchtrinne. Die App meldet „Fertig“ (optional ein kurzer Piepton) und zeigt Ist-Gramm je Farbe und Abweichung.
+6. **Becher nehmen:** Schublade 50 mm aufziehen (Magnetklick), Becher greifen, Deckel drauf oder umrühren. Reed meldet offen.
 
 Kleinste sinnvolle Teilmenge 0,1 g. Dauer je Farbe etwa 10 bis 40 s je nach Zähigkeit, ein Rezept mit vier Farben 2 bis 4 Minuten, mit sehr zäher Farbe (100 Pa·s) bis 6 Minuten.
 
@@ -418,7 +432,7 @@ Kleinste sinnvolle Teilmenge 0,1 g. Dauer je Farbe etwa 10 bis 40 s je nach Zäh
 ## 11. Handhabung
 
 **Spritze tauschen (vorne, auf Tischhöhe):**
-1. App: „Wechseln“ und Farbe wählen. Stößel fährt auf S_park, das Karussell dreht diese Station nach vorne, die Lichtfuge zeigt ihre Farbe.
+1. App: „Wechseln“ und Farbe wählen. Stößel fährt auf S_park, das Karussell dreht diese Station nach vorne, die App zeigt ihre Farbe.
 2. Schublade ganz herausziehen und beiseitestellen (Tropfen fielen sonst auf Schublade und Becher), ein gefaltetes Küchentuch auf die Bühne legen. Portalscheibe an der Fingerkerbe abnehmen (Magnete).
 3. Spritze am Zylinder fassen und waagrecht nach vorne ziehen, die Rastzunge gibt nach.
 4. Gefüllte Reservespritze mit Ventil waagrecht einschieben, bis es klickt. Die Einlaufschrägen führen Flansch und Zylinder, nichts wird blind eingefädelt. Eine überfüllte Spritze (über 50 ml) stößt am Stempel an und muss etwas ausgedrückt werden.
@@ -435,7 +449,7 @@ Kleinste sinnvolle Teilmenge 0,1 g. Dauer je Farbe etwa 10 bis 40 s je nach Zäh
 | Wann | Was |
 |---|---|
 | nach jeder Session | nichts, die Düsen parken über der feuchten Rinne, die Ventile sind zu |
-| alle 4 Wochen (Ziel, am Prototyp prüfen; Lichtfuge pulsiert kurz blau, App erinnert) | Portalscheibe ab, je Rinnenkammer 25 ml Wasser mit einer Spritze durch ein Deckelloch auf den Schwamm geben |
+| alle 4 Wochen (Ziel, am Prototyp prüfen; die App erinnert) | Portalscheibe ab, je Rinnenkammer 25 ml Wasser mit einer Spritze durch ein Deckelloch auf den Schwamm geben |
 | nach 15 Dosierungen (App erinnert) | Portalscheibe ab, die zwei Abstreiflippen mit dem feuchten Tuch abwischen (1 Minute), bevor die Farbe antrocknet |
 | nach mehr als 3 Tagen Pause | App bietet „Düsen spülen“ an: leerer Becher, je Station 0,3 g |
 | alle 2 bis 3 Monate oder bei Geruch | Schwammstreifen tauschen (5.3, Ersatz im Startpaket), Schublade herausnehmen und spülen |
@@ -450,107 +464,155 @@ Ein Düsen-Wischtuch (Mikrofaser) liegt dem Gerät bei. Es gibt keine Kappen, di
 
 ## 12. Druckteile (Anycubic Kobra 2 Pro, 220 x 220 x 250, alle Teile höchstens Ø 204 in X/Y und 200 in Z)
 
-| Nr | Teil | Material, Einstellung | Hüllmaß | Lage beim Druck | Stützen | ca. g |
-|---|---|---|---|---|---|---|
-| 1 | Sockelschale mit Goldband, Portalunterteil, Griffmulde, Buchsenloch | PLA schwarz, 0,16 mm, 4 Perimeter (1,6), 0 Prozent Infill, 6 Innenrippen 1,2 x 8 | Ø 204 x 101 | stehend, Fuß unten. Portal oben offen, Griffmulde mit 45-Grad-Oberkante | keine | 155 |
-| 2 | Körper unten (Z 101 bis 235), Portalschlitz, sechs Fenster mit Innenrahmen | PLA schwarz, 0,16 mm, 4 Perimeter, 6 Rippen | Ø 199 x 137 (mit Goldrahmen) | stehend. Fensterbögen R 11 drucken sich als Bogen | keine | 162 |
-| 3 | Körper oben (Z 235 bis 338), Portaloberteil | PLA schwarz, 0,16 mm, 4 Perimeter, 6 Rippen | Ø 199 x 103 | kopfüber (Portalecken R 24 werden zur Unterseite) | keine | 130 |
-| 4 | Krone mit Fase und Schildtasche | PLA schwarz, 0,16 mm, Wand 2, Deckel 2 | Ø 204 x 65,8 | kopfüber, Deckel auf dem Bett, Fase wird 45-Grad-Überhang | keine | 215 |
-| 5 | Lichtfugenring | PETG natur, Wand 1,2 | Ø 196 x 7 | stehend | keine | 9 |
-| 6 | Grundplatte mit Fußtaschen und Ballastbechern | PETG schwarz, 15 Prozent Gyroid | Ø 200 x 12 | Platte unten, Rippen oben | keine | 95 |
-| 7 | Lagerbock Karussellwelle | PETG, 40 Prozent | Ø 40 x 33 | stehend | keine | 25 |
-| 8 | Feuchtrinne (C-Ring, zwei Kammern) und Deckel (zwei Hälften, 1,2) | PETG schwarz | Ø 138 x 10 | Boden unten, Deckel flach | keine | 42 |
-| 9 | Rinnensäulen (4) | PETG | Ø 8 x 47 | stehend | keine | im Kleinteil-Posten |
-| 10 | Abstreifhalter (2) | PETG | 20 x 16 x 10 | flach | keine | 8 |
-| 11 | Laufring mit vier Laschen | PETG schwarz, 30 Prozent | Ø 189 x 6 | flach | keine | 45 |
-| 12 | Karussellplatte mit Nabe, Taschen, Schlitzen, Rastzungen | PETG schwarz matt, 25 Prozent, Brim 5 | Ø 171 x 18 (mit Nabe) | Oberseite unten auf dem Bett (Taschen zum Bett offen, Nabe oben) | keine | 100 |
-| 13 | Rollenböcke (7) | PETG, 40 Prozent | 25 x 11 x 18 | Gabel offen nach oben | keine | 28 |
-| 14 | Schlitten mit Fläche X 28 und zwei M4-Einsätzen | PETG, 40 Prozent | Ø 68 x 58 | stehend, Mutternstufe oben | keine | 75 |
-| 15 | Stempel | PETG | Ø 28 x 6 | flach | keine | 6 |
-| 16 | Brücke mit Rippen, Lagersitz, Klemmnaben | PETG schwarz, 30 Prozent | Ø 196 x 19 | Platte unten, Rippen oben | keine | 90 |
-| 17 | LED-Träger mit drei Stegen | PETG | Ø 167 x 46 | Ring unten, Stege oben | keine | 18 |
-| 18 | GT2-Rad 70 Z mit Magnettasche | PETG, 100 Prozent, 0,12 mm | Ø 47 x 10 | Nabe oben | keine | 18 |
-| 19 | Schublade (Korpus) mit konischem Bechersitz | PETG natur | 70 x 71 x 19 | Boden unten | keine | 40 |
-| 20 | Schubladenfront mit Goldlippe | PLA schwarz | etwa 68 x 18 x 31 | aufrecht wie eingebaut | keine | im Posten 19 |
-| 21 | Podest (Stiel und Scheibe Ø 60 x 1,6) | PETG natur | Ø 60 x 5,8 | Scheibe unten | keine | 8 |
-| 22 | LED-Ringhalter, Wägezellenbock, Überlastanschlag | PETG | je unter 60 x 20 x 15 | flach | keine | 16 |
-| 23 | Motor-2-Winkel, Hallhalter, Platinenhalter, Kabelclips, Fugenhalter, Schienen (2), Klebering Körper | PETG, Klebering PLA | je unter 90 x 20 x 30 | flach | keine | 40 |
-| 24 | Einführzunge für Schwammstreifen | PETG, 0,8 dick | 160 x 16 x 0,8 | flach | keine | 6 |
-| 25 | Spritzenablage für den Tisch, sechs Fächer | PLA schwarz | 190 x 70 x 45 | flach | keine | 45 |
-| 26 | Buchsenring | PLA, vergoldet | Ø 16 x 3 | flach | keine | 1 |
-| 27 | Namensschild | PLA schwarz, 0,12 mm | etwa 90 x 16 x 1,2 | flach, Schrift oben | keine | 2 |
+Alle Teile aus PETG. Die Spalte „Material, Einstellung“ steht unten als Gruppe, die Tabelle hat Hüllmaß, Lage, Stützen und Masse. Das Skript `hardware/farbmischer.scad` rechnet jedes Teil in Druckorientierung (Variable `teil`), alle haben Z = 0 auf dem Bett und die Hüllmaße der Tabelle (geprüft mit OpenSCAD 2021.01).
 
-Summe etwa 1390 g netto (PLA 715, PETG schwarz 660, PETG natur 15), mit 20 Prozent Zuschlag für Fehldrucke und Probestücke 1,65 kg. Druckzeit realistisch 90 bis 130 Stunden (10 bis 15 g je Stunde auf der Kobra 2 Pro bei 0,16 mm und 4 Perimetern). Größte Teile Sockelschale und Krone Ø 204 (8 mm Rand auf dem 220er-Bett, 3 mm Brim möglich), höchstes Teil Körper unten mit 137.
+| Nr | Teil | Hüllmaß | Lage beim Druck | Stützen | ca. g |
+|---|---|---|---|---|---|
+| 1 | Sockelschale mit Griffmulde und Buchsenloch (ohne Rahmen und Ring) | Ø 204 x 101 | stehend, Fuß unten. Portal oben offen, Griffmulde mit 45-Grad-Oberkante | keine | 150 |
+| 2 | Körper unten (Z 101 bis 235), Portalschlitz, sechs Fenster mit Innenrahmen | Ø 196 x 137 | stehend. Fensterbögen R 11 drucken sich als Bogen | keine | 160 |
+| 3 | Körper oben (Z 235 bis 338), Portaloberteil | Ø 196 x 103 | kopfüber (Portalecken R 24 werden zur Unterseite) | keine | 125 |
+| 4 | Krone mit Absatz für den Kronenring und Schildtasche | Ø 204 x 65,8 | kopfüber, Deckel auf dem Bett. Fase und Absatz sind 45 Grad und 2 mm Brücke | keine | 210 |
+| 5 | Goldband (ersetzt die Lichtfuge) | Ø 196 x 7 | stehend | keine | 7 |
+| 6 | Goldring (am Portal offen) | Ø 202 x 4 | flach, Fase unten | keine | 10 |
+| 7 | Kronenring (Fase) | Ø 204 x 6 | stehend, Wände 45 Grad | keine | 9 |
+| 8 | Portalrahmen: rahmen_unten, rahmen_seite (2 x), rahmen_oben | 80 x 84 / 3,3 x 206 / 88 x 29, alle 1,5 dick | flach in der Abwicklung | keine | 5 |
+| 9 | Goldlippe | 68 x 11 x 3 | flach | keine | 1 |
+| 10 | Buchsenring | Ø 16 x 3 | flach | keine | 1 |
+| 11 | Namensschild zweifarbig | 90 x 16 x 1,2 | flach, Schrift oben | keine | 2 |
+| 12 | Portalscheibe unten (Z 99 bis 219) | 120 x 78 x 2 | flach, Außenseite unten | keine | 23 |
+| 13 | Portalscheibe oben (Z 215 bis 333) | 118 x 78 x 2 | flach, Außenseite unten | keine | 23 |
+| 14 | Fensterscheiben (6 Stück) | 26 x 76 x 1,6 | flach | keine | 24 |
+| 15 | Grundplatte mit Fußtaschen und Ballastbechern | Ø 200 x 12 | Platte unten, Rippen oben | keine | 95 |
+| 16 | Lagerbock Karussellwelle | Ø 40 x 33 | stehend | keine | 25 |
+| 17 | Feuchtrinne (C-Ring, zwei Kammern) und Deckel (zwei Hälften, 1,2) | Ø 138 x 10 | Boden unten, Deckel flach | keine | 42 |
+| 18 | Rinnensäulen (4), Kabelclips, Fugenhalter, Hallhalter, Platinenhalter, Motor-2-Winkel, Schienen (2), Klebering | je unter 90 x 66 x 36 | je flach oder stehend | keine | 58 |
+| 19 | Abstreifhalter (2) | 20 x 16 x 10 | flach | keine | 8 |
+| 20 | Laufring mit vier Laschen | Ø 189 x 6 | flach | keine | 45 |
+| 21 | Karussellplatte mit Nabe, Taschen, Schlitzen, Rastzungen, Stationsbuchstaben | Ø 171 x 18 (mit Nabe) | Oberseite unten auf dem Bett (Taschen zum Bett offen, Nabe oben), die Buchstaben liegen auf dem Bett | keine | 100 |
+| 22 | Rollenböcke (7) | 25 x 11 x 18 | Gabel offen nach oben | keine | 28 |
+| 23 | Schlitten mit Fläche X 28 und zwei M4-Einsätzen | Ø 68 x 58 | stehend, Mutternstufe oben | keine | 75 |
+| 24 | Ausleger mit Stempel (ersetzt Winkelstahl und Stempelscheibe) | 40 x 46 x 25 | **liegend auf der Seite (Y oben)**, L-Profil in jeder Schicht | keine | 23 |
+| 25 | Brücke mit Rippen, Lagersitz, Klemmnaben | Ø 196 x 19 | Platte unten, Rippen oben | keine | 90 |
+| 26 | GT2-Rad 70 Z mit Magnettasche | Ø 47 x 10 | Nabe oben | keine | 18 |
+| 27 | Schublade (Korpus) mit konischem Bechersitz | 70 x 71 x 19 | Boden unten | keine | 40 |
+| 28 | Schubladenfront | 68 x 16 x 28 | aufrecht wie eingebaut | keine | 20 |
+| 29 | Podest (Stiel und Scheibe Ø 60 x 1,6) | Ø 60 x 5,8 | Scheibe unten | keine | 8 |
+| 30 | Wägezellenbock, Überlastanschlag | je unter 24 x 20 x 2 | flach | keine | 12 |
+| 31 | Einführzunge für Schwammstreifen | 160 x 16 x 0,8 | flach | keine | 6 |
+| 32 | Spritzenablage für den Tisch, sechs Fächer | 190 x 70 x 45 | flach | keine | 45 |
 
-**Nachbearbeitung Hülle:** Körper unten und oben über den innen liegenden Klebering und den Stoß 3 x 0,7 verkleben (2K-Kleber), Fuge und Schichtlinien mit Feinspachtel füllen. Füller in 2 bis 3 Gängen, nass schleifen 240, 400, 800. Sockel und Schubladenfront hochglanz, Körper und Krone seidenmatt lackieren (wer an der Krone Glanz will, lackiert zuerst eine Probekrone und entscheidet danach). Goldring, Portalrahmen und Kronenfase stehen 1,5 erhaben und werden zum Schluss mit Gold-Anreibewachs (Rub n Buff) mit Finger oder Wattestäbchen eingerieben, die erhabene Kante wirkt als Maske. Lackmarker nur zum Ausbessern, Rückfallebene Messingband 4 mm. Zuerst zwei Probestücke (Ring 60 x 30 mit erhabener Linie) komplett lackieren und vergolden, dazu ein Probeschild für den Namen.
+**Material und Einstellung je Teil:**
 
-**Druckreihenfolge:** erst Funktionsteile (12, 13, 11, 14, 15, 16, 18, 7, 6, 8) und Funktionsprobe mit echten Spritzen und Wasser, dann Waage und Schublade, erst danach die Hüllen (1 bis 5). Pflicht vor dem ersten Hüllendruck: Pappattrappe (17.5), Ventiltest (17.2), Lichtfugen-Muster (17.6).
+| Nr | Material und Einstellung |
+|---|---|
+| 1 | PETG schwarz glänzend, 0,16 mm (0,12 für eine glattere Fläche), 4 Perimeter (1,6), 0 Prozent Infill, 6 Innenrippen 1,2 x 8 |
+| 2 | PETG schwarz matt, 0,16 mm, 4 Perimeter, 6 Rippen |
+| 3 | PETG schwarz matt, 0,16 mm, 4 Perimeter, 6 Rippen |
+| 4 | PETG schwarz matt, 0,16 mm, Wand 2,4, Deckel 2 |
+| 5 | Gold-PETG, Wand 1,6 und 1,2 |
+| 6 | Gold-PETG, 3 Perimeter, 3 mm Brim |
+| 7 | Gold-PETG |
+| 8 | Gold-PETG, 0,12 mm, 100 Prozent, 3 mm Brim, die zwei Seitenleisten zusammen auf einem Bett |
+| 9 | Gold-PETG |
+| 10 | Gold-PETG |
+| 11 | 0,12 mm, Basis 0,6 schwarz, ab 0,6 Gold (Filamentwechsel), Schrift 0,6 erhaben |
+| 12 | Rauch-PETG, 0,2 mm, 100 Prozent, 245 Grad, Lüfter höchstens 30 Prozent, Außenseite auf glattem Bett |
+| 13 | wie unten |
+| 14 | Klar-PETG, 0,16 mm, 100 Prozent |
+| 15 | PETG schwarz, 15 Prozent Gyroid |
+| 16 | PETG, 40 Prozent |
+| 17 | PETG schwarz |
+| 18 | PETG, 40 Prozent |
+| 19 | PETG |
+| 20 | PETG schwarz, 30 Prozent |
+| 21 | PETG schwarz matt, 25 Prozent, Brim 5 |
+| 22 | PETG, 40 Prozent |
+| 23 | PETG, 40 Prozent |
+| 24 | PETG schwarz, 4 Perimeter, 100 Prozent, 0,16 mm |
+| 25 | PETG schwarz, 30 Prozent |
+| 26 | PETG, 100 Prozent, 0,12 mm |
+| 27 | PETG weiß |
+| 28 | PETG schwarz glänzend |
+| 29 | PETG schwarz |
+| 30 | PETG |
+| 31 | PETG, 0,8 dick |
+| 32 | PETG schwarz |
+
+**Summe etwa 1488 g netto** (PETG schwarz 1343, davon glänzend 170 und matt 495, Rest Innenteile in beliebigem Schwarz; Gold 35; Rauch 46; Klar 24; weiß 40), mit 20 Prozent Zuschlag für Fehldrucke und Probestücke 1.79 kg. Druckzeit realistisch 90 bis 130 Stunden (Hülle 0,16 mm). Größte Teile Sockelschale und Krone Ø 204 (8 mm Rand auf dem 220er-Bett, 3 mm Brim möglich), höchstes Teil Körper unten mit 137.
+
+**PETG, was anders ist als bei PLA (Richtwerte, mit einem Testwürfel prüfen):**
+
+- Düse 235 bis 245 Grad, Bett 75 bis 85 Grad, Lüfter 30 bis 50 Prozent, nur bei Überhängen und Brücken mehr. Außenwände langsam (30 bis 40 mm/s), das gibt die glatte Fläche.
+- PETG klebt auf glattem PEI **zu gut**: Klebestift oder Trennmittel auf das Blech, sonst reißt beim Lösen Material aus der Platte. Auf Textur-PEI wird die Unterseite rau, das stört nur bei Scheiben und Gold (dort glattes Blech nehmen).
+- Fadenziehen und Tropfen: Düse sauber, Temperatur nicht höher als nötig, Filament trocken (4 bis 6 Stunden bei 65 Grad). Die Hülle zeigt jeden Faden. Sichtflächen nie mit Stützen drucken (die Hülle braucht keine).
+- Brücken und Überhänge hängen bei PETG früher durch: längere freie Brücken als 20 mm vermeiden. Im Entwurf kommen nur kurze vor (Fensterbögen R 11, Absatz an der Krone 2 mm).
+- Schwinden etwa 0,3 bis 0,5 Prozent: Passungen (Lagersitze 608, Ø 19,2 für die LM10LUU, Stationstaschen) nach dem ersten Probestück mit der Schieblehre prüfen und in `farbmischer.scad` nachziehen.
+- Kleben: 2K-Epoxid oder Sekundenkleber (Gel, bei Spalten mit Aktivator). Kein Lösungsmittelkleber, der greift PETG nicht an. Zuerst trocken anlegen und markieren.
+- Weißes und transparentes PETG nie mit schwarzen Resten in derselben Düse drucken: Düse vorher mit dem neuen Filament spülen.
+
+**Nachbearbeitung Hülle (Stand 6, ohne Füller, Schliff und Lack):** Körper unten und oben über den innen liegenden Klebering und den Stoß 3 x 0,7 verkleben (2K-Epoxid), die Teilungsfuge bleibt als V-Nut sichtbar. Grate und Fäden mit dem Cutter oder einer Feile entfernen, mit Isopropanol entfetten. Dann die Goldteile aufkleben: Goldring auf den Sockel, Portalrahmen in drei Leistenarten, Kronenring auf die Kronenfase, Goldlippe oben auf die Front, Buchsenring um die Buchse, Namensschild in die Krone. Zuerst zwei Probestücke (Ring 60 x 30 mit einer Goldleiste, 3 breit) komplett aufbauen.
+
+**Druckreihenfolge:** erst Funktionsteile (21, 22, 20, 23, 24, 25, 26, 16, 15, 17) und Funktionsprobe mit echten Spritzen und Wasser (der Ausleger zuerst: er ist das einzige Teil, das gedruckt statt aus Stahl ist), dann Waage und Schublade, dann die Gold- und Scheiben-Probestücke, erst danach die Hüllen (1 bis 4). Pflicht vor dem ersten Hüllendruck: Pappattrappe (17.5), Ventiltest (17.2), Probestücke Gold und Rauchscheibe (17.6, 17.7).
 
 ## 13. Stückliste mit Preisen
 
 | Gruppe | Teil | Menge | Einzel | Summe |
 |---|---|---|---|---|
-| Elektronik | ESP32 DevKit 30 Pin | 1 | 6,00 | 6,00 |
-| Elektronik | TMC2209 StepStick | 2 | 5,00 | 10,00 |
-| Elektronik | NEMA 17, 34 mm, etwa 0,26 Nm (Stößel) | 1 | 9,00 | 9,00 |
-| Elektronik | NEMA 17 Pancake 23 mm (Karussell) | 1 | 8,00 | 8,00 |
-| Elektronik | Wägezelle 500 g mit HX711 | 1 | 5,00 | 5,00 |
-| Elektronik | Hall A3144, Magnet 5 x 2, 4,7 kΩ, 100 nF | 1 | 1,50 | 1,50 |
-| Elektronik | Mikroschalter | 1 | 1,00 | 1,00 |
-| Elektronik | Reed-Kontakt mit Magnet | 1 | 1,00 | 1,00 |
-| Elektronik | WS2812B-Ring 12 LED | 1 | 3,00 | 3,00 |
-| Elektronik | WS2812B-Streifen 144/m, 1 m (Lichtfuge 75, Vitrine 12) | 1 | 9,00 | 9,00 |
-| Elektronik | 74AHCT125, 330 Ω, 1000 µF, 2 x 100 µF, 10 kΩ, 1 kΩ | 1 | 1,50 | 1,50 |
-| Elektronik | Netzteil 12 V 3 A mit Einbaubuchse | 1 | 9,00 | 9,00 |
-| Elektronik | Step-down XL4015 5 V 5 A | 1 | 3,00 | 3,00 |
-| Elektronik | Lochraster 70 x 90, Buchsenleisten, Klemmen, JST, Silikonlitze | 1 | 7,00 | 7,00 |
-| Mechanik | T8-Spindel Steigung 2, 200 mm, Messingmutter | 1 | 6,00 | 6,00 |
-| Mechanik | Linearwelle Ø 10 h6 x 200 | 2 | 3,00 | 6,00 |
-| Mechanik | LM10LUU | 2 | 3,50 | 7,00 |
-| Mechanik | Welle Ø 8 h6 x 250 | 1 | 3,00 | 3,00 |
-| Mechanik | Kugellager 608, 10er-Pack | 1 | 4,00 | 4,00 |
-| Mechanik | Stellring Ø 8 | 3 | 1,00 | 3,00 |
-| Mechanik | GT2-Scheiben 20 Z (2 x Bohrung 5, 1 x Bohrung 8) | 1 | 5,00 | 5,00 |
-| Mechanik | GT2-Riemen geschlossen 158 und 210 | 1 | 4,00 | 4,00 |
-| Mechanik | Gewindestange M5 2 x 1 m, 30 Muttern M5, Passscheiben 5 x 10, Schraubensicherung | 1 | 5,00 | 5,00 |
-| Mechanik | Winkelstahl 40 x 40 x 4 (1 m oder Reststück) | 1 | 4,00 | 4,00 |
-| Mechanik | Schrauben, Gewindeeinsätze, 10 Magnete 6 x 2, Passscheibe 8 x 14 | 1 | 8,00 | 8,00 |
-| Mechanik | Ballast 28 Scheiben M20, Filz, 6 Silikonfüße, Silikondämpfer | 1 | 6,00 | 6,00 |
-| Gehäuse | PLA schwarz 0,7 kg (Verbrauch) | 1 | 12,50 | 12,50 |
-| Gehäuse | PETG schwarz 0,65 kg (Verbrauch) | 1 | 13,00 | 13,00 |
-| Gehäuse | PETG natur 15 g | 1 | 0,50 | 0,50 |
-| Gehäuse | Zuschlag 20 Prozent Fehldrucke | 1 | 5,20 | 5,20 |
-| Gehäuse | Rauchacryl 2 mm, Zuschnitte | 1 | 8,00 | 8,00 |
-| Finish | Füllgrund-Spray | 1 | 8,00 | 8,00 |
-| Finish | Lack schwarz hochglanz | 1 | 8,00 | 8,00 |
-| Finish | Lack schwarz seidenmatt | 1 | 8,00 | 8,00 |
-| Finish | Nassschleifpapier 240/400/800 | 1 | 4,00 | 4,00 |
-| Finish | Gold-Anreibewachs (Rub n Buff Gold Leaf), Ausbessern mit vorhandenem Lackmarker | 1 | 8,00 | 8,00 |
-| Startpaket | Spritze 60 ml Katheteransatz (6 im Gerät, 5 Reserve), Apotheke 1,50 bis 3,00 | 11 | 2,00 | 22,00 |
-| Startpaket | Silikon-Entenschnabelventile, 20 Stück | 1 | 5,00 | 5,00 |
-| Startpaket | Portionsbecher 60 ml mit Deckel, 100 Stück | 1 | 6,00 | 6,00 |
-| Startpaket | Schwammtücher (3er), Mikrofasertuch | 1 | 3,00 | 3,00 |
-| Farbe | Studienacryl 500 ml (C, M, Y, K, Titanweiß je 1), je Flasche 8 bis 14 | 5 | 10,00 | 50,00 |
+| Elektronik | ESP32 DevKit 30 Pin | 1 | 6.00 | 6.00 |
+| Elektronik | TMC2209 StepStick | 2 | 5.00 | 10.00 |
+| Elektronik | NEMA 17, 34 mm, etwa 0,26 Nm (Stößel) | 1 | 9.00 | 9.00 |
+| Elektronik | NEMA 17 Pancake 23 mm (Karussell) | 1 | 8.00 | 8.00 |
+| Elektronik | Wägezelle 500 g mit HX711 | 1 | 5.00 | 5.00 |
+| Elektronik | Hall A3144, Magnet 5 x 2, 4,7 kΩ, 100 nF | 1 | 1.50 | 1.50 |
+| Elektronik | Mikroschalter | 1 | 1.00 | 1.00 |
+| Elektronik | Reed-Kontakt mit Magnet | 1 | 1.00 | 1.00 |
+| Elektronik | 2 x 100 µF, 10 kΩ, 1 kΩ | 1 | 0.50 | 0.50 |
+| Elektronik | Netzteil 12 V 3 A mit Einbaubuchse | 1 | 9.00 | 9.00 |
+| Elektronik | Step-down MP1584 5 V 1 A | 1 | 1.00 | 1.00 |
+| Elektronik | Lochraster 70 x 90, Buchsenleisten, Klemmen, JST, Silikonlitze | 1 | 7.00 | 7.00 |
+| Mechanik | T8-Spindel Steigung 2, 200 mm, Messingmutter | 1 | 6.00 | 6.00 |
+| Mechanik | Linearwelle Ø 10 h6 x 200 | 2 | 3.00 | 6.00 |
+| Mechanik | LM10LUU | 2 | 3.50 | 7.00 |
+| Mechanik | Welle Ø 8 h6 x 250 | 1 | 3.00 | 3.00 |
+| Mechanik | Kugellager 608, 10er-Pack | 1 | 4.00 | 4.00 |
+| Mechanik | Stellring Ø 8 | 3 | 1.00 | 3.00 |
+| Mechanik | GT2-Scheiben 20 Z (2 x Bohrung 5, 1 x Bohrung 8) | 1 | 5.00 | 5.00 |
+| Mechanik | GT2-Riemen geschlossen 158 und 210 | 1 | 4.00 | 4.00 |
+| Mechanik | Gewindestange M5 2 x 1 m, 30 Muttern M5, Passscheiben 5 x 10, Schraubensicherung | 1 | 5.00 | 5.00 |
+| Mechanik | Schrauben, 2 Gewindeeinsätze M4, 10 Magnete 6 x 2, 4 Stahlscheiben 8 x 0,5, Passscheibe 8 x 14 | 1 | 8.00 | 8.00 |
+| Mechanik | Ballast 28 Scheiben M20, Filz, 6 Silikonfüße, Silikondämpfer, Gummiauflage Ø 25 | 1 | 6.50 | 6.50 |
+| Gehäuse | PETG schwarz 1.343 kg (Verbrauch) | 1 | 26.86 | 26.86 |
+| Gehäuse | PETG Gold 0.035 kg (Verbrauch) | 1 | 0.98 | 0.98 |
+| Gehäuse | Rauch-PETG transparent 0.046 kg (Verbrauch) | 1 | 1.10 | 1.10 |
+| Gehäuse | Klar-PETG 0.024 kg (Verbrauch) | 1 | 0.48 | 0.48 |
+| Gehäuse | PETG weiß 0.040 kg (Verbrauch) | 1 | 0.80 | 0.80 |
+| Gehäuse | Zuschlag 20 Prozent Fehldrucke | 1 | 6.04 | 6.04 |
+| Kleber | 2K-Epoxid 25 ml, Sekundenkleber Gel, Isopropanol, Malerkrepp | 1 | 7.00 | 7.00 |
+| Startpaket | Spritze 60 ml Katheteransatz (6 im Gerät, 5 Reserve), Apotheke 1,50 bis 3,00 | 11 | 2.00 | 22.00 |
+| Startpaket | Silikon-Entenschnabelventile, 20 Stück | 1 | 5.00 | 5.00 |
+| Startpaket | Portionsbecher 60 ml mit Deckel, 100 Stück | 1 | 6.00 | 6.00 |
+| Startpaket | Schwammtücher (3er), Mikrofasertuch | 1 | 3.00 | 3.00 |
+| Farbe | Studienacryl 500 ml (C, M, Y, K, Titanweiß je 1), je Flasche 8 bis 14 | 5 | 10.00 | 50.00 |
 
-**Summen:** Elektronik 74,00, Mechanik 61,00, Gehäuse 39,20, Finish 36,00. **Gerät 210,20 Euro.** Mit Startpaket (36,00) **246,20 Euro.** Mit erster Farbe **296,20 Euro.** Mit 10 Prozent Puffer für Fehlkäufe rund 326 Euro. Filament ist nach Verbrauch gerechnet. Wer nichts vorrätig hat, kauft drei Spulen (PLA schwarz, PETG schwarz, PETG natur) für etwa 50 Euro statt 31,20, dann sind es mit Farbe etwa 315 Euro. Eine zweite Flasche Titanweiß (10 Euro) lohnt sich, weil Weiß doppelt so schnell verbraucht wird.
+**Summen:** Elektronik 59.00, Mechanik 57.50, Gehäuse 36.26 (Filament nach Verbrauch), Kleber 7.00. **Gerät 159.76 Euro** (Stand 5.1: 210,20). Mit Startpaket (36.00) **195.76 Euro.** Mit erster Farbe **245.76 Euro.** Mit 10 Prozent Puffer für Fehlkäufe rund 270 Euro. Wer kein Filament vorrätig hat, kauft zwei Spulen PETG schwarz 1 kg (40 Euro), je 250 g Gold (10), Rauch (9), Klar (8) und weiß (8), zusammen 75 Euro statt 36.26, dann sind es mit Farbe etwa 284 Euro. Matt-PETG für Körper und Krone ist die zweite schwarze Spule (Körper und Krone brauchen etwa 0.49 kg), wer nur eine Sorte hat, druckt alles glänzend. Eine zweite Flasche Titanweiß (10 Euro) lohnt sich, weil Weiß doppelt so schnell verbraucht wird.
+
+**Was gegenüber Stand 5.1 weg ist (Gerät):** LED-Ring 3,00, LED-Streifen 9,00, 74AHCT125 mit Zubehör 1,50 (Rest 0,50 bleibt), Step-down XL4015 3,00 (jetzt MP1584 1,00), Winkelstahl 4,00, Rauchacryl 8,00, Füllgrund 8,00, Lack hochglanz 8,00, Lack seidenmatt 8,00, Schleifpapier 4,00, Anreibewachs 8,00. **Neu:** Gold-, Rauch-, Klar- und Weiß-PETG, Kleber 7,00, Gummiauflage und Gewindeeinsätze im Sammelposten.
 
 **Sparpfad (Auswahlliste für Johann):**
 
-| Maßnahme | Ersparnis | Folge |
+| Maßnahme | Ersparnis (wo) | Folge |
 |---|---|---|
-| Reservespritzen später kaufen (nur 6 am Start) | 10,00 (Startpaket) | erster Tausch heißt umfüllen statt tauschen |
-| Seidenmatt-Lack weglassen, alles hochglanz | 8,00 (Gerät) | kein Matt-Glanz-Kontrast, Fingerabdrücke an Körper und Krone |
-| LED-Streifen weglassen (Opalring und Fenster bleiben dunkel) | 9,00 (Gerät) | kein Fortschrittsring, kein Vitrinenlicht, nur Bühnenlicht |
-| Vorhandene Schrauben, Magnete, Litze nutzen | etwa 5,00 (Gerät) | |
-| Schwammtücher aus dem Haushalt | 3,00 (Startpaket) | |
-| **Sparpfad gesamt** | **35,00** | Gerät 210,20 minus 22,00 = **188,20** (Ziel der Controllerin 175 bis 185 knapp verfehlt), Startpaket 36,00 minus 13,00 = 23,00, zusammen **211,20** |
-| zusätzlich Rauchacryl weglassen (Fenster und Portal offen) | 8,00 (Gerät) | Gerät 180,20, aber Staub auf den Spritzen, wirkt deutlich weniger edel |
+| Reservespritzen später kaufen (nur 6 am Start) | 10.00 (Startpaket) | erster Tausch heißt umfüllen statt tauschen |
+| Fensterscheiben (Klar-PETG) weglassen | 0.50 (Gerät) | Fenster offen, Staub auf den Spritzen, Farben besser sichtbar |
+| Vorhandene Schrauben, Magnete, Litze nutzen | 5.00 (Gerät) |  |
+| Schwammtücher aus dem Haushalt | 3.00 (Startpaket) |  |
+| **Sparpfad gesamt** | **18.50** | Gerät 159.76 minus 5.50 = **154.26**, Startpaket 36.00 minus 13.00 = 23.00, zusammen **177.26** |
 
-Nicht sparen an Wägezelle (Dosierkern), Füller und Lagern.
+Nicht sparen an Wägezelle (Dosierkern), Kleber und Lagern.
 
-**Laufende Kosten:** Farbe 0,016 bis 0,028 Euro je ml (8 bis 14 Euro je 500 ml), Becher 0,06 Euro, Ventile 0,25 Euro (einige im Jahr), Spritzen 5 bis 8 im Jahr aus der Apotheke, etwa 10 bis 20 Euro, Schwammtuch 0,15 Euro im Monat. Verschleißsatz alle 1 bis 2 Jahre etwa 15 Euro: Messingmutter T8, zwei LM10LUU, 10 Ventile, Schwammtücher. Die Silikonlippen der Kolben verschleißen mit der Spritze und werden mit ihr getauscht.
+**Laufende Kosten:** Farbe 0,016 bis 0,028 Euro je ml (8 bis 14 Euro je 500 ml), Becher 0,06 Euro, Ventile 0,25 Euro (einige im Jahr), Spritzen 5 bis 8 im Jahr aus der Apotheke, etwa 10 bis 20 Euro, Schwammtuch 0,15 Euro im Monat. Verschleißsatz alle 1 bis 2 Jahre etwa 15 Euro: Messingmutter T8, zwei LM10LUU, 10 Ventile, Schwammtücher. Die Silikonlippen der Kolben verschleißen mit der Spritze und werden mit ihr getauscht. Strom: Standby und Dosieren unter 15 W, ohne Licht kaum messbar.
 
-**Ehrliche Einordnung:** Gegen Bastelacryl rechnet sich das Gerät nie. Gegen fertig gemischte Farbtöpfchen (0,05 bis 0,15 Euro je ml) erst nach 1,9 bis 8,2 Litern Mischfarbe (246,20 Euro geteilt durch die Ersparnis je ml). Es ist ein Geschenk mit Farbtreffer, Wiederholbarkeit und Ritual, kein Sparprojekt.
+**Ehrliche Einordnung:** Gegen Bastelacryl rechnet sich das Gerät nie. Gegen fertig gemischte Farbtöpfchen (0,05 bis 0,15 Euro je ml) erst nach 1.5 bis 6.5 Litern Mischfarbe (195.76 Euro geteilt durch die Ersparnis je ml). Es ist ein Geschenk mit Farbtreffer, Wiederholbarkeit und Ritual, kein Sparprojekt.
 
 **Einkauf und Nachschub:** Elektronik und Mechanik in einer Sammelbestellung (AliExpress, etwa drei Wochen) oder teurer bei Amazon. Spritzen, Ventile und Becher immer aus mindestens zwei Quellen: Spritzen aus Apotheke oder Sanitätshaus (Katheterspritze 60 ml über Nacht bestellbar), Entenschnabelventile bei Amazon und Ali, Becher im Supermarkt oder Gastrobedarf. Farbe: Studienacryl 500 ml (Boesner Studio, Gerstaecker Studio oder ähnlich), keine Markenfarbe als Pflicht.
 
@@ -568,13 +630,13 @@ Nicht sparen an Wägezelle (Dosierkern), Füller und Lagern.
 - **Rückhub:** nach jeder Teilmenge 1,3 mm zurück (1 mm Druckentlastung plus Spindelspiel), kein Zurückziehen des Kolbens. Dosierstellung immer von oben anfahren.
 - **Fließende:** Gewichtszunahme unter 0,01 g/s über 1 s, Zeitgrenze 20 s.
 - **Becher- und Schubladenprüfung:** Reed geschlossen und Waage im Fenster leere Schublade plus 2 bis 15 g und ruhig, sonst keine Dosierung und Meldung „Schublade ganz schließen“.
-- **Licht:** 99 LEDs an einer Leitung: Index 0 bis 11 Bühne, 12 bis 23 Vitrine (Paar k bei Fenster k, in Ruhe warmweiß 10 Prozent, beim Dosieren die aktive Station hell), 24 bis 98 Lichtfuge (Index 24 bei θ 182,4, aufsteigend gegen den Uhrzeigersinn, 4,8 Grad je LED, Index 61 vorne). Helligkeit höchstens 30 Prozent. Ruhe: Fuge warmweiß atmen (2700 K). Dosieren: Bühne 4000 K, Fuge Zielfarbe als Fortschritt. Fertig: Fuge 3 s gold, Bühne Zielfarbe, nach 60 s ohne Aktion ausblenden. Einschalten: Farbverlauf durch die sechs Stationsfarben. Fehler: Bühne zweimal rot. Erinnerung Wasser: Fuge einmal am Tag kurz blau, wenn 28 Tage seit dem letzten Befeuchten vergangen sind (Startwert, nach der Messung am Prototyp anpassen, in der App quittieren). Erinnerung Lippen nach 15 Dosierungen.
+- **Kein Licht (Stand 6):** Die LEDs entfallen vollständig. GPIO 25 und die Bibliothek für WS2812 werden nicht mehr gebraucht, Helligkeitsgrenze, Lichtzustände und Farbverläufe entfallen. Fortschritt, „Fertig“, Fehler und die Erinnerungen (Wasser nach 28 Tagen als Startwert, Lippen nach 15 Dosierungen) zeigt nur die App. Optional ein aktiver Summer auf GPIO 25 für „Fertig“ und Fehler.
 - **Spülen:** nach mehr als 3 Tagen ohne Dosierung „Düsen spülen“ anbieten (0,3 g je Station in einen Spülbecher).
 - **Wechselmodus:** Station nach vorne, Stößel oben, Motoren halten, auf Bestätigung warten, dann Park.
-- **Gerätename:** Der Name im Kronenschild (Spitzname plus „Atelier“) als Seitentitel der Webseite, daneben die aktuelle Mischfarbe (Wunsch der Künstlerin).
+- **Gerätename:** Der Name im Kronenschild (Spitzname plus „Atelier“) als Seitentitel der Webseite, daneben die aktuelle Mischfarbe (Wunsch der Künstlerin). Ohne Licht am Gerät trägt die App die ganze Rückmeldung: großer Fortschrittsring in der Zielfarbe, „Fertig“ als eigener Bildschirm.
 - **Nochmal und Lieblingsmischungen:** letzte Mischung mit einem Tipp wiederholen, Mischungen mit Namen speichern.
 - **Weiß knapp:** Warnung, sobald W1 und W2 zusammen unter 20 ml liegen.
-- **Nicht mehr gültig aus Stand 4 und 5:** Kontakttaster im Stempel, Dosierung nach Strecke, 40 Vollschritte je Station, fünf Stationen, LED auf GPIO 5, g_per_ml-Kalibrierung von Hand, 48 LEDs, Kontaktschwelle 0,05 g, Rückhub 1 mm.
+- **Nicht mehr gültig aus Stand 4, 5 und 5.1:** Kontakttaster im Stempel, Dosierung nach Strecke, 40 Vollschritte je Station, fünf Stationen, LED auf GPIO 5 oder 25, alle LEDs und Lichtzustände (WS2812, `Adafruit_NeoPixel`, `LED_COUNT`, `LED_BRIGHTNESS`, `PIN_LED_RING`), g_per_ml-Kalibrierung von Hand, 48 LEDs, Kontaktschwelle 0,05 g, Rückhub 1 mm. Die Firmware in `firmware/` ist noch für fünf Spritzenpumpen mit LED-Ring geschrieben und muss auf Stand 6 umgebaut werden.
 
 ## 15. Kollisionsprüfungen mit Sollabstand
 
@@ -640,7 +702,7 @@ Die Schubladenfront folgt der Sockelkontur, eine rechteckige Front 70 breit wür
 
 Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--pruefung` erneut bestehen. Knapp sind: Schlitten und Wellenende gegen Platte (2,07), Laufring gegen Zylinder (2,50), Zuganker gegen Rollenbock und Platte (2,50), Rinnendeckel gegen Ventil (2,30), Motor 1 gegen LED-Träger (2,30), Muttern und Laschen gegen Körperwand (1,90, fest gegen fest). Wenn eine Spritzenmarke einen längeren Zylinder, einen dickeren Flansch oder einen Zylinder Ø 30,5 hat, verschiebt sich die Kette. Deshalb die Spritzenmessung (17.1) vor dem Druck der Teile 11 und 12.
 
-## 16. Rechnungen (Stand 5 aus fm5b.py und fm5d.py, geänderte Zeilen für Stand 5.1 von Hand nachgerechnet)
+## 16. Rechnungen (Stand 5 aus fm5b.py und fm5d.py, geänderte Zeilen für Stand 5.1 und 6 nachgerechnet)
 
 | Größe | Ergebnis |
 |---|---|
@@ -648,30 +710,29 @@ Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--p
 | Spindel T8 x 2 | Wirkungsgrad 0,36, 0,087 Nm für 100 N, bei 0,25 Nm 286 N, selbsthemmend (5,2 gegen 8,8 Grad). T8 x 4 wäre es nicht (10,3 Grad) |
 | Führungswellen Ø 10, 150 frei | Stempel senkt sich unter 100 N auf r 53 um etwa 0,22 mm, 27 MPa (Ø 8 wären 0,54 mm). Die Waage regelt das aus |
 | Moment am Schlitten | 5,3 Nm (100 N auf r 53), je LM10LUU-Ende etwa 66 N (C etwa 590 N) |
-| Ausleger Winkelstahl 40 x 40 x 4, 25 breit | waagrechter Schenkel: 100 N auf 25 mm Hebel = 2,5 Nm, W = 25 · 4² / 6 = 67 mm³, 38 MPa (S235: 235), Durchbiegung 0,02 mm. Einspannung: die obere M4 sitzt 34 mm über der Kippkante und zieht 2,5 Nm / 34 mm = 74 N, Pressung an der Kippkante auf der PETG-Fläche 25 x 4 etwa 1 MPa, ein M4-Gewindeeinsatz in PETG hält mehrere 100 N. Stand 5 hatte 6 mm Einspannung in einer Nut mit 400 bis 500 N Kantenlast |
+| Ausleger PETG (Platte 8, Arm 25 x 8, Stempelfuß Ø 25), liegend gedruckt | Auslegung auf die Haltekraft des Motors, nicht auf die Dosierkraft: 250 N (0,26 Nm, T8 x 2, Wirkungsgrad 0,3), StallGuard schaltet früher ab. Biegung am Plattenrand: 250 N · 17 mm = 4250 N·mm, W = 25 · 8² / 6 = 266.7 mm³, **15.9 MPa** (PETG in der Schichtebene etwa 45 MPa Annahme, Sicherheit 2.8; bei 150 N 9.6 MPa). Durchbiegung am Stempel bei 100 N 0.08 mm (E = 2000 MPa, ohne Rippen gerechnet). Kippmoment 250 N · 25 mm = 6250 N·mm, oberer M4-Einsatz im Abstand 32 zur Kippkante: Zug **195 N** (117 N bei 150 N), ein M4-Messing-Gewindeeinsatz in PETG hält mehrere 100 N. Pressung an der Kippkante 250 + 195 N auf 25 x 3 mm = 5.9 MPa. Das Teil liegt beim Druck auf der Seite, damit die Last in der Schichtebene und nicht quer zu den Schichten (etwa 30 MPa) liegt. **Muss am Prototyp mit 250 N (Kofferwaage am Stempel, Hebel) bestätigt werden;** hält er nicht, Rippen höher und Arm 10 dick (Z-Spiel zum Schlitten bleibt, Prüfung 15) |
 | Flanschauflage | Stempel auf r 53, die Auflage des Flansches reicht an den Seiten bis r 57: die Kraft liegt 4 mm innerhalb, kein Kippmoment aus der Auflage |
 | Zuganker M5 | 1,8 MPa in der Stange, 1,5 MPa unter der Mutter in der PETG-Tasche |
 | Karussell | 0,75 kg mit sechs vollen Spritzen, Trägheit 0,0031 kg m². Beschleunigen 0,031 Nm, Rollreibung plus zwei Lippen 0,031 Nm, am Motor nach 1 : 3,5 0,018 Nm. Pancake bei 0,4 A etwa 0,05 Nm, Reserve etwa 2,8-fach, bei 0,6 A etwa 4-fach (Stand 5 rechnete mit dem Haltemoment bei Nennstrom und kam auf 7-fach) |
 | Reibung prüfen | Kofferwaage am Plattenrand (r 85,5): unter 0,58 N bedeutet unter 0,05 Nm (Muss der Controllerin, Pflicht in 17.3) |
-| Lichtfuge | 75 LED auf r 83,6, Teilung 6,94 (144/m), Abstand LED zu Opalring 11,3, Verhältnis 1,6 (Ziel über 1). Mit 60/m passen auf diesen Umfang nur 31 LED (Stand 5 rechnete 36 auf 600 mm Streifen, der Ring hatte nur 546 mm Umfang) |
 | Rollen | vordere Rollen bei ± 25,7 tragen beim Dosieren zusammen etwa 102 N, 608 statisch 1370 N |
 | Riemen | GT2 20 : 70 mit 210 mm bei Achsabstand 57,8; GT2 20 : 20 mit 158 mm bei 59 |
 | Durchfluss, 10 ml bei 100 N (Poiseuille, 15 Prozent Ventilverlust) | Katheter 3,5 x 20: 7 s bei 20 Pa·s, 18 s bei 50, 36 s bei 100. Luer 2,0 x 12: 40, 101 und 201 s |
 | Masse | etwa 3,8 kg mit 0,48 kg Ballast, Schwerpunkt etwa Z 190 (geschätzt: Krone 7,5 höher, Ballast 20 g leichter als Stand 5) |
 | Kippen | sechs Füße auf r 92, ungünstigste Richtung zwischen zwei Füßen r 79,7: Kippwinkel 23 Grad, seitliche Kippkraft oben (Z 407) 7,3 N, Kabelzug an der Buchse (Z 30) erst ab 99 N. Ohne Ballast Schwerpunkt etwa Z 215 |
-| Strom | 99 LEDs bei 30 Prozent höchstens 1,8 A, 5 V gesamt etwa 2,1 A, 12 V gesamt etwa 1,6 A von 3 A |
-| Druck | Filament 1,39 kg netto, 1,65 kg mit Zuschlag, 90 bis 130 Stunden |
+| Druck | Filament 1,49 kg netto, 1,79 kg mit Zuschlag (Abschnitt 12), 90 bis 130 Stunden. Gold-PETG nur 35 g, die Goldteile sind in Minuten gedruckt |
+| Strom | Motoren 0,5 bis 0,65 A bei 12 V, ESP32 und Sensoren etwa 0,3 A bei 5 V, aus 12 V gesamt unter 1,2 A von 3 A. Ohne LEDs kein 5-A-Wandler nötig |
 
 ## 17. Bauplan in sicheren Schritten
 
 1. **Spritzen messen:** drei Marken (BD, Omnifix, eine aus der Apotheke vor Ort). Flansch (Länge, Breite, Dicke, Eckradius), Kolbenplatte Ø, Zylinder außen, Länge Flansch bis Zylinderende, Konuslänge, Hub bei 50 ml. Werte in dieses Blatt, in `render_farbmischer.py` und in `farbmischer.scad` eintragen und `--pruefung` laufen lassen. Vor dem Druck der Teile 11 und 12.
 2. **Ventiltest (Pflicht vor dem Hüllendruck):** fünf gefüllte Spritzen mit Ventil zwei Wochen lang senkrecht über einem feuchten Schwammstreifen lagern, jeden zweiten Tag 1 g drücken. Ventil öffnet, schließt, tropft nicht, verklebt nicht? Rückfallebene: offene Silikondüse (Schlauch 4 x 6, 6 lang), die Rinne übernimmt dann allein das Feuchthalten. Parallel die Rinne mit Deckel und nassem Schwamm zwei Wochen stehen lassen und wiegen: daraus folgt das echte Nachfüllintervall.
-3. **Funktionsprobe:** Karussellplatte, Rollenböcke, Laufring, Lagerbock, Grundplatte, Zuganker, Brücke, Schlitten mit Ausleger drucken und ohne Hülle aufbauen. Mit Wasser und dann mit Farbe dosieren und wiegen, Drehreibung mit der Kofferwaage messen (Pflicht), Rundlauf der Rollen prüfen (Laufring über Beilagen justieren). Bei 100 N beobachten, ob die Spritze im Flansch kippt. Lautstärke mit einer Handy-App in 1 m messen.
+3. **Funktionsprobe:** Karussellplatte, Rollenböcke, Laufring, Lagerbock, Grundplatte, Zuganker, Brücke, Schlitten und gedruckten Ausleger (liegend, 100 Prozent) drucken und ohne Hülle aufbauen. Den Ausleger zuerst mit Gewicht oder Kofferwaage auf 250 N belasten und die Durchbiegung messen. Mit Wasser und dann mit Farbe dosieren und wiegen, Drehreibung mit der Kofferwaage messen (Pflicht), Rundlauf der Rollen prüfen (Laufring über Beilagen justieren). Bei 100 N beobachten, ob die Spritze im Flansch kippt. Lautstärke mit einer Handy-App in 1 m messen.
 4. **Waage und Schublade:** Podest, Schienen, Schublade, Überlastanschlag. Kufenluft 0,5 ± 0,2 mit der Fühlerlehre einstellen. Stabilität der Waage bei laufenden Motoren prüfen, Rauschen messen (Kontaktschwelle 0,2 g bestätigen), mit Druck auf die Front und schief stehendem Becher testen, ob die Warnung kommt.
 5. **Pappattrappe (Pflicht vor dem ersten Hüllendruck):** Rohr Ø 196 x 407 schwarz, Kappe Ø 204 x 66, eine Woche auf ihren Schreibtisch (das Geschenk verraten Johann und eine Freundin zur Not als „Lampe in Planung“). Wirkt es zu mächtig, die Krone um bis zu 7 mm kürzen: dafür die Naben der GT2-Scheiben auf 1 mm abdrehen und die Scheiben mit Madenschraube M3 im Zahnkranz sichern (Abschnitt 18).
-6. **Lichtfugen-Muster:** ein Ringsegment 60 mm (Wand 1,2, innen matt) und ein Trägerstück r 83,5 mit 9 LEDs drucken und im Dunkeln ansehen. Sind Punkte zu sehen, innen eine Lage Pergamin einlegen.
-7. **Probestücke:** zwei Ringe lackieren und vergolden, ein Namensschild drucken und vergolden. Dann die Hüllen drucken und lackieren.
-8. **Dokumente nachziehen:** README (Stückliste nach Abschnitt 13) und Netzliste (zwei Treiber mit UART, HX711 an 3,3 V, Pegelwandler, 99 LEDs an einer Leitung).
+6. **Rauchscheibe und Klarscheibe:** eine Portalscheibe-Hälfte (120 x 78 x 2) und eine Fensterscheibe (26 x 76 x 1,6) in Rauch- und Klar-PETG drucken, vor Fenster und Lampe halten. Reicht die Durchsicht, weiter. Sonst Temperatur und Geschwindigkeit ändern, dünner drucken (1,2 mm) oder Scheiben weglassen (Fenster offen).
+7. **Probestücke:** Goldring und ein Stück Portalrahmen (`rahmen_oben`) drucken, anlegen, biegen, auf ein Probestück der Hülle kleben (Ring 60 x 30 mit einer Leiste). Namensschild zweifarbig drucken (Filamentwechsel bei 0,6) und in eine Probe-Krone kleben. Dann die Hüllen drucken und die Goldteile aufkleben.
+8. **Dokumente nachziehen:** README ist auf Stand 6 (Stückliste nach Abschnitt 13). Die Netzliste in `electronics/` gehört zum Fünf-Motor-Entwurf und braucht für dieses Gerät eine neue Fassung (zwei Treiber mit UART, HX711 an 3,3 V, ohne LEDs und ohne Pegelwandler), oder Lochraster nach Abschnitt 9.
 
 ## 18. Risiken
 
@@ -683,15 +744,21 @@ Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--p
 | Waage driftet oder sieht Motorvibration | nur im Stillstand messen, Tara vor jeder Farbe, Silikonentkopplung, HX711-Leitungen kurz |
 | Schublade berührt beim Wiegen die Schienen | Rampe mit 1 mm Absenkung, Kufenluft 0,5 ± 0,2 über Beilagen eingestellt, Tara-Fenster und Ruheprüfung in der Firmware |
 | Schwamm trocknet aus oder schimmelt | Deckel, Erinnerung (Start 28 Tage, nach Messung anpassen), Streifen alle 2 bis 3 Monate tauschen, ein Tropfen Essig ins Wasser |
-| Lack auf FDM wirkt nicht | Probestück, Füller und Schliff ernst nehmen, eher drei Abende als zwei |
+| Rauch- oder Klar-PETG druckt trüb | Scheiben dünn drucken (1,2 mm), langsam und heiß, Außenseite auf glattem Blech; sonst Scheiben weglassen. Die Sichtbarkeit der Farben im Fenster hängt am Raumlicht |
+| Gold-Leisten lösen sich oder biegen nicht sauber | zuerst Probestück (17.7), Epoxid statt Sekundenkleber, Malerkrepp als Klemme, Leisten warm (Haartrockner) biegen. Rückfallebene Messingband 4 mm |
+| Teilungsfuge Z 235 wirkt unsauber | Fasen 0,5 prüfen, Epoxid nicht in die V-Nut laufen lassen (Malerkrepp). Fuge ist gewollt, ein Versatz der Hälften über 0,3 mm fällt auf, deshalb beim Kleben auf einer ebenen Platte ausrichten |
+| Gedruckter Ausleger biegt oder bricht | Auslegung 16 MPa bei 250 N, liegend gedruckt, 100 Prozent Füllung. Rückfallebene: Winkelstahl 40 x 40 x 4 (Stand 5.1), Platte und Löcher sind gleich |
+| PETG-Hülle fadenzieht oder zeigt Z-Naht | Filament trocknen, Retraktion prüfen, Naht hinten bei θ 180 |
 | Höhe 407 wirkt zu hoch | Pappattrappe; Krone bis 7 mm kürzer nur mit abgedrehten GT2-Naben und Madenschraube im Zahnkranz (fummelig, deshalb nicht der Normalfall) |
-| Lichtfuge zeigt Punkte | 144/m, 11 mm Abstand, matter Opalring, Musterstück 17.6, Pergamin als zweite Lage |
 | Spritze kippt im Flansch | Stempel auf r 53, Beobachtung in 17.3 |
 | Gerät zu laut für die WG | StealthChop, Dämpfer, Messung in 17.3 |
-| Kosten über dem Wunsch der Controllerin | ehrlich ausgewiesen, Sparpfad auf 188 (Gerät) |
+| Kosten über dem Wunsch der Controllerin | Gerät liegt in Stand 6 deutlich unter 175 bis 185 (Abschnitt 13), Startpaket und Farbe kommen dazu |
 | Kein Teil ist bisher gebaut | Schritte 17.1 bis 17.4 vor jeder Hülle |
 
 ## 19. Wie die Kritik der vier Rollen abgedeckt ist
+
+*Stand 6, kurz:* Die Absätze unten sind die Abnahme von Stand 5.1. Von ihnen gelten Maße, Mechanik und Kollisionen unverändert, Oberfläche, Licht und Gold sind durch Stand 6 ersetzt (Abschnitt 0). Kosten-Controllerin: Gerät unter dem Ziel, keine Spritzgussteile, keine Lacke. Produktdesignerin: Goldlinien sind jetzt Gold-PETG-Teile, die Teilungsfuge ist gewollt und sichtbar, die Hülle verliert den Lack-Hochglanz an Körper und Krone, Sockel und Front bleiben glänzend. Ingenieur: der Ausleger ist das einzige tragende Teil, das von Stahl auf PETG wechselt, mit Nachweis in Abschnitt 16 und Rückfallebene Winkelstahl. Künstlerin: der Verlust ist das Licht (Fenster und Bühne leuchten nicht mehr), dafür sieht sie die Farben klar im Tageslicht und der Becher steht auf Weiß. Das ist der Preis des Wunsches nach PETG ohne LED.
+
 
 **Kosten-Controllerin:** ehrliche Rechnung in drei Stufen (210, 246, 296) plus Filament-Neukauf und Puffer, Sparpfad als Liste mit richtiger Summe, Amortisation korrigiert (1,9 bis 8,2 Liter gegen Fertigmischung, gegen Bastelacryl nie). Apothekenpreis für Spritzen, realistische Druckzeit, Verschleißsatz. Wand 4 Perimeter, 0 Prozent Infill an den Schalen, Rippen 1,2 x 8. Ballast 0,48 kg. Rollen 608 statt Kugeln, Reibung unter 0,05 Nm messbar. Nachschub nur Standardware aus mindestens zwei Quellen. Lochraster, keine Fünf-Motor-Platine, keine Kupplungen, kein Messing. Kein Teil über Ø 204.
 
@@ -714,5 +781,8 @@ Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--p
 | Ventil | Ø 9 x 10 | Ventilabstand, Lippenhöhe |
 | Pancake-Motor Wellenlänge | 20 | Höhe des Motorwinkels |
 | GT2-Scheibe Höhe | 16 | Kronenhöhe |
-| LED-Streifen Breite und Teilung | 10, 6,94 | LED-Träger, Anzahl 75 |
 | Mutter M5 Schlüsselweite | 8 | Abstand zur Körperwand (1,9) |
+| Schwund PETG bei diesem Filament | 0,3 bis 0,5 Prozent | Lagersitze 608 (Ø 22,1), LM10LUU-Bohrung (Ø 19,2), Stationstaschen |
+| Biegung der Goldleisten | 1,5 dick bei r 98 | Rahmenleisten, Goldring (am Probestück prüfen) |
+| Transmission Rauch- und Klar-PETG | etwa 40 bis 50 Prozent, milchig | Portalscheibe, Fensterscheiben |
+| Ausleger unter 250 N | 16 MPa, 0,08 mm bei 100 N | Rippenhöhe, Armdicke |

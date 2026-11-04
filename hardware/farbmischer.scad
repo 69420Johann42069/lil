@@ -1,7 +1,10 @@
 // ============================================================================
-// Farbmischer Stand 5.1: parametrisches OpenSCAD nach hardware/farbmischer_parameter.md
+// Farbmischer Stand 6: parametrisches OpenSCAD nach hardware/farbmischer_parameter.md
 // Ein schwarzer Flakon mit Goldlinien, Körper Ø 196, Fuß und Krone Ø 204, 406,8 hoch. Sechs 60-ml-Spritzen im
 // Karussell, ein fester Stößel in der Mitte, Wägezelle unter dem Becher, zwei Motoren.
+// Stand 6: kein Licht mehr (keine LEDs), alles aus PETG gedruckt, keine Nachbearbeitung mit Füller, Lack oder
+// Anreibewachs. Gold sind eigene gedruckte Teile aus Gold-PETG, Portalscheibe und Fensterscheiben sind gedruckt,
+// der Ausleger mit Stempel ist gedruckt statt Winkelstahl.
 //
 // Benutzung: Variable "teil" setzen (Liste unten) oder "montage" für die Gesamtansicht.
 // Alle Druckteile stehen in Druckorientierung auf Z = 0, Mitte bei X = 0, Y = 0.
@@ -18,15 +21,20 @@
 //  - Falz der Hüllenteile 3 x 0,7 (Zapfen und Muffe), die Körperhälften zusätzlich mit Klebering.
 //  - Spritzenablage: runde Taschen statt Fächer mit Farbmarken.
 //  - Kaufteile (Montage) sind Platzhalterkörper, keine Konstruktionsmodelle.
+//  - Portalrahmen: in der Montage als Haut über der Hülle, als Druckteil flach in der Abwicklung (Bogenlänge statt Sehne),
+//    wird beim Aufkleben gebogen. Der Ausleger mit Stempel liegt beim Druck auf der Seite (Y nach oben).
+//  - Portalscheibe in zwei Hälften (Bett 220), Überlappung Z 215 bis 219 mit halber Dicke.
 // ============================================================================
 
 // ---------- 0 Steuerung ----------
 teil = "montage";
-// Druckteile: sockel koerper_unten koerper_oben krone lichtfuge grundplatte lagerbock
-//   rinne rinnendeckel saeule abstreifhalter laufring karussell rollenbock schlitten stempel
-//   bruecke led_traeger gt2_rad schublade front podest led_ringhalter waegebock anschlag
+// Druckteile: sockel koerper_unten koerper_oben krone grundplatte lagerbock
+//   rinne rinnendeckel saeule abstreifhalter laufring karussell rollenbock schlitten ausleger
+//   bruecke gt2_rad schublade front podest waegebock anschlag
 //   motor2_winkel hallhalter platinenhalter kabelclip fugenhalter schiene zunge ablage
-//   buchsenring klebering namensschild
+//   klebering namensschild
+// Gold-PETG: goldring goldband kronenring rahmen_unten rahmen_seite rahmen_oben lippe buchsenring
+// Scheiben (Rauch- oder Klar-PETG): portalscheibe_unten portalscheibe_oben fensterscheibe
 // Ansicht: montage
 schnitt = 0;             // 1 = Montage in der XZ-Ebene aufgeschnitten (Y > 0 entfernt)
 kaufteile_zeigen = 1;    // 1 = Kaufteile als Platzhalter in der Montage
@@ -52,6 +60,7 @@ n_plaetze = 7;
 teilung = 360 / n_plaetze;                    // 51,4286 Grad
 st_r = 57;                                    // Stationsradius (Spritzenachse)
 fenster_winkel = [1, 2, 3, 4, 5, 6];          // Platz 1 bis 6 haben Spritze und Fenster
+stationsbuchstabe = ["W", "Y", "M", "C", "K", "W"];   // Platz 1 Weiß 1, 2 Gelb, 3 Magenta, 4 Cyan, 5 Schwarz, 6 Weiß 2
 
 // ---------- 3 Kaufteile, Maße [MESSEN] ----------
 sp_ro = 15;                    // [MESSEN] Zylinder außen Ø 30
@@ -75,7 +84,7 @@ becher_h = 33;                 // [MESSEN] Becher Höhe
 becher_max_d = 63;             // Hüllmaß für Ersatzbecher
 zelle_l = 80; zelle_b = 12.7; zelle_h = 12.7;   // [MESSEN] Wägezelle 500 g, Lochabstand M4 prüfen
 nema_b = 42.3;                 // [MESSEN] NEMA 17 Kantenlänge
-nema_l1 = 34;                  // NEMA 17 Stößel, 34 mm (LED-Träger darunter bleibt frei)
+nema_l1 = 34;                  // NEMA 17 Stößel, 34 mm
 nema_l2 = 23;                  // NEMA 17 Pancake Karussell
 pancake_welle = 20;            // [MESSEN] Wellenlänge Pancake
 lager608_d = 22; lager608_t = 7; lager608_i = 8;
@@ -85,7 +94,6 @@ pass_t = 0.5;                  // Passscheibe 8 x 14 x 0,5 unter der Scheibe
 gt2_h_nutz = 8;                // Zahnkranz mit Bund in der Riemenebene
 mutter_fl_d = 22; mutter_fl_t = 3.5; mutter_d = 10.2; mutter_l = 15;   // [MESSEN] Messingmutter T8
 stellring_d = 16; stellring_h = 8;
-led_ring_da = 50; led_ring_di = 36; led_ring_t = 3;
 schalter_l = 20; schalter_b = 10; schalter_h = 6;      // [MESSEN] Mikroschalter
 
 // ---------- 4 Höhenkette (Z) ----------
@@ -95,8 +103,7 @@ z_gp0 = 3; gp_t = 4; z_gp1 = z_gp0 + gp_t;           // Grundplatte 3 bis 7
 gp_rippe_h = 8;                // Rippen bis Z 15
 z_rippe1 = z_gp1 + gp_rippe_h;
 z_zelle0 = 7.5; z_zelle1 = z_zelle0 + zelle_h;       // 20,2
-z_led0 = 20.7; z_led1 = z_led0 + led_ring_t;         // LED-Ring Z 20,7 bis 23,7 (Kaufteil 3 dick)
-z_podest0 = 24.4; podest_t = 1.6; z_podest1 = z_podest0 + podest_t;   // 24,4 bis 26
+z_podest0 = 24.4; podest_t = 1.6; z_podest1 = z_podest0 + podest_t;   // 24,4 bis 26 (Stiel Ø 14 steht frei, der Platz des LED-Rings ist leer)
 z_schub0 = 26; schub_boden = 1.5; z_becher0 = z_schub0 + schub_boden;   // 27,5
 z_becher1 = z_becher0 + becher_h;                    // 60,5
 // Spritze
@@ -124,11 +131,16 @@ schl_r = 34; schl_u = 10; schl_o = 48; schl_h = schl_u + schl_o;   // 58
 schl_tasche_d = 23; schl_tasche_t = 12.5;
 schl_bohr_d = 19.2;            // Ø 19 H7 für LM10LUU, gedruckt mit Zuschlag
 mutter_oben = 35.5;            // Mutter Körper endet bei S + 35,5
-arm_x0 = 28; arm_x1 = 68; arm_b = 25; arm_t = 4; arm_z0 = 8;       // Ausleger Winkelstahl 40 x 40 x 4, waagrechter Schenkel
-winkel_h = 40;                 // senkrechter Schenkel Z S + 8 bis S + 48 an der Schlittenfläche X 28
-winkel_schraube_z = [16, 42];  // 2 x M4 in Gewindeeinsätzen, Z relativ zu S
+// Stand 6: Ausleger mit Stempel aus einem Stück PETG (liegend auf der Seite gedruckt, L-Profil in jeder Schicht)
+arm_x0 = 28; arm_x1 = 68; arm_b = 25; arm_z0 = 8;     // Ausleger: X 28 bis 68, Y +-12,5, Unterkante S + 8
+arm_t = 8;                     // waagrechter Arm 8 dick (Z S + 8 bis S + 16)
+platte_dick = 8;               // senkrechte Platte X 28 bis 36 an der Schlittenfläche
+winkel_h = 40;                 // senkrechte Platte Z S + 8 bis S + 48
+rippe_b = 3; rippe_h = 20; rippe_l = 22;               // zwei Stützrippen je 3 dick bei |Y| 9,5 bis 12,5
+winkel_schraube_z = [24, 40];  // 2 x M4 in Gewindeeinsätzen, Z relativ zu S (Hebel 32 zur Kippkante)
 einsatz_m4_d = 5.6; einsatz_m4_t = 8;
-stempel_d = 28; stempel_t = 6; gummi_t = 2; stempel_x = 53;      // 4 mm innen von der Spritzenachse (Flanschauflage)
+stempel_d = 25; stempel_t = 6; gummi_t = 2; stempel_x = 53;      // Stempel Ø 25 am Ausleger, 4 mm innen von der Spritzenachse (Flanschauflage)
+kraft_max = 250;               // N, Haltekraft des Motors 1 am T8 (0,26 Nm, Wirkungsgrad 0,3), StallGuard schaltet früher ab
 // Brücke und Krone
 z_m1_0 = 346.8; m1_l = nema_l1; z_br0 = z_m1_0 + m1_l;   // 380,8
 br_t = 7; z_br1 = z_br0 + br_t;                          // 387,8
@@ -152,7 +164,7 @@ scheibe_t = 2; scheibe_x = 90.5; falz_b = 3;
 pad_b = 3;                     // Hinterlegung des Scheibenfalzes innen (Breite über den Falz hinaus)
 fenster_b = 22; fenster_z0 = 108; fenster_z1 = 180; fenster_zm = fenster_z1 - fenster_b / 2;   // Bogenmitte 169, ganz unter dem Laufring
 fenster_streifen_b = 26; fenster_streifen_h = 76; fenster_fuge = 1; fenster_fuge_t = 1;
-fenster_pad_b = 32; fenster_pad_h = 78; fenster_pad_x = 94.6;  // Rahmen für den Acrylstreifen
+fenster_pad_b = 32; fenster_pad_h = 78; fenster_pad_x = 93.8;  // Rahmen für die gedruckte Fensterscheibe (Scheibe liegt bei X 94,0 bis 95,6)
 griff_b = 24; griff_z0 = 20; griff_z1 = 80; griff_t = 8; griff_r = 4;
 buchse_z = 30; buchse_d = 8.2; buchsenring_d = 16;
 krone_fase = 6;
@@ -160,13 +172,14 @@ krone_fase = 6;
 zug_r = 90.5; zug_winkel = [32, -32, 2.5 * teilung, -2.5 * teilung]; zug_d = 5; zug_loch = 5.5;   // hinten mittig zwischen zwei Fenstern
 mutter_m5_af = 8; mutter_m5_h = 4;        // DIN 934 in Sechskanttaschen, Schlüsselfläche radial außen, keine Karosseriescheiben
 lasche_r1 = 94.5;                          // Ende der Laufringlaschen
-// Lichtfuge, LED
-fuge_wand = 1.2;               // Opalring, innen matt geschliffen
-led_traeger_r0 = 82; led_traeger_r1 = 83.5; z_led_tr0 = 334.5; z_led_tr1 = 344.5;
-led_oben = 85.5;               // Oberkante der LEDs (Streifen 144/m)
-led_teilung = 1000 / 144; n_led_fuge = floor(2 * PI * (led_traeger_r1 + 0.15) / led_teilung);   // 75
-led_steg_r = 80.75;
-led_steg_winkel = [105, 225, 345];
+// Gold (Gold-PETG): Goldring, Goldband, Kronenring, Portalrahmen, Lippe
+goldring_r1 = 101; goldring_gap = 39;         // Goldring Ø 202, am Portal offen (|Y| < 39)
+kr_ring_dr = 2;                // Kronenring, waagrechte Dicke der Fase (1,4 senkrecht gemessen)
+rahmen_t = 1.5; rahmen_bb = 3; rahmen_n = 12;  // Portalrahmen: 1,5 erhaben, 3 breit
+rahmen_naht_unten = 97;        // Bühnenrahmen endet am Goldring
+rahmen_hw_scheibe = 39.4;      // Fensterrahmen beginnt 0,4 außerhalb der Falzkante (Scheibe 78 + 2 x 0,2 Spiel)
+scheibe_zt = 217; scheibe_ov = 4;             // Portalscheibe in zwei Teilen, Überlappung 4 mm vor der Karussellplatte
+fenster_streifen_t = 1.6;      // Fensterscheibe, Klar-PETG
 // Krone innen
 lug_winkel_magnet = [0, 90, 180, 270];
 lug_winkel_stift = [45, 225];
@@ -194,7 +207,7 @@ ues_luft = 0.8; ues_tasche_t = 1.5;
 podest_stiel_d = 14; podest_d = 60;
 // Schublade
 schub_b = 70; schub_wand = 2; schub_x0 = 22; schub_x1 = 110; schub_z1 = 45;   // Vorderkante folgt der Front (siehe t_schublade)
-sitz_du = 48; sitz_do = 52; sitz_h = 3; sitz_da = 56; opalfenster_d = 50;   // Bechersitz konisch
+sitz_du = 48; sitz_do = 52; sitz_h = 3; sitz_da = 56;   // Bechersitz konisch
 front_b = 68; front_z0 = 17; front_z1 = 45; front_t = 8; lippe_b = 3; lippe_h = 1.5;
 auszug = 50;
 schiene_y0 = 32; schiene_y1 = 35;   // KORRIGIERT: Blatt nennt 35 bis 39, dort liegt nichts unter der Schublade (Wand 33 bis 35)
@@ -270,8 +283,6 @@ mutter_wand = koerper_ri - (zug_r + mutter_m5_af / 2);      // 1,9 Schlüsselfl�
 lasche_wand = koerper_ri - lasche_r1;                       // 1,9
 zug_platte = zug_r - zug_d / 2 - platte_r;                  // 2,5 Zuganker gegen Karussellplatte
 zug_bock = zug_r - zug_d / 2 - bock_r1;                     // 2,5 Zuganker gegen Rollenbock (Außenbogen)
-zug_led = zug_r - zug_d / 2 - led_oben;                     // 2,5 Zuganker gegen LED-Oberkante
-motor1_led = z_m1_0 - z_led_tr1;                            // 2,3 Motor 1 über dem LED-Träger
 // seitlicher Abstand Zuganker zum Fensterstreifen (nächstes Fenster: vorne 19,4 Grad, hinten 25,7 Grad)
 zug_fenster_quer = min(zug_r * sin(teilung - 32), zug_r * sin(0.5 * teilung));
 zug_streifen = zug_fenster_quer - zug_d / 2 - fenster_streifen_b / 2;   // 14,6
@@ -281,6 +292,12 @@ riemen_frei = z_deckel_u - z_riemen1;                       // 8,5
 gt2_ueberstand = z_gt2_oben - z_deckel_u;                   // -0,5: Scheibe in voller Höhe unter dem Kronendeckel
 rdeckel_ventil = z_vent_spitze - z_rdeckel1;                // 2,3
 stempel_versatz = st_r - stempel_x;                         // 4: Kraft innerhalb der Flanschauflage
+// Ausleger aus PETG: Biegespannung an der Wurzel (Arm 25 x 8, ohne die Rippen gerechnet) und Zug im oberen Schraubenpaar
+ausleger_hebel = stempel_x - (arm_x0 + platte_dick);        // 17 vom Plattenrand zur Stempelmitte
+ausleger_sigma = kraft_max * ausleger_hebel / (arm_b * arm_t * arm_t / 6);   // 15,9 MPa bei 250 N
+schraube_zug = kraft_max * (stempel_x - arm_x0) / (winkel_schraube_z[1] - arm_z0);   // 195 N am oberen Einsatz
+ausleger_fuss_unten = arm_z0 - stempel_t;                   // Stempel Z S + 2 (mit Gummi 2 mm bis S)
+stempel_kp = sp_kp_d / 2 - (stempel_x - st_r + stempel_d / 2) ;   // Stempel liegt innerhalb der Kolbenplatte Ø 38 (Rest zum Plattenrand)
 tasche_rinne_becher = st_r * sin(rinne_offen);              // Rinnenende gegen Becherrand seitlich
 becher_rinne_luft = tasche_rinne_becher - becher_do / 2;    // 4,1
 rinne_ventil_luft = (rinne_r1 - wand) - (st_r + vent_d / 2);   // Ventil gegen Außenwand der Rinne
@@ -289,8 +306,6 @@ welle_len = (z_br0 + welle_einsp) - welle_z0;               // 170 Führungswell
 rolle_oben = bock_achse_z + lager608_d / 2;                 // Rolle Oberkante 210,5
 schiene_balken_u = schiene_z1 - schiene_balken_t;           // 22,5
 schiene_zelle = schiene_balken_u - z_zelle1;                // 2,3
-led_podest_luft = z_podest0 - z_led1;                       // 0,7
-led_zelle_luft = z_led0 - z_zelle1;                         // 0,5
 platine_ecke = sqrt(45 * 45 + (abs(platine_y) + 1) * (abs(platine_y) + 1));
 platine_luft = koerper_ri - platine_ecke;                   // 2,9 (Hülle Z 97 bis 100 innen mindestens r 96,4)
 // Hüllmaße der Druckteile (Breite, Tiefe, Höhe in Druckorientierung)
@@ -298,7 +313,9 @@ hm_sockel = [d_sock_u, d_sock_u, (z_ring1 + falz_h) - z_sock0];
 hm_koerper_unten = [koerper_d + 2 * rahmen_h, koerper_d + 2 * rahmen_h, (z_kor_teil + falz_h) - z_kor0];
 hm_koerper_oben = [koerper_d + 2 * rahmen_h, koerper_d + 2 * rahmen_h, z_kor1 - z_kor_teil];
 hm_krone = [krone_d, krone_d, z_hoehe - z_kr0];
-hm_lichtfuge = [koerper_d, koerper_d, (z_fuge1 + falz_h - 1) - (z_kor1 - 2)];
+hm_goldband = [koerper_d, koerper_d, 7];
+hm_goldring = [2 * goldring_r1, 2 * goldring_r1, z_ring1 - z_ring0];
+hm_kronenring = [krone_d, krone_d, krone_fase];
 hm_grundplatte = [2 * gp_r, 2 * gp_r, z_rippe1 - z_gp0];
 hm_rinnendeckel = [2 * rinne_r1, rinne_r1 + rinne_r0, rdeckel_t];
 hm_klebering = [koerper_d, koerper_d, 8];
@@ -311,15 +328,16 @@ hm_laufring = [2 * lasche_r1, 2 * lasche_r1, z_lr1 - z_lr0];
 hm_karussell = [2 * platte_r, 2 * platte_r, z_platte1 - nabe_z0];
 hm_rollenbock = [2 * bock_halb, bock_r1 - bock_r0, z_platte0 - bock_z0];
 hm_schlitten = [2 * schl_r, 2 * schl_r, schl_h];
-hm_stempel = [stempel_d, stempel_d, stempel_t];
+hm_ausleger = [arm_x1 - arm_x0, arm_b, (arm_z0 + winkel_h) - gummi_t];   // liegt auf der Seite (Y nach oben): X 40, Y 25, Höhe 25
+hm_portalscheibe = [(scheibe_z1 - scheibe_z0) / 2 + scheibe_ov, scheibe_b, scheibe_t];
+hm_fensterscheibe = [fenster_streifen_b, fenster_streifen_h, fenster_streifen_t];
+hm_lippe = [front_b, 11, lippe_b];
 hm_bruecke = [2 * br_r, 2 * br_r, (z_br1 + br_rippe_h) - z_br0];
-hm_led_traeger = [2 * led_traeger_r1, 2 * led_traeger_r1, z_br0 - z_led_tr0];
 hm_gt2 = [gt2_70_aussen, gt2_70_aussen, gt2_70_z1 - gt2_70_nabe_z0];
 hm_schublade = [schub_b, (sock_r(z_schub0) - front_t) - schub_x0, schub_z1 - z_schub0];
 front_x_min = sqrt(pow(sock_r(front_z1) - front_t, 2) - pow(front_b / 2, 2));
 hm_front = [front_b, sock_r(front_z0) + lippe_h - front_x_min, front_z1 + lippe_b - front_z0];
 hm_podest = [podest_d, podest_d, z_podest1 - z_zelle1];
-hm_led_ringhalter = [62, 10, z_led0 - z_gp1];
 hm_waegebock = [24, 20, 0.5];
 hm_anschlag = [20, 14, (z_zelle0 - ues_luft) - (z_gp1 - ues_tasche_t)];
 hm_motor2_winkel = [48, 66, m2_z1 + 2.5 - z_gp1];
@@ -349,8 +367,6 @@ assert(tasche_steg >= 3.0, "Steg zwischen zwei Flanschtaschen unter 3 mm");
 assert(rinne_ventil_luft >= 2.0, "Ventil gegen Rinnenwand unter 2 mm");
 assert(becher_rinne_luft >= 2.0, "Rinnenende gegen Becher unter 2 mm");
 assert(becher_du <= sitz_du - 0.5 && becher_du + (becher_do - becher_du) * sitz_h / becher_h <= sitz_do, "Becher passt nicht in den konischen Sitz");
-assert(led_podest_luft >= 0.5 - 0.001, "Podest gegen LED-Ring unter 0,5 mm");
-assert(led_zelle_luft >= 0.5 - 0.001, "LED-Ring gegen Wägezelle unter 0,5 mm");
 assert(schiene_zelle >= 2.0, "Schienenbalken gegen Wägezelle unter 2 mm");
 assert(spindel_unten_rest > 0, "Spindel endet über der Mutter bei S_min");
 assert(falz_t > 0 && falz_t * 2 + sp <= wand + 0.001, "Falz passt nicht in die Wand");
@@ -369,14 +385,15 @@ assert(mutter_wand >= 1.5, "Mutter M5 (Fläche außen) zu nah an der Körperwand
 assert(lasche_wand >= 1.5, "Laufringlasche zu nah an der Körperwand");
 assert(zug_platte >= 2.0, "Zuganker gegen Karussellplatte unter 2 mm");
 assert(zug_bock >= 2.0, "Zuganker gegen Rollenbock unter 2 mm");
-assert(zug_led >= 2.0, "Zuganker gegen LED-Oberkante unter 2 mm");
-assert(motor1_led >= 2.0, "Motor 1 gegen LED-Träger unter 2 mm");
 assert(zug_streifen >= 5.0, "Zuganker steht im Fensterbereich");
 assert(fenster_laufring >= 2.0, "Seitenfenster reicht an den Laufring");
 assert(rdeckel_ventil >= 2.0, "Rinnendeckel gegen Ventil beim Drehen unter 2 mm");
 assert(stempel_versatz >= 2.0, "Stempel liegt nicht innerhalb der Flanschauflage");
+assert(ausleger_sigma <= 20, "Ausleger aus PETG: Biegespannung über 20 MPa (Reserve zu etwa 45 MPa XY und 30 MPa quer zu den Schichten)");
+assert(schraube_zug <= 250, "Ausleger: Zug am oberen M4-Einsatz über 250 N");
+assert(stempel_kp > 0, "Stempel Ø 25 liegt nicht ganz auf der Kolbenplatte Ø 38");
+assert(rahmen_hw_scheibe >= scheibe_b / 2 + sp, "Fensterrahmen steht im Scheibenfalz");
 assert(platine_luft >= 2.0, "Platinenecke gegen Hülle unter 2 mm");
-assert(n_led_fuge == 75, "Lichtfuge: Anzahl LEDs nicht 75");
 assert(z_vent_spitze > z_rinne1, "Rinne höher als die Ventilspitze");
 assert(s_pos <= s_park + eps && s_pos >= s_min - eps, "Stempelstellung außerhalb des Weges");
 // Hüllmaße gegen das Druckbett 220 x 220 x 250 und gegen die Blattgrenze Z 200
@@ -384,7 +401,12 @@ assert(fits(hm_sockel), "Sockelschale passt nicht aufs Bett");
 assert(fits(hm_koerper_unten), "Körper unten passt nicht aufs Bett");
 assert(fits(hm_koerper_oben), "Körper oben passt nicht aufs Bett");
 assert(fits(hm_krone), "Krone passt nicht aufs Bett");
-assert(fits(hm_lichtfuge), "Lichtfugenring passt nicht aufs Bett");
+assert(fits(hm_goldband), "Goldband passt nicht aufs Bett");
+assert(fits(hm_goldring), "Goldring passt nicht aufs Bett");
+assert(fits(hm_kronenring), "Kronenring passt nicht aufs Bett");
+assert(fits(hm_portalscheibe), "Portalscheibe (Hälfte) passt nicht aufs Bett");
+assert(fits(hm_fensterscheibe), "Fensterscheibe passt nicht aufs Bett");
+assert(fits(hm_lippe), "Goldlippe passt nicht aufs Bett");
 assert(fits(hm_grundplatte), "Grundplatte passt nicht aufs Bett");
 assert(fits(hm_lagerbock), "Lagerbock passt nicht aufs Bett");
 assert(fits(hm_rinne), "Feuchtrinne passt nicht aufs Bett");
@@ -394,14 +416,12 @@ assert(fits(hm_laufring), "Laufring passt nicht aufs Bett");
 assert(fits(hm_karussell), "Karussellplatte passt nicht aufs Bett");
 assert(fits(hm_rollenbock), "Rollenbock passt nicht aufs Bett");
 assert(fits(hm_schlitten), "Schlitten passt nicht aufs Bett");
-assert(fits(hm_stempel), "Stempel passt nicht aufs Bett");
+assert(fits(hm_ausleger), "Ausleger mit Stempel passt nicht aufs Bett");
 assert(fits(hm_bruecke), "Brücke passt nicht aufs Bett");
-assert(fits(hm_led_traeger), "LED-Träger passt nicht aufs Bett");
 assert(fits(hm_gt2), "GT2-Rad passt nicht aufs Bett");
 assert(fits(hm_schublade), "Schublade passt nicht aufs Bett");
 assert(fits(hm_front), "Schubladenfront passt nicht aufs Bett");
 assert(fits(hm_podest), "Podest passt nicht aufs Bett");
-assert(fits(hm_led_ringhalter), "LED-Ringhalter passt nicht aufs Bett");
 assert(fits(hm_waegebock), "Wägezellenbock passt nicht aufs Bett");
 assert(fits(hm_anschlag), "Überlastanschlag passt nicht aufs Bett");
 assert(fits(hm_motor2_winkel), "Motor-2-Winkel passt nicht aufs Bett");
@@ -416,7 +436,7 @@ assert(fits(hm_buchsenring), "Buchsenring passt nicht aufs Bett");
 assert(fits(hm_rinnendeckel), "Rinnendeckel passt nicht aufs Bett");
 assert(fits(hm_klebering), "Klebering passt nicht aufs Bett");
 assert(fits(hm_namensschild), "Namensschild passt nicht aufs Bett");
-assert(fits_z(hm_sockel) && fits_z(hm_koerper_unten) && fits_z(hm_koerper_oben) && fits_z(hm_led_traeger),
+assert(fits_z(hm_sockel) && fits_z(hm_koerper_unten) && fits_z(hm_koerper_oben),
        "ein Teil ist höher als 200 mm");
 assert(fits_blatt(hm_sockel) && fits_blatt(hm_krone) && fits_blatt(hm_grundplatte) && fits_blatt(hm_karussell) && fits_blatt(hm_bruecke)
        && fits_blatt(hm_koerper_unten) && fits_blatt(hm_koerper_oben) && fits_blatt(hm_laufring),
@@ -431,7 +451,7 @@ echo(str("Kolbenplatte leer ", z_kp_leer, ", 2 ml Rest ", z_kp_min, ", 50 ml ", 
 echo(str("Ventil über Becherrand: ", vent_ueber, ", Schlitten tief gegen Platte: ", spiel_schl_platte));
 echo(str("Steg Flanschtaschen: ", tasche_steg, ", Laufring gegen Zylinder: ", laufring_zyl));
 echo(str("Zuganker: Mutter bis Körperwand ", mutter_wand, ", gegen Platte ", zug_platte, ", seitlich zum Fensterstreifen ", zug_streifen));
-echo(str("Höhe ", z_hoehe, ", Lichtfuge ", n_led_fuge, " LEDs, Führungswelle ", welle_len, " lang"));
+echo(str("Höhe ", z_hoehe, ", Führungswelle ", welle_len, " lang, Ausleger Spannung ", ausleger_sigma, " MPa, Schraubenzug ", schraube_zug, " N"));
 
 // ---------- 8 Hilfsmodule ----------
 function arc_pts(r, a0, a1, n) = [for (i = [0:n]) [r * cos(a0 + (a1 - a0) * i / n), r * sin(a0 + (a1 - a0) * i / n)]];
@@ -512,17 +532,46 @@ module scheibe_falz_cut() {
     quer_extrusion(scheibe_x - scheibe_t, 140) offset(delta = sp) scheibe2d();
 }
 
-module portal_rahmen(za, zb) {
-    // Goldrahmen 4 breit, 1,5 erhaben, nur als Haut über der Hülle
-    zbereich(za, zb) intersection() {
+// ---- Portalrahmen aus Gold-PETG (Stand 6): eigene Leisten, 3 breit, 1,5 erhaben ----
+// Für den Druck liegen sie flach in der Abwicklung der Hülle (Bogenlänge statt Sehne) und werden beim Aufkleben
+// um die Hülle gebogen (1,5 mm PETG biegt sich über r 98 ohne Mühe). Für die Montage steht dieselbe Kontur als Haut.
+function dev_s(y, r) = r * asin(y / r) * PI / 180;
+function ecke(cy, cz, rad, a0, a1) = [for (i = [0:rahmen_n]) [cy + rad * cos(a0 + (a1 - a0) * i / rahmen_n), cz + rad * sin(a0 + (a1 - a0) * i / rahmen_n)]];
+function rr_pts(hw, z0, z1, ro, ru) = concat(ecke(hw - ru, z0 + ru, ru, -90, 0), ecke(hw - ro, z1 - ro, ro, 0, 90),
+                                             ecke(-(hw - ro), z1 - ro, ro, 90, 180), ecke(-(hw - ru), z0 + ru, ru, 180, 270));
+function dev_pts(pts, r) = [for (p = pts) [dev_s(p[0], r), p[1]]];
+
+// Bühnenrahmen (Z 13 bis 97): Innenkante = Portalkante, Außenkante 3 weiter
+rb_in = rr_pts(portal_b / 2, portal_z0, portal_z1, portal_ro, portal_ru);
+rb_out = rr_pts(portal_b / 2 + rahmen_bb, portal_z0 - rahmen_bb, portal_z1 + rahmen_bb, portal_ro + rahmen_bb, portal_ru + rahmen_bb);
+// Fensterrahmen (Z 101 bis 336,4): Innenkante 0,4 außerhalb der Falzkante, Außenkante 3 weiter
+fw_in = rr_pts(rahmen_hw_scheibe, 60, scheibe_z1 + (rahmen_hw_scheibe - scheibe_b / 2), scheibe_ro + (rahmen_hw_scheibe - scheibe_b / 2), 3);
+fw_out = rr_pts(rahmen_hw_scheibe + rahmen_bb, 60 - rahmen_bb, scheibe_z1 + (rahmen_hw_scheibe - scheibe_b / 2) + rahmen_bb,
+                scheibe_ro + (rahmen_hw_scheibe - scheibe_b / 2) + rahmen_bb, 3 + rahmen_bb);
+rahmen_z_seite0 = 101;                                            // Seitenleiste von hier bis zum Beginn der oberen Bögen
+rahmen_z_seite1 = scheibe_z1 + (rahmen_hw_scheibe - scheibe_b / 2) - (scheibe_ro + (rahmen_hw_scheibe - scheibe_b / 2));   // 307
+rahmen_z_oben1 = scheibe_z1 + (rahmen_hw_scheibe - scheibe_b / 2) + rahmen_bb;                                              // 336,4
+r_dev_unten = 99.8;                                               // mittlerer Radius des Sockelkegels zwischen Z 13 und 97
+r_dev_koerper = koerper_ro;
+
+module band2d(pi, po) {
+    polygon(points = concat(po, pi), paths = [[for (i = [0:len(po) - 1]) i], [for (i = [0:len(pi) - 1]) len(po) + i]]);
+}
+
+module rahmen_haut(pi, po, z0, z1) {
+    zbereich(z0, z1) intersection() {
+        quer_extrusion(40, 140) band2d(pi, po);
         difference() {
-            quer_extrusion(40, 140) offset(delta = rahmen_b) portal2d(portal_b, portal_z0, portal_z1, portal_ro, portal_ru);
-            portal_cut();
-        }
-        difference() {
-            env_solid(rahmen_h);
+            env_solid(rahmen_t);
             env_solid(0);
         }
+    }
+}
+
+module rahmen_flach(pi, po, r, z0, z1) {
+    intersection() {
+        band2d(dev_pts(pi, r), dev_pts(po, r));
+        translate([-300, z0]) square([600, z1 - z0]);
     }
 }
 
@@ -544,11 +593,6 @@ module portal_magnete() {
             cylinder(d = magnet_d, h = 3.0);
 }
 
-module portal_fingerkerbe() {
-    // Kerbe 12 x 3 im Rahmen unten
-    translate([koerper_ro - 3, 0, scheibe_z0 - 0.2]) box(-6, 6, -6, 6, 0, 3.0);
-}
-
 // ---- Seitenfenster ----
 module fenster_cut(th) {
     rotate([0, 0, th]) quer_extrusion(60, 140) fenster2d();
@@ -568,7 +612,7 @@ module fenster_fuge_cut(th) {
 }
 
 module fenster_pad(th) {
-    // Rahmen innen für den Acrylstreifen 26 x 104 (Rauchacryl 2 mm), mit Aussparung für den Streifen
+    // Rahmen innen für die gedruckte Fensterscheibe 26 x 76 x 1,6 (Klar-PETG), mit Aussparung für die Scheibe
     rotate([0, 0, th]) intersection() {
         difference() {
             quer_extrusion(fenster_pad_x, 98) translate([0, (fenster_z0 + fenster_z1) / 2]) rrect2d(fenster_pad_b, fenster_pad_h, 4);
@@ -583,10 +627,11 @@ module fenster_pad(th) {
 // ============================================================================
 
 // ---- 1 Sockelschale ----
+// Stand 6: Der Goldring ist ein eigenes Teil (Gold-PETG) und liegt auf der Oberkante des Sockels (Z 97),
+// der Sockel trägt nur die innere Falzhälfte bis Z 104 durch den Ring hindurch.
 sockel_profil = [[sock_ri(z_sock0), z_sock0], [d_sock_u / 2, z_sock0], [d_sock_o / 2, z_ring0],
-                 [d_sock_o / 2 - 0.6, z_ring0], [d_sock_o / 2 - 0.6, z_ring0 + 1], [ring_d / 2, z_ring0 + 1],   // 1 mm Schattenfuge
-                 [ring_d / 2, z_ring1], [koerper_ri + falz_t, z_ring1], [koerper_ri + falz_t, z_ring1 + falz_h],
-                 [koerper_ri, z_ring1 + falz_h]];
+                 [koerper_ri + falz_t, z_ring0], [koerper_ri + falz_t, z_ring1 + falz_h],
+                 [koerper_ri, z_ring1 + falz_h], [koerper_ri, z_ring0]];
 
 // Griffmulde hinten: Boden folgt dem Kegel, oben 45-Grad-Kante, Ecken R 4 in der Ansicht.
 // versatz > 0 schiebt die Form nach innen (Wand hinter der Mulde), dz und dy weiten sie auf.
@@ -621,25 +666,25 @@ module t_sockel() {
                 box(laschen_r - 3.5, sock_ri(10) + 0.8, -4.5, 4.5, z_gp1, z_gp1 + 6);
                 translate([laschen_r, 0, z_gp1 - eps]) cylinder(d = m3_pilot, h = 6);
             }
-            portal_rahmen(portal_z0, z_ring1);
-            portal_pad(scheibe_z0, z_ring1);
         }
         griff_form(0, 0, 0);
         portal_cut();
-        scheibe_falz_cut();
         portal_magnete();
         // Buchsenloch Ø 8,2 hinten (Einbaubuchse M8), Goldring Ø 16 außen aufgeklebt
         translate([-140, 0, buchse_z]) rotate([0, 90, 0]) cylinder(d = buchse_d, h = 60);
-        portal_fingerkerbe();
     }
 }
 
 // ---- 2 und 3 Körper ----
+// Stand 6: Die Teilung bei Z 235 wird nicht gespachtelt, sondern ist eine gewollte Schattenfuge:
+// an beiden Außenkanten 0,5 x 45 Grad Fase, zusammen eine V-Nut 1,0 breit und 0,5 tief.
+fuge_fase = 0.5;
 koerper_unten_profil = [[koerper_ri, z_kor0 + falz_h], [koerper_ro - falz_t, z_kor0 + falz_h], [koerper_ro - falz_t, z_kor0],
-                        [koerper_ro, z_kor0], [koerper_ro, z_kor_teil], [koerper_ri + falz_t, z_kor_teil],
+                        [koerper_ro, z_kor0], [koerper_ro, z_kor_teil - fuge_fase], [koerper_ro - fuge_fase, z_kor_teil],
+                        [koerper_ri + falz_t, z_kor_teil],
                         [koerper_ri + falz_t, z_kor_teil + falz_h], [koerper_ri, z_kor_teil + falz_h]];
 koerper_oben_profil = [[koerper_ri, z_kor_teil + falz_h], [koerper_ro - falz_t, z_kor_teil + falz_h], [koerper_ro - falz_t, z_kor_teil],
-                       [koerper_ro, z_kor_teil], [koerper_ro, z_kor1], [koerper_ri, z_kor1]];
+                       [koerper_ro - fuge_fase, z_kor_teil], [koerper_ro, z_kor_teil + fuge_fase], [koerper_ro, z_kor1], [koerper_ri, z_kor1]];
 
 module koerper_rippen(z0, z1) {
     for (a = [77.1, 128.6, 180, 231.4, 282.9, 334.3]) rotate([0, 0, a]) box(koerper_ri - 8, koerper_ri + 0.4, -0.6, 0.6, z0, z1);
@@ -650,7 +695,6 @@ module t_koerper_unten() {
         union() {
             rotate_extrude() polygon(koerper_unten_profil);
             koerper_rippen(z_kor0 + falz_h, z_kor_teil - 5);
-            portal_rahmen(z_kor0, z_kor_teil);
             portal_pad(z_kor0 + falz_h, z_kor_teil);
             for (p = fenster_winkel) fenster_pad(p * teilung);
         }
@@ -669,7 +713,6 @@ module t_koerper_oben() {
         union() {
             rotate_extrude() polygon(koerper_oben_profil);
             koerper_rippen(z_kor_teil + falz_h + 5, z_kor1);
-            portal_rahmen(z_kor_teil, scheibe_z1 + 2);
             portal_pad(z_kor_teil + falz_h, z_kor1);
         }
         portal_cut();
@@ -682,8 +725,9 @@ module t_koerper_oben() {
 module lug(th, mit_magnet) {
     rotate([0, 0, th]) difference() {
         intersection() {
-            rotate_extrude() polygon([[lug_r0, z_riemen0], [koerper_ro + 2, z_riemen0], [koerper_ro + 2, z_deckel_u + eps],
-                                      [lug_r0 + 6, z_deckel_u + eps], [lug_r0, z_riemen0 + 3]]);
+            // Außenkante 0,5 unter der Fasenfläche des Kronenkörpers (r = 100 - (z - 400,8))
+            rotate_extrude() polygon([[lug_r0, z_riemen0], [99.0, z_riemen0], [99.0, z_fase0 + 0.7],
+                                      [krone_d / 2 - kr_ring_dr - 0.5 - (z_deckel_u - z_fase0), z_deckel_u + eps], [lug_r0, z_riemen0 + 3]]);
             rotate([0, 0, -lug_halb_winkel]) linear_extrude(height = 500)
                 polygon([[0, 0], [200, 0], [200 * cos(2 * lug_halb_winkel), 200 * sin(2 * lug_halb_winkel)]]);
         }
@@ -694,27 +738,70 @@ module lug(th, mit_magnet) {
     }
 }
 
+// Stand 6: Die Fase ist ein eigenes Teil (Kronenring, Gold-PETG, 2 mm waagrecht dick). Der schwarze Kronenkörper
+// trägt die Fase um diese Dicke zurückgesetzt, die Außenmaße bleiben Ø 204 und 6 x 45 Grad.
+z_fase0 = z_hoehe - krone_fase;                                      // 400,8
 module t_krone() {
     difference() {
         union() {
-            rotate_extrude() polygon([[krone_d / 2 - 2, z_kr0], [krone_d / 2, z_kr0], [krone_d / 2, z_hoehe - krone_fase],
-                                      [krone_d / 2 - krone_fase, z_hoehe], [0, z_hoehe], [0, z_deckel_u], [krone_d / 2 - 2, z_deckel_u]]);
+            // Wand r 99,6 bis 102 bis Z 400,8 (Absatz 2 mm für den Kronenring), darüber eine Schale entlang der Fase
+            // (2,4 waagrecht dick) mit Innenkragen Z 397,8 bis 400,8 als Übergang, Deckel 2 dick
+            rotate_extrude() polygon([[krone_d / 2 - 2.4, z_kr0], [krone_d / 2, z_kr0], [krone_d / 2, z_fase0],
+                                      [krone_d / 2 - kr_ring_dr, z_fase0],
+                                      [krone_d / 2 - kr_ring_dr - krone_fase, z_hoehe], [0, z_hoehe],
+                                      [0, z_deckel_u],
+                                      [krone_d / 2 - kr_ring_dr - 2.4 - (z_deckel_u - z_fase0), z_deckel_u],
+                                      [krone_d / 2 - kr_ring_dr - 2.4, z_fase0],
+                                      [krone_d / 2 - kr_ring_dr - 2.4, z_fase0 - 3],
+                                      [krone_d / 2 - 2.4, z_fase0 - 3]]);
             for (a = lug_winkel_magnet) lug(a, 1);
             for (a = lug_winkel_stift) lug(a, 0);
         }
         // Tasche 92 x 18 x 1,2 für das Namensschild, Leserichtung von vorne (lange Seite entlang Y)
         translate([0, 0, z_hoehe - 1.2]) linear_extrude(height = 2) rotate([0, 0, 90]) rrect2d(92, 18, 2);
-        // Kronenfase wird mit Gold-Anreibewachs vergoldet
     }
 }
 
-// ---- 5 Lichtfugenring ----
-module t_lichtfuge() {
+module t_kronenring() {
+    // Gold-PETG, Parallelogramm in (r, z): bildet die Fase 6 x 45 Grad, liegt auf der Fase des Kronenkörpers
+    rotate_extrude() polygon([[krone_d / 2, z_fase0], [krone_d / 2 - krone_fase, z_hoehe],
+                              [krone_d / 2 - krone_fase - kr_ring_dr, z_hoehe], [krone_d / 2 - kr_ring_dr, z_fase0]]);
+}
+
+// ---- 5 Goldband (ersetzt die Lichtfuge) und Goldring (Sockel/Körper) ----
+module t_goldband() {
     zk = z_kor1;
-    // sichtbarer Ring 338 bis 341, Wand 0,8, Stecker 2 mm in Körper und Krone
-    rohr(koerper_ro, koerper_ro - fuge_wand, zk, zk + 3);
-    rohr(koerper_ri - sp, koerper_ri - sp - fuge_wand, zk - 2, zk + eps);
-    rohr(koerper_ri - sp, koerper_ri - sp - fuge_wand, zk + 3 - eps, zk + 3 + 2);
+    // sichtbarer Ring 338 bis 341, Wand 1,6, Stecker 2 mm in Körper und Krone (Wand 1,2)
+    rohr(koerper_ro, koerper_ro - 1.6, zk, zk + 3);
+    rohr(koerper_ri - sp, koerper_ri - sp - 1.2, zk - 2, zk + eps);
+    rohr(koerper_ri - sp, koerper_ri - sp - 1.2, zk + 3 - eps, zk + 3 + 2);
+}
+
+module t_goldring() {
+    // Ø 202 x 4, liegt auf dem Sockel (Z 97), Körper steht darauf (Z 101). Innen r 97,3 (Sockelfalz geht hindurch),
+    // unten außen 0,8 x 45 Grad Fase als Schattenfuge, am Portal offen (|Y| < 39)
+    difference() {
+        rotate_extrude() polygon([[koerper_ri + falz_t + sp, z_ring0], [goldring_r1 - 0.8, z_ring0], [goldring_r1, z_ring0 + 0.8],
+                                  [goldring_r1, z_ring1], [koerper_ri + falz_t + sp, z_ring1]]);
+        box(0, 200, -goldring_gap, goldring_gap, z_ring0 - 1, z_ring1 + 1);
+    }
+}
+
+// ---- Portalrahmen: drei Leistenarten in Gold-PETG ----
+module t_rahmen_unten() {   // Bühnenrahmen: Boden und beide Seiten bis Z 97, flach in der Abwicklung
+    linear_extrude(height = rahmen_t) translate([0, -(portal_z0 - rahmen_bb)])
+        rahmen_flach(rb_in, rb_out, r_dev_unten, portal_z0 - rahmen_bb, rahmen_naht_unten);
+}
+module t_rahmen_seite() {   // eine gerade Seitenleiste Z 101 bis 307 (zwei Stück, rechts und links gleich)
+    linear_extrude(height = rahmen_t) translate([-dev_s(rahmen_hw_scheibe, r_dev_koerper), -rahmen_z_seite0])
+        intersection() {
+            rahmen_flach(fw_in, fw_out, r_dev_koerper, rahmen_z_seite0, rahmen_z_seite1);
+            translate([0, 0]) square([300, 600]);
+        }
+}
+module t_rahmen_oben() {    // beide Bögen und der obere Balken, Z 307 bis 336,4
+    linear_extrude(height = rahmen_t) translate([0, -rahmen_z_seite1])
+        rahmen_flach(fw_in, fw_out, r_dev_koerper, rahmen_z_seite1, rahmen_z_oben1);
 }
 
 // ---- 6 Grundplatte ----
@@ -851,8 +938,6 @@ module t_laufring() {
             // Sechskanttaschen oben und unten, 1,5 tief, Schlüsselfläche außen (außen offen)
             for (zz = [-eps, h - 1.5]) translate([0, 0, zz]) rotate([0, 0, 30]) cylinder(d = 2 * mutter_r_ecke + 0.4, h = 1.5 + eps, $fn = 6);
         }
-        // Nut für die Leitung der Vitrinen-LEDs an der Unterseite
-        translate([0, 0, -eps]) linear_extrude(height = 1.2) sektor(80.5, 82, lr_offen + 12, 360 - lr_offen - 12);
     }
 }
 
@@ -899,11 +984,9 @@ module t_karussell() {
                 translate([rast_r0, s > 0 ? tasche_b / 2 - rast_schlitz : -tasche_b / 2, z_platte0 - 1])
                     cube([rast_r1 - rast_r0 + 2, rast_schlitz, platte_t - tasche_t + 1.01]);
             }
-            // Kennring: Lackmarker in Stationsfarbe, 0,6 tief
-            translate([platte_r - 3, tasche_b / 2 + 6, z_platte1 - 0.6]) difference() {
-                cylinder(d = 6, h = 1);
-                translate([0, 0, -0.1]) cylinder(d = 3.5, h = 1.2);
-            }
+            // Stationsbuchstabe 0,6 tief neben der Tasche (Stand 6: statt Farbring), lesbar von vorne
+            translate([76, tasche_b / 2 + 8.2, z_platte1 - 0.6]) rotate([0, 0, 90]) linear_extrude(height = 1)
+                text(stationsbuchstabe[p - 1], size = 8, halign = "center", valign = "center");
         }
         // Rollenböcke: sieben Paare M3 von oben
         for (j = [0:6]) rotate([0, 0, (j + 0.5) * teilung]) for (s = [-1, 1])
@@ -955,12 +1038,25 @@ module t_schlitten() {
     }
 }
 
-// ---- 15 Stempel ----
-module t_stempel() {
-    translate([stempel_x, 0, s_pos + gummi_t]) difference() {
-        cylinder(d = stempel_d, h = stempel_t);
-        translate([0, 0, -1]) cylinder(d = m4_d, h = stempel_t + 2);
-        translate([0, 0, stempel_t - m3_kopf_t]) cylinder(d1 = m4_d, d2 = m4_d + 3, h = m3_kopf_t + 0.1);
+// ---- 15 Ausleger mit Stempel (ein Stück PETG, ersetzt Winkelstahl und Stempelscheibe) ----
+// Platte X 28 bis 36 an der Schlittenfläche, Arm X 28 bis 68 (Z S + 8 bis S + 16), Stempelfuß Ø 25 bei X 53 (Z S + 2 bis S + 8),
+// zwei Stützrippen. Gedruckt liegt er auf der Seite (Y nach oben): das L-Profil steht dann in jeder Schicht.
+// Unter dem Stempel klebt eine 2 mm Gummiauflage (Gummi oder Silikon, Kaufteil).
+module t_ausleger() {
+    zb = s_pos + arm_z0;
+    difference() {
+        union() {
+            box(arm_x0, arm_x0 + platte_dick, -arm_b / 2, arm_b / 2, zb, zb + winkel_h);
+            box(arm_x0, arm_x1, -arm_b / 2, arm_b / 2, zb, zb + arm_t);
+            translate([stempel_x, 0, s_pos + gummi_t]) cylinder(d = stempel_d, h = stempel_t + eps);
+            for (y0 = [arm_b / 2, -arm_b / 2 + rippe_b]) translate([0, y0, 0]) rotate([90, 0, 0]) linear_extrude(height = rippe_b)
+                polygon([[arm_x0 + platte_dick - eps, zb + arm_t - eps], [arm_x0 + platte_dick + rippe_l, zb + arm_t - eps],
+                         [arm_x0 + platte_dick - eps, zb + arm_t + rippe_h]]);
+        }
+        for (zz = winkel_schraube_z) {
+            translate([arm_x0 - 1, 0, s_pos + zz]) rotate([0, 90, 0]) cylinder(d = m4_d, h = platte_dick + 2);
+            translate([arm_x0 + platte_dick - 4, 0, s_pos + zz]) rotate([0, 90, 0]) cylinder(d = 7.6, h = 5);   // Senkung für M4-Zylinderkopf
+        }
     }
 }
 
@@ -991,24 +1087,10 @@ module t_bruecke() {
         // Montage Motor 1: vier M3 in den Langlochbereich
         // Magnettaschen für die Krone
         for (a = lug_winkel_magnet) rotate([0, 0, a]) translate([94.5, 0, z_br1 - magnet_t + eps]) cylinder(d = magnet_d, h = magnet_t);
-        // Schrauben LED-Träger von oben
-        for (a = led_steg_winkel) rotate([0, 0, a]) translate([led_steg_r, 0, z_br0 - 1]) cylinder(d = m3_d, h = br_t + 2);
         // Schalter-Tasche in der Unterseite bei X -26
         translate([schalter_x - schalter_l / 2, -schalter_b / 2 - 0.2, z_br0 - 1]) cube([schalter_l + 0.4, schalter_b + 0.4, 5]);
         // Kabeldurchführung am Zuganker -128,6
         rotate([0, 0, -2.5 * teilung]) translate([zug_r - 10, 0, z_br0 - 1]) cylinder(d = 6, h = br_t + 2);
-    }
-}
-
-// ---- 17 LED-Träger ----
-module t_led_traeger() {
-    union() {
-        rohr(led_traeger_r1, led_traeger_r0, z_led_tr0, z_led_tr1);   // Streifen 144/m außen, LED-Oberkante r 85,5, Zuganker 2,5 außerhalb
-        // drei Stege bis zur Brückenunterseite
-        for (a = led_steg_winkel) rotate([0, 0, a]) difference() {
-            box(led_traeger_r0 - 4, led_traeger_r1, -2, 2, z_led_tr1 - eps, z_br0 - 0.2);
-            translate([led_steg_r, 0, z_br0 - 9]) cylinder(d = m3_pilot, h = 9);
-        }
     }
 }
 
@@ -1065,8 +1147,6 @@ module t_schublade() {
         // Freistich unter Wänden und Boden über den Schienen, nur die Kufen hinten (X 22 bis 25) reichen bis Z 26
         for (s = [-1, 1]) translate([schub_x0 + kufe_l, s > 0 ? schiene_y0 - 0.1 : -schiene_y1 - 0.1, z_schub0 - 1])
             cube([schub_x1, schiene_y1 - schiene_y0 + 0.2, 1 + kufe_freigang - 0.5]);
-        // Opalfenster: Boden von unten auf 1,0 dünn
-        translate([zelle_x, 0, z_schub0 - eps]) cylinder(d = opalfenster_d, h = 0.5 + eps);
         // konischer Sitz: zentriert den Becherboden Ø 47
         translate([zelle_x, 0, z_becher0 - 2 * eps]) cylinder(d1 = sitz_du, d2 = sitz_do, h = sitz_h + 4 * eps);
         // zwei M3 durch die Stirnwand in die Front
@@ -1085,12 +1165,6 @@ module t_front() {
                 }
                 box(0, 200, -front_b / 2, front_b / 2, front_z0, front_z1);
             }
-            // Goldlippe 3 x 1,5 als Daumenauflage
-            intersection() {
-                rotate_extrude() polygon([[sock_r(front_z1) - 1, front_z1], [sock_r(front_z1) + lippe_h, front_z1],
-                                          [sock_r(front_z1) + lippe_h, front_z1 + lippe_b], [sock_r(front_z1) - 1, front_z1 + lippe_b]]);
-                box(0, 200, -front_b / 2, front_b / 2, front_z1 - 1, front_z1 + lippe_b + 1);
-            }
         }
         // Magnettasche 6 x 2 von innen, Mitte
         translate([sock_r(front_z0 + 14) - front_t - 0.1, 0, front_z0 + 4]) rotate([0, 90, 0]) cylinder(d = magnet_d, h = magnet_t + 0.1);
@@ -1099,7 +1173,16 @@ module t_front() {
     }
 }
 
-// ---- 21 Podest: Scheibe Ø 60 x 2 opal auf Stiel Ø 14, liegt um die Becherachse (X = zelle_x) ----
+// ---- 20b Goldlippe (Gold-PETG): Daumenauflage 3 x 1,5 oben auf der Front, 4,5 tief für die Klebefläche ----
+module t_lippe() {
+    intersection() {
+        rotate_extrude() polygon([[sock_r(front_z1) - 3, front_z1], [sock_r(front_z1) + lippe_h, front_z1],
+                                  [sock_r(front_z1) + lippe_h, front_z1 + lippe_b], [sock_r(front_z1) - 3, front_z1 + lippe_b]]);
+        box(0, 200, -front_b / 2, front_b / 2, front_z1 - 1, front_z1 + lippe_b + 1);
+    }
+}
+
+// ---- 21 Podest: Scheibe Ø 60 x 1,6 (PETG schwarz) auf Stiel Ø 14, liegt um die Becherachse (X = zelle_x) ----
 module t_podest() {
     translate([zelle_x, 0, 0]) difference() {
         union() {
@@ -1110,14 +1193,7 @@ module t_podest() {
     }
 }
 
-// ---- 22 LED-Ringhalter, Wägezellenbock, Überlastanschlag ----
-module t_led_ringhalter() {
-    for (x = [30, 84]) translate([x, 0, 0]) difference() {
-        box(-4, 4, -5, 5, z_gp1, z_led0);
-        translate([0, 0, z_gp1 - 1]) cylinder(d = m3_pilot, h = 6);
-    }
-}
-
+// ---- 22 Wägezellenbock, Überlastanschlag ----
 module t_waegebock() {
     // festes Ende der Wägezelle auf 0,5 hohem Bock (zwei Lagen), M4
     difference() {
@@ -1182,14 +1258,14 @@ module t_kabelclip() {
 }
 
 module t_fugenhalter() {
-    // Haltewinkel am Zuganker auf Z 335, trägt den Lichtfugenring
+    // Haltewinkel am Zuganker auf Z 333 bis 336, trägt den Goldbandring
     difference() {
         union() {
             hull() {
                 translate([zug_r, 0, 333]) cylinder(r = 5, h = 3);
                 translate([koerper_ri - 1, 0, 333]) cylinder(r = 3, h = 3);
             }
-            translate([koerper_ri - 2, -3, 333]) cube([2.5, 6, 3.8]);
+            translate([koerper_ri - 2, -3, 333]) cube([2.5, 6, 3.0]);
         }
         translate([zug_r, 0, 332]) cylinder(d = zug_loch, h = 6);
     }
@@ -1231,9 +1307,41 @@ module t_ablage() {
     }
 }
 
-// ---- 26 Buchsenring ----
+// ---- 26 Scheiben (gedruckt) ----
+// Portalscheibe in zwei Hälften mit Überlappung: unten Z 99 bis 219, oben Z 215 bis 333. In der Überlappung (4 mm, hinter der
+// Karussellplatte Z 211 bis 223) hat jede Hälfte nur die halbe Dicke, außen bündig. Rauch-PETG, transparent.
+module scheibe_vol(x0, x1) {
+    intersection() {
+        translate([x0, 0, 0]) rotate([90, 0, 90]) linear_extrude(height = x1 - x0) scheibe2d();
+        box(0, 200, -100, 100, 0, 400);
+    }
+}
+
+module t_portalscheibe(teil) {
+    xi = scheibe_x - scheibe_t; xm = scheibe_x - scheibe_t / 2; xa = scheibe_x;
+    za = scheibe_zt - scheibe_ov / 2; zb = scheibe_zt + scheibe_ov / 2;
+    if (teil == 0) {   // unten: außen bis Z 215, innen halb bis 219
+        intersection() { scheibe_vol(xi, xa); box(0, 200, -100, 100, 0, za); }
+        intersection() { scheibe_vol(xi, xm + eps); box(0, 200, -100, 100, za - eps, zb); }
+    } else {           // oben: außen halb ab Z 215, voll ab 219
+        intersection() { scheibe_vol(xm - eps, xa); box(0, 200, -100, 100, za, zb + eps); }
+        intersection() { scheibe_vol(xi, xa); box(0, 200, -100, 100, zb, 400); }
+    }
+}
+
+module t_fensterscheibe() {
+    linear_extrude(height = fenster_streifen_t) rrect2d(fenster_streifen_b, fenster_streifen_h, 2);
+}
+
+// Lage im Gerät bei theta = 0: flach bei X 94,0 bis 95,6 hinter dem Fenster, im Rahmen (fenster_pad) verklebt
+module fensterscheibe_montage() {
+    translate([94.0, 0, (fenster_z0 + fenster_z1) / 2]) rotate([90, 0, 90]) linear_extrude(height = fenster_streifen_t)
+        rrect2d(fenster_streifen_b, fenster_streifen_h, 2);
+}
+
+// ---- 27 Buchsenring ----
 module t_klebering() {
-    // innen liegender Klebering der Körperhälften, PLA 8 x 1,2, am Portal offen
+    // innen liegender Klebering der Körperhälften, PETG 8 x 1,2, am Portal offen
     translate([0, 0, z_kor_teil - 4]) linear_extrude(height = 8) sektor(koerper_ri - sp - 1.2, koerper_ri - sp, 30, 330);
 }
 
@@ -1258,7 +1366,16 @@ module druck(name) {
     else if (name == "koerper_unten") translate([0, 0, -z_kor0]) t_koerper_unten();
     else if (name == "koerper_oben") translate([0, 0, z_kor1]) rotate([180, 0, 0]) t_koerper_oben();
     else if (name == "krone") translate([0, 0, z_hoehe]) rotate([180, 0, 0]) t_krone();
-    else if (name == "lichtfuge") translate([0, 0, -(z_kor1 - 2)]) t_lichtfuge();
+    else if (name == "goldband") translate([0, 0, -(z_kor1 - 2)]) t_goldband();
+    else if (name == "goldring") translate([0, 0, -z_ring0]) t_goldring();
+    else if (name == "kronenring") translate([0, 0, -z_fase0]) t_kronenring();
+    else if (name == "rahmen_unten") t_rahmen_unten();
+    else if (name == "rahmen_seite") t_rahmen_seite();
+    else if (name == "rahmen_oben") t_rahmen_oben();
+    else if (name == "lippe") translate([-(sock_r(front_z1) - 3), 0, -front_z1]) t_lippe();
+    else if (name == "portalscheibe_unten") translate([-scheibe_z0, 0, scheibe_x]) rotate([0, 90, 0]) t_portalscheibe(0);
+    else if (name == "portalscheibe_oben") translate([-(scheibe_zt - scheibe_ov / 2), 0, scheibe_x]) rotate([0, 90, 0]) t_portalscheibe(1);
+    else if (name == "fensterscheibe") t_fensterscheibe();
     else if (name == "grundplatte") translate([0, 0, -z_gp0]) t_grundplatte();
     else if (name == "lagerbock") translate([0, 0, -lb_z0]) t_lagerbock();
     else if (name == "rinne") translate([0, 0, -z_rinne0]) t_rinne();
@@ -1269,14 +1386,12 @@ module druck(name) {
     else if (name == "karussell") translate([0, 0, z_platte1]) rotate([180, 0, 0]) t_karussell();
     else if (name == "rollenbock") translate([-(bock_r0 + bock_r1) / 2, 0, -bock_z0]) t_rollenbock();
     else if (name == "schlitten") translate([0, 0, -(s_pos - schl_u)]) t_schlitten();
-    else if (name == "stempel") translate([-stempel_x, 0, -(s_pos + gummi_t)]) t_stempel();
+    else if (name == "ausleger") translate([-arm_x0, s_pos + arm_z0 + winkel_h, arm_b / 2]) rotate([90, 0, 0]) t_ausleger();
     else if (name == "bruecke") translate([0, 0, -z_br0]) t_bruecke();
-    else if (name == "led_traeger") translate([0, 0, -z_led_tr0]) t_led_traeger();
     else if (name == "gt2_rad") translate([0, 0, gt2_70_z1]) rotate([180, 0, 0]) t_gt2_rad();
     else if (name == "schublade") translate([-schub_x0, 0, -z_schub0]) t_schublade();
     else if (name == "front") translate([-front_x_min, 0, -front_z0]) t_front();
     else if (name == "podest") translate([-zelle_x, 0, z_podest1]) rotate([180, 0, 0]) t_podest();
-    else if (name == "led_ringhalter") translate([-30, 0, -z_gp1]) t_led_ringhalter();
     else if (name == "waegebock") translate([-zelle_x, -zelle_y0 - 10, -z_gp1]) t_waegebock();
     else if (name == "anschlag") translate([-zelle_x, 0, -(z_gp1 - ues_tasche_t)]) t_anschlag();
     else if (name == "motor2_winkel") translate([-m2_x, 0, -z_gp1]) t_motor2_winkel();
@@ -1332,9 +1447,7 @@ module kaufteile() {
     color([0.7, 0.7, 0.72]) for (s = [-1, 1]) translate([0, s * welle_y, s_pos - 5]) zyl(lm10_d / 2, 0, lm10_l);
     color([0.69, 0.55, 0.34]) translate([0, 0, s_pos + 20.5]) cylinder(d = mutter_d, h = mutter_l + mutter_fl_t);
     color([0.55, 0.55, 0.57]) translate([0, 0, z_stellring0]) cylinder(d = stellring_d, h = stellring_h);
-    // Ausleger, Gummi
-    color([0.55, 0.55, 0.57]) box(arm_x0, arm_x1, -arm_b / 2, arm_b / 2, s_pos + arm_z0, s_pos + arm_z0 + arm_t);
-    color([0.55, 0.55, 0.57]) box(arm_x0, arm_x0 + arm_t, -arm_b / 2, arm_b / 2, s_pos + arm_z0, s_pos + arm_z0 + winkel_h);
+    // Gummiauflage unter dem Stempel (Ausleger und Stempel sind jetzt ein gedrucktes Teil)
     color([0.2, 0.2, 0.2]) translate([stempel_x, 0, s_pos]) cylinder(d = stempel_d, h = gummi_t);
     // Motoren
     color([0.2, 0.2, 0.22]) translate([-motor1_r - nema_b / 2, -nema_b / 2, z_m1_0]) cube([nema_b, nema_b, m1_l]);
@@ -1349,19 +1462,9 @@ module kaufteile() {
     color([0.55, 0.55, 0.57]) for (a = zug_winkel) rotate([0, 0, a]) translate([zug_r, 0, z_gp0]) cylinder(d = zug_d, h = z_br1 - z_gp0);
     // Ballast
     color([0.5, 0.5, 0.52]) for (b = ballast_pos) rotate([0, 0, b[1]]) translate([b[0], 0, z_gp1]) cylinder(d = ballast_d, h = ballast_n * ballast_s);
-    // Vitrinen-LEDs unter dem Laufring, zwei je Fenster
-    color([1, 0.85, 0.6]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) box(77, 83, -7, 7, z_lr0 - 2, z_lr0);
-    // LED-Streifen der Lichtfuge
-    color([1, 0.85, 0.6]) rohr(led_oben, led_traeger_r1, z_led_tr0, z_led_tr1);
-    // Wägezelle, LED-Ring, Becher
+    // Wägezelle, Becher
     color([0.75, 0.75, 0.78]) box(zelle_x - zelle_b / 2, zelle_x + zelle_b / 2, zelle_y0, zelle_y1, z_zelle0, z_zelle1);
-    color([1, 0.85, 0.6]) translate([zelle_x, 0, z_led0]) rohr(led_ring_da / 2, led_ring_di / 2, 0, led_ring_t);
     color([0.93, 0.93, 0.93, 0.55]) translate([zelle_x, 0, z_becher0]) cylinder(d1 = becher_du, d2 = becher_do, h = becher_h);
-    // Rauchacryl Portal
-    color([0.18, 0.18, 0.2, 0.5]) intersection() {
-        translate([scheibe_x - scheibe_t, 0, 0]) rotate([90, 0, 90]) linear_extrude(height = scheibe_t) scheibe2d();
-        box(0, 200, -100, 100, 0, 400);
-    }
 }
 
 // ============================================================================
@@ -1374,7 +1477,14 @@ module montage() {
             color("#141417") t_koerper_unten();
             color("#141417") t_koerper_oben();
             color("#0A0A0C") t_krone();
-            color("#F2EFE8") t_lichtfuge();
+            color("#C9A44C") t_goldband();
+            color("#C9A44C") t_goldring();
+            color("#C9A44C") t_kronenring();
+            color("#C9A44C") rahmen_haut(rb_in, rb_out, portal_z0 - rahmen_bb, rahmen_naht_unten);
+            color("#C9A44C") rahmen_haut(fw_in, fw_out, rahmen_z_seite0, rahmen_z_oben1);
+            color("#C9A44C") t_lippe();
+            color([0.18, 0.18, 0.2, 0.55]) { t_portalscheibe(0); t_portalscheibe(1); }
+            color([0.93, 0.95, 0.96, 0.4]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) fensterscheibe_montage();
             color("#1C1C1E") t_grundplatte();
             color("#1C1C1E") t_lagerbock();
             color("#1C1C1E") t_rinne();
@@ -1386,14 +1496,12 @@ module montage() {
             color("#1C1C1E") rotate([0, 0, phi]) t_karussell();
             color("#1C1C1E") rotate([0, 0, phi]) for (j = [0:6]) rotate([0, 0, (j + 0.5) * teilung]) t_rollenbock();
             color("#1C1C1E") t_schlitten();
-            color("#1C1C1E") t_stempel();
+            color("#1C1C1E") t_ausleger();
             color("#1C1C1E") t_bruecke();
-            color("#1C1C1E") t_led_traeger();
             color("#1C1C1E") t_gt2_rad();
-            color("#EDEAE3") t_schublade();
+            color("#F4F2EE") t_schublade();
             color("#0A0A0C") t_front();
-            color("#F2EFE8") t_podest();
-            color("#1C1C1E") t_led_ringhalter();
+            color("#1C1C1E") t_podest();
             color("#1C1C1E") t_waegebock();
             color("#1C1C1E") t_anschlag();
             color("#1C1C1E") t_motor2_winkel();
