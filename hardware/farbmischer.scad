@@ -90,7 +90,6 @@ nema_l1 = 34;                  // NEMA 17 Stößel, 34 mm
 nema_l2 = 23;                  // NEMA 17 Pancake Karussell
 pancake_welle = 20;            // [MESSEN] Wellenlänge Pancake
 lager608_d = 22; lager608_t = 7; lager608_i = 8;
-lm10_d = 19; lm10_l = 55;      // LM10LUU
 gt2_h_gekauft = 16;            // [MESSEN] GT2-Scheibe 20 Z Gesamthöhe mit Nabe (Nabe oben)
 pass_t = 0.5;                  // Passscheibe 8 x 14 x 0,5 unter der Scheibe
 gt2_h_nutz = 8;                // Zahnkranz mit Bund in der Riemenebene
@@ -131,7 +130,8 @@ s_pos = s_park - stempel_dosieren * s_weg;    // Stellung für Montage und Druck
 // Schlitten (Z relativ zu S)
 schl_r = 34; schl_u = 10; schl_o = 48; schl_h = schl_u + schl_o;   // 58
 schl_tasche_d = 23; schl_tasche_t = 12.5;
-schl_bohr_d = 19.2;            // Ø 19 H7 für LM10LUU, gedruckt mit Zuschlag
+schl_gleit_d = 10 + 0.4;     // Gleitsitz auf der Welle Ø 10, direkt im Schlitten gedruckt (kein Linearlager gekauft)
+schl_gleit_l = 14; schl_gleit_frei = 12;   // zwei Gleitzonen von je 14 mm unten und oben, dazwischen Ø 12 frei
 mutter_oben = 35.5;            // Mutter Körper endet bei S + 35,5
 // Stand 6: Ausleger mit Stempel aus einem Stück PETG (liegend auf der Seite gedruckt, L-Profil in jeder Schicht)
 arm_x0 = 28; arm_x1 = 68; arm_b = 25; arm_z0 = 8;     // Ausleger: X 28 bis 68, Y +-12,5, Unterkante S + 8
@@ -140,7 +140,7 @@ platte_dick = 8;               // senkrechte Platte X 28 bis 36 an der Schlitten
 winkel_h = 40;                 // senkrechte Platte Z S + 8 bis S + 48
 rippe_b = 3; rippe_h = 20; rippe_l = 22;               // zwei Stützrippen je 3 dick bei |Y| 9,5 bis 12,5
 winkel_schraube_z = [24, 40];  // 2 x M4 in Gewindeeinsätzen, Z relativ zu S (Hebel 32 zur Kippkante)
-einsatz_m4_d = 5.6; einsatz_m4_t = 8;
+einsatz_m4_d = 3.3; einsatz_m4_t = 12;   // Kernloch für M4 direkt in PETG (kein Gewindeeinsatz gekauft), 12 mm tief
 stempel_d = 25; stempel_t = 6; gummi_t = 2; stempel_x = 53;      // Stempel Ø 25 am Ausleger, 4 mm innen von der Spritzenachse (Flanschauflage)
 kraft_max = 250;               // N, Haltekraft des Motors 1 am T8 (0,26 Nm, Wirkungsgrad 0,3), StallGuard schaltet früher ab
 // Brücke und Krone
@@ -1026,10 +1026,10 @@ module t_schlitten() {
     zb = s_pos - schl_u;
     translate([0, 0, zb]) difference() {
         cylinder(r = schl_r, h = schl_h);
-        // zwei Bohrungen für LM10LUU bei Y +-22, Madenschraube radial
-        for (s = [-1, 1]) {
-            translate([0, s * welle_y, -1]) cylinder(d = schl_bohr_d, h = schl_h + 2);
-            translate([0, s * welle_y, schl_h / 2]) rotate([0, -90, 0]) cylinder(d = m3_pilot, h = schl_r);
+        // zwei Gleitbohrungen bei Y +-22: unten und oben je eine Gleitzone Ø 10,4, dazwischen frei (weniger Reibung)
+        for (s = [-1, 1]) translate([0, s * welle_y, 0]) {
+            translate([0, 0, -1]) cylinder(d = schl_gleit_d, h = schl_h + 2);
+            translate([0, 0, schl_gleit_l]) cylinder(d = schl_gleit_d + schl_gleit_frei - 10, h = schl_h - 2 * schl_gleit_l);
         }
         // Stufenbohrung von oben: Ø 23 x 12,5 tief, unten Mutternflansch Ø 22 x 3,5, vier M3
         translate([0, 0, schl_h - schl_tasche_t]) cylinder(d = schl_tasche_d, h = schl_tasche_t + 1);
@@ -1037,7 +1037,7 @@ module t_schlitten() {
         for (a = [45, 135, 225, 315]) rotate([0, 0, a]) translate([8, 0, schl_h - schl_tasche_t - 8]) cylinder(d = m3_pilot, h = 8.1);
         // ebene Fläche bei X 28 über die volle Höhe für den senkrechten Schenkel des Winkels
         translate([arm_x0, -schl_r - 1, -1]) cube([schl_r, 2 * schl_r + 2, schl_h + 2]);
-        // zwei Gewindeeinsätze M4 waagrecht, bei S + 16 und S + 42
+        // zwei Kernlöcher M4 waagrecht (Schrauben schneiden das Gewinde selbst), bei S + 16 und S + 42
         for (zz = winkel_schraube_z) translate([arm_x0 - einsatz_m4_t, 0, schl_u + zz]) rotate([0, 90, 0]) cylinder(d = einsatz_m4_d, h = einsatz_m4_t + 1);
     }
 }
@@ -1447,8 +1447,7 @@ module kaufteile() {
     color([0.55, 0.55, 0.57]) zyl(welle2_d / 2, welle2_z0, welle2_z1);
     color([0.55, 0.55, 0.57]) zyl(spindel_d / 2, spindel_z0, spindel_z1);
     color([0.55, 0.55, 0.57]) for (s = [-1, 1]) translate([0, s * welle_y, 0]) zyl(welle_d / 2, welle_z0, z_br0 + welle_einsp);
-    // LM10LUU und Mutter am Schlitten
-    color([0.7, 0.7, 0.72]) for (s = [-1, 1]) translate([0, s * welle_y, s_pos - 5]) zyl(lm10_d / 2, 0, lm10_l);
+    // Mutter am Schlitten (die Wellen laufen direkt im gedruckten Schlitten)
     color([0.69, 0.55, 0.34]) translate([0, 0, s_pos + 20.5]) cylinder(d = mutter_d, h = mutter_l + mutter_fl_t);
     color([0.55, 0.55, 0.57]) translate([0, 0, z_stellring0]) cylinder(d = stellring_d, h = stellring_h);
     // Gummiauflage unter dem Stempel (Ausleger und Stempel sind jetzt ein gedrucktes Teil)

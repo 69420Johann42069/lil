@@ -21,7 +21,6 @@ Mit freigegebener Domain amazon.de (Umgebungsmenü in der Titelleiste, Edit, All
 | Elko 100 µF 25 V | 2 | [B00LSJ0R2I](https://amazon.de/dp/B00LSJ0R2I) (10er) | kein Preis | Widerstände 10 k, 4,7 k, 1 k und 100 nF: Sortiment nicht gefunden |
 | T8-Spindel 200 mm, Tr8x2, Messingmutter | 1 | [B0C5M5SD2C](https://amazon.de/dp/B0C5M5SD2C) (2er) | kein Preis | |
 | Linearwelle Ø 10, 200 mm, gehärtet | 2 | [B07GNLNGLJ](https://amazon.de/dp/B07GNLNGLJ) (Zuschnitt) | **6,90 € für 2 x 200 mm** | „16,00 EUR/m + 0,25 EUR je Schnitt, mind. 2,50 EUR“, zuzüglich Versand |
-| LM10LUU | 2 | [B0D2TT8RM3](https://amazon.de/dp/B0D2TT8RM3) | kein Preis | |
 | Welle Ø 8, 250 mm | 1 | [B0CQ2MGV2Q](https://amazon.de/dp/B0CQ2MGV2Q) | kein Preis | |
 | Kugellager 608ZZ | 1 | [B0848LBTQW](https://amazon.de/dp/B0848LBTQW) (10er) | kein Preis | |
 | Stellring Ø 8 | 3 | [B01ADR64KO](https://amazon.de/dp/B01ADR64KO) (5er) | kein Preis | |
@@ -31,8 +30,6 @@ Mit freigegebener Domain amazon.de (Umgebungsmenü in der Titelleiste, Edit, All
 | Gewindestange M5 1 m verzinkt | 2 | [B07QBR5T3T](https://amazon.de/dp/B07QBR5T3T) (je 1 Stück) | kein Preis | |
 | Neodym 6 x 2 | 1 | [B09H34QS6C](https://amazon.de/dp/B09H34QS6C) (100er) | kein Preis | |
 | Neodym 5 x 2 | 1 | [B0C894LTZP](https://amazon.de/dp/B0C894LTZP) (100er) | etwa 7,64 € | nur im Kurztext |
-| Gewindeeinsätze M4 | 1 | [B0G1ND17C5](https://amazon.de/dp/B0G1ND17C5) (46er) | kein Preis | |
-| Gummi- oder Filzfüße | 1 | [B0F3CL7Z5T](https://amazon.de/dp/B0F3CL7Z5T) (366er) | kein Preis | |
 | Gummipad Ø 25 x 2 | 1 | nichts passend gefunden | kein Preis | Ausweg: Rest einer Silikonbackmatte oder Gummi aus dem Arbeitsvorrat |
 | Spritze 60 ml (Blasenspritze Katheteransatz) | 6 | [B0057DQSEW](https://amazon.de/dp/B0057DQSEW) | kein Preis | Titel nennt 50 und 100 ml, Größe prüfen. Apotheke ist billiger (0,94 € je Stück) |
 | Entenschnabelventil | 10 | [B07TR4NPYP](https://www.amazon.de/dp/B07TR4NPYP) | kein Preis | Maße 10 x 6 x 12,7 mm, für 8 mm [B0CPPGPPVV](https://www.amazon.de/dp/B0CPPGPPVV) (7 mm) prüfen |
@@ -44,4 +41,4 @@ Mit freigegebener Domain amazon.de (Umgebungsmenü in der Titelleiste, Edit, All
 
 **Nicht aus einem Shop machbar:** Cyan und Gelb in 500 ml (bei Amazon nicht gefunden), das Gummipad Ø 25, der Schraub- und Widerstandssatz. Das PETG kaufst du ohnehin selbst (10 Euro je kg, 1,56 kg gebraucht).
 
-Die gesamte Liste ohne Shop-Bindung, mit den belegten Preisen aus eBay, AliExpress und anderen Shops: `hardware/einkaufsliste.md` (Gerät 121,38 Euro, alles zusammen 202,07 Euro, ohne Kleber).
+Die gesamte Liste ohne Shop-Bindung, mit den belegten Preisen aus eBay, AliExpress und anderen Shops: `hardware/einkaufsliste.md` (Gerät 107,65 Euro, alles zusammen 188,34 Euro, ohne Kleber).
