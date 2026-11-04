@@ -28,10 +28,10 @@
 
 // ---------- 0 Steuerung ----------
 teil = "montage";
-// Druckteile: sockel koerper_unten koerper_oben krone grundplatte lagerbock
+// Druckteile: sockel koerper_unten koerper_oben krone grundplatte motorturm
 //   rinne rinnendeckel saeule abstreifhalter laufring karussell rollenbock schlitten ausleger
-//   bruecke gt2_rad schublade front podest waegebock anschlag
-//   motor2_winkel hallhalter platinenhalter kabelclip fugenhalter schiene zunge ablage
+//   bruecke schublade front podest waegebock anschlag
+//   platinenhalter kabelclip fugenhalter schiene zunge ablage
 //   klebering namensschild
 // Gold-PETG: goldring goldband kronenring rahmen_unten rahmen_seite rahmen_oben lippe buchsenring
 // Scheiben (Rauch- oder Klar-PETG): portalscheibe_unten portalscheibe_oben fensterscheibe
@@ -87,7 +87,8 @@ becher_max_d = 63;             // Hüllmaß für Ersatzbecher
 zelle_l = 80; zelle_b = 12.7; zelle_h = 12.7;   // [MESSEN] Wägezelle 500 g, Lochabstand M4 prüfen
 nema_b = 42.3;                 // [MESSEN] NEMA 17 Kantenlänge
 nema_l1 = 34;                  // NEMA 17 Stößel, 34 mm
-nema_l2 = 23;                  // NEMA 17 Pancake Karussell
+nema_l2 = 34;                  // NEMA 17 Karussell: derselbe Motor wie der Stößel (34 mm), sitzt direkt unter der Karussellplatte
+schaft_l = 22; schaft_d = 5; schaft_flach = 2.0;   // [MESSEN] Wellenlänge ab Flansch, Welle Ø 5 mit D-Fläche (Fläche 2,0 von der Achse)
 pancake_welle = 20;            // [MESSEN] Wellenlänge Pancake
 lager608_d = 22; lager608_t = 7; lager608_i = 8;
 gt2_h_gekauft = 16;            // [MESSEN] GT2-Scheibe 20 Z Gesamthöhe mit Nabe (Nabe oben)
@@ -196,12 +197,15 @@ laschen_winkel = [45, -45, 135, -135]; laschen_r = 96;
 ballast_pos = [[72, 69], [72.5, -71], [66.5, 120], [66.5, -120]];   // [r, theta], je 7 x DIN 125 M20 (Ø 37 x 3)
 ballast_tasche_d = 38; ballast_n = 7; ballast_s = 3; ballast_d = 37;
 // Lagerbock, Karussellwelle, Riementrieb unten
-lb_d = 40; lb_z0 = 7; lb_z1 = 40;
-welle2_d = 8; welle2_z0 = 9; welle2_z1 = 221;
-gt2_70_z0 = 43; gt2_70_z1 = 51; gt2_70_nabe_z0 = 41; gt2_70_teilkreis = 44.6; gt2_70_aussen = 47;
+// Stand 8: Karussell direkt am Motor 2 (kein Riemen, keine Welle, kein Lagerbock, kein 70er-Rad).
+// Motor 2 steht mit der Welle nach oben mittig im Motorturm, die Platte sitzt direkt auf der Welle und läuft mit den Rollenböcken auf dem Laufring.
+tw_a = 25.2; tw_w = 3;                                  // Turm außen +-25,2 (Motor 42,3 plus 1 mm Luft je Seite plus Wand 3)
+z_m2_top = z_platte1 - 1.5 - schaft_l;                  // Motorflansch, Wellenende 1,5 unter der Plattenoberseite
+z_m2_0 = z_m2_top - nema_l2;
+tisch_t = 2.5; z_tisch1 = z_m2_top + tisch_t;
+hall_r = 14;
 gt2_20_d = 16;
-m2_x = -57.8; m2_z0 = 17; m2_z1 = m2_z0 + nema_l2;       // Körper 17 bis 40
-hall_r = 15;
+m2_x = 0;
 // Wägezelle, Podest
 zelle_x = 57; zelle_y0 = -70; zelle_y1 = 10;
 zelle_fest_y1 = -50; zelle_last_y0 = -10;
@@ -225,7 +229,8 @@ schwamm_o = 65.5;
 rdeckel_t = 1.2; z_rdeckel1 = z_rinne1 + rdeckel_t; rdeckel_loch = 14;   // Rinnendeckel mit sechs Löchern
 lippe_winkel = 40; lippe_z1 = 68.5; lippe_t = 1.5; lippe_r0 = 50; lippe_r1 = 64;
 // Karussell
-platte_r = 85.5; nabe_d = 30; nabe_z0 = 205; welle_flach = 3.5;
+platte_r = 85.5; nabe_d = 36; nabe_z0 = 207;
+hall_top = nabe_z0 - 1.5;                             // Pfostenoberseite, Magnet sitzt 1,5 darüber
 tasche_r0 = 34; tasche_b = 33; tasche_ecke = 5; schlitz_b = 32; schlitz_r0 = 41;
 rast_t = 1.5; rast_nase = 1.0; rast_r0 = 66; rast_r1 = 84; rast_schlitz = 0.8;
 bock_r0 = 74.5; bock_r1 = 85.5; bock_halb = 12; bock_z0 = 193.5; bock_achse_r = 80; bock_achse_z = 199.5;
@@ -322,7 +327,7 @@ hm_grundplatte = [2 * gp_r, 2 * gp_r, z_rippe1 - z_gp0];
 hm_rinnendeckel = [2 * rinne_r1, rinne_r1 + rinne_r0, rdeckel_t];
 hm_klebering = [koerper_d, koerper_d, 8];
 hm_namensschild = [90, 16, 1.2];
-hm_lagerbock = [lb_d, lb_d, lb_z1 - lb_z0];
+hm_motorturm = [2 * tw_a, 2 * tw_a, z_tisch1 + 4 - z_gp1];
 hm_rinne = [2 * rinne_r1, 2 * rinne_r1, z_rinne1 - z_rinne0];
 hm_saeule = [saeule_d, saeule_d, z_rinne0 - z_gp1];
 hm_halter = [20, 16, 10];
@@ -335,15 +340,12 @@ hm_portalscheibe = [(scheibe_z1 - scheibe_z0) / 2 + scheibe_ov, scheibe_b, schei
 hm_fensterscheibe = [fenster_streifen_b, fenster_streifen_h, fenster_streifen_t];
 hm_lippe = [front_b, 11, lippe_b];
 hm_bruecke = [2 * br_r, 2 * br_r, (z_br1 + br_rippe_h) - z_br0];
-hm_gt2 = [gt2_70_aussen, gt2_70_aussen, gt2_70_z1 - gt2_70_nabe_z0];
 hm_schublade = [schub_b, (sock_r(z_schub0) - front_t) - schub_x0, schub_z1 - z_schub0];
 front_x_min = sqrt(pow(sock_r(front_z1) - front_t, 2) - pow(front_b / 2, 2));
 hm_front = [front_b, sock_r(front_z0) + lippe_h - front_x_min, front_z1 + lippe_b - front_z0];
 hm_podest = [podest_d, podest_d, z_podest1 - z_zelle1];
 hm_waegebock = [24, 20, 0.5];
 hm_anschlag = [20, 14, (z_zelle0 - ues_luft) - (z_gp1 - ues_tasche_t)];
-hm_motor2_winkel = [48, 66, m2_z1 + 2.5 - z_gp1];
-hm_hallhalter = [lb_d / 2 + 2 - (hall_r - 2.5), 8, 3];
 hm_platinenhalter = [4, 4, 60 - z_gp1];
 hm_kabelclip = [16, 9, 8];
 hm_fugenhalter = [12, 10, 4];
@@ -410,7 +412,7 @@ assert(fits(hm_portalscheibe), "Portalscheibe (Hälfte) passt nicht aufs Bett");
 assert(fits(hm_fensterscheibe), "Fensterscheibe passt nicht aufs Bett");
 assert(fits(hm_lippe), "Goldlippe passt nicht aufs Bett");
 assert(fits(hm_grundplatte), "Grundplatte passt nicht aufs Bett");
-assert(fits(hm_lagerbock), "Lagerbock passt nicht aufs Bett");
+assert(fits(hm_motorturm), "Motorturm passt nicht aufs Bett");
 assert(fits(hm_rinne), "Feuchtrinne passt nicht aufs Bett");
 assert(fits(hm_saeule), "Rinnensäule passt nicht aufs Bett");
 assert(fits(hm_halter), "Abstreifhalter passt nicht aufs Bett");
@@ -420,14 +422,11 @@ assert(fits(hm_rollenbock), "Rollenbock passt nicht aufs Bett");
 assert(fits(hm_schlitten), "Schlitten passt nicht aufs Bett");
 assert(fits(hm_ausleger), "Ausleger mit Stempel passt nicht aufs Bett");
 assert(fits(hm_bruecke), "Brücke passt nicht aufs Bett");
-assert(fits(hm_gt2), "GT2-Rad passt nicht aufs Bett");
 assert(fits(hm_schublade), "Schublade passt nicht aufs Bett");
 assert(fits(hm_front), "Schubladenfront passt nicht aufs Bett");
 assert(fits(hm_podest), "Podest passt nicht aufs Bett");
 assert(fits(hm_waegebock), "Wägezellenbock passt nicht aufs Bett");
 assert(fits(hm_anschlag), "Überlastanschlag passt nicht aufs Bett");
-assert(fits(hm_motor2_winkel), "Motor-2-Winkel passt nicht aufs Bett");
-assert(fits(hm_hallhalter), "Hallhalter passt nicht aufs Bett");
 assert(fits(hm_platinenhalter), "Platinenhalter passt nicht aufs Bett");
 assert(fits(hm_kabelclip), "Kabelclip passt nicht aufs Bett");
 assert(fits(hm_fugenhalter), "Fugenhalter passt nicht aufs Bett");
@@ -818,11 +817,11 @@ module t_grundplatte() {
                 rohr(gp_rippe_r1, gp_rippe_r0, z_gp1, z_rippe1);
                 for (a = concat(laschen_winkel, zug_winkel)) rotate([0, 0, a]) box(88, 110, -7, 7, z_gp1 - 1, z_rippe1 + 1);
             }
-            for (a = [90, 120, 150, 210, 240, 270]) rotate([0, 0, a]) box(21, 36, -1, 1, z_gp1, z_rippe1);
+            for (a = [90, 120, 150, 210, 240, 270]) rotate([0, 0, a]) box(36, 51, -1, 1, z_gp1, z_rippe1);
             // Ballastbecher Ø 38 mit Wand, Stapel 7 x 3 mm ragt bis Z 28 (Filz darüber)
             for (b = ballast_pos) rotate([0, 0, b[1]]) translate([b[0], 0, 0]) rohr(ballast_tasche_d / 2 + wand, ballast_tasche_d / 2, z_gp1, z_rippe1);
-            // Aufnahmering für den Lagerbock
-            rohr(lb_d / 2 + 1.4, lb_d / 2 + 0.2, z_gp1, z_gp1 + 2);
+            // Aufnahmerahmen für den Motorturm (quadratisch, 2 hoch)
+            difference() { box(-tw_a - 1.6, tw_a + 1.6, -tw_a - 1.6, tw_a + 1.6, z_gp1, z_gp1 + 2); box(-tw_a - 0.2, tw_a + 0.2, -tw_a - 0.2, tw_a + 0.2, z_gp1 - 1, z_gp1 + 3); }
         }
         // Fußtaschen Ø 12,5 x 1 unten
         for (k = [0:5]) rotate([0, 0, 30 + 60 * k]) translate([fuss_r, 0, z_gp0 - eps]) cylinder(d = fuss_tasche_d, h = 1 + eps);
@@ -847,16 +846,25 @@ module t_grundplatte() {
     }
 }
 
-// ---- 7 Lagerbock ----
-module t_lagerbock() {
+// ---- 7 Motorturm (Stand 8): vierwandiger Kasten von der Grundplatte bis unter die Karussellplatte, trägt Motor 2 mit der Welle nach oben ----
+// Der Motor wird von unten eingeschoben und von oben durch den Tisch angeschraubt (vier M3 in die Motorflanschgewinde),
+// dann wird der Turm mit Kabel durch das Fenster auf die Grundplatte geklebt (Aufnahmerahmen). Oben auf dem Tisch steht ein Pfosten für den Hall-Sensor.
+module t_motorturm() {
     difference() {
-        zyl(lb_d / 2, lb_z0, lb_z1);
-        // zwei Lagersitze 608 (Ø 22 H7 x 7), dazwischen Durchgang Ø 12
-        translate([0, 0, lb_z0 + 3]) cylinder(d = lager608_d + 0.1, h = lager608_t + 0.01);
-        translate([0, 0, lb_z1 - lager608_t]) cylinder(d = lager608_d + 0.1, h = lager608_t + 1);
-        translate([0, 0, lb_z0 - 1]) cylinder(d = 12, h = lb_z1 - lb_z0 + 2);
-        // Halterungen für den Hallhalter, M3
-        translate([lb_d / 2 - 4, 0, lb_z1 - 12]) rotate([0, 90, 0]) cylinder(d = m3_pilot, h = 6);
+        union() {
+            box(-tw_a, tw_a, -tw_a, tw_a, z_gp1, z_tisch1);
+            box(hall_r - 3, hall_r + 3, -4.5, 4.5, z_tisch1 - eps, hall_top);
+        }
+        // Innenraum von unten bis zur Tischunterseite
+        box(-(tw_a - tw_w), tw_a - tw_w, -(tw_a - tw_w), tw_a - tw_w, z_gp1 - 1, z_m2_top);
+        // Zentrierbund Ø 22,5 und vier M3 durch den Tisch
+        translate([0, 0, z_m2_top - 1]) cylinder(d = 22.5, h = tisch_t + 2);
+        for (sx = [-1, 1]) for (sy = [-1, 1]) translate([sx * 15.5, sy * 15.5, z_m2_top - 1]) cylinder(d = m3_d, h = tisch_t + 2);
+        // Kabelfenster unten in der -Y-Wand (Richtung Platine)
+        box(-9, 9, -tw_a - 1, -(tw_a - tw_w) + 1, z_gp1 - 1, z_gp1 + 18);
+        // Hall-Tasche 4,4 x 5,4 (A3144 liegt flach, Fläche nach oben), Beinchen durch den Schlitz nach unten in den Turm
+        translate([hall_r - 2.2, -2.7, hall_top - 3.4]) cube([4.4, 5.4, 4]);
+        translate([hall_r - 1.5, -2.0, z_m2_top - 1]) cube([3, 4, 4 + tisch_t + 1]);
     }
 }
 
@@ -967,11 +975,14 @@ module t_karussell() {
             zyl(nabe_d / 2, nabe_z0, z_platte0 + eps);
             // Federzungen sind Teil der Platte, Nasen stehen in den Taschen
         }
-        // D-Bohrung 8 in der Nabe
+        // D-Bohrung für die Motorwelle Ø 5, von unten bis 1,5 unter die Plattenoberseite (Sackloch), Madenschraube M3 radial in der Nabe
         translate([0, 0, nabe_z0 - 1]) intersection() {
-            cylinder(d = welle2_d + 0.3, h = z_platte1 - nabe_z0 + 2);
-            translate([-10, -10, 0]) cube([10 + welle_flach, 20, z_platte1 - nabe_z0 + 2]);
+            cylinder(d = schaft_d + 0.3, h = z_platte1 - 1.5 - nabe_z0 + 1);
+            translate([-10, -10, 0]) cube([10 + schaft_flach + 0.15, 20, z_platte1 - nabe_z0 + 2]);
         }
+        translate([0, 0, nabe_z0 + 2]) rotate([-90, 0, 0]) cylinder(d = m3_pilot, h = nabe_d / 2 + 1);
+        // Magnettasche Ø 5,2 x 2,2 von unten auf r 14 (Hall-Sensor auf dem Turm)
+        translate([hall_r, 0, nabe_z0 - eps]) cylinder(d = 5.2, h = 2.2);
         for (p = fenster_winkel) rotate([0, 0, p * teilung]) {
             // Tasche 3,5 tief
             translate([0, 0, z_platte1 - tasche_t]) linear_extrude(height = tasche_t + 1) flansch_tasche2d();
@@ -1098,30 +1109,6 @@ module t_bruecke() {
     }
 }
 
-// ---- 18 GT2-Rad 70 Z (Gerätelage) ----
-module t_gt2_rad() {
-    z = 70;
-    r_tip = gt2_70_teilkreis / 2 - 0.38;
-    difference() {
-        union() {
-            zyl(r_tip, gt2_70_z0 + 1, gt2_70_z1 - 1);
-            zyl(gt2_70_aussen / 2, gt2_70_z0, gt2_70_z0 + 1);
-            zyl(gt2_70_aussen / 2, gt2_70_z1 - 1, gt2_70_z1);
-            zyl(10, gt2_70_nabe_z0, gt2_70_z0 + eps);
-        }
-        // Zahnlücken GT2
-        for (i = [0:z - 1]) rotate([0, 0, i * 360 / z]) translate([r_tip, 0, gt2_70_z0 + 1 - eps]) cylinder(d = 1.5, h = gt2_70_z1 - gt2_70_z0 - 2 + 2 * eps, $fn = 12);
-        // D-Bohrung 8
-        translate([0, 0, gt2_70_nabe_z0 - 1]) intersection() {
-            cylinder(d = welle2_d + 0.2, h = 12);
-            translate([-10, -10, 0]) cube([10 + 3.5, 20, 12]);
-        }
-        translate([0, 0, gt2_70_nabe_z0 + 1]) rotate([0, 90, 0]) cylinder(d = m3_pilot, h = 12);
-        // Magnettasche Ø 5,2 x 2,2 unten auf r 15
-        translate([hall_r, 0, gt2_70_z0 - eps]) cylinder(d = 5.2, h = 2.2);
-    }
-}
-
 // ---- 19 Schublade (Gerätelage, geschlossen) ----
 // Vorderende folgt der Innenfläche der Front (Kegel, Front 8 dick), dort 2 mm Stirnwand für die Front
 module front_innen_solid(z0, z1) {
@@ -1212,32 +1199,6 @@ module t_anschlag() {
 }
 
 // ---- 23 Kleinteile ----
-module t_motor2_winkel() {
-    // Tisch über dem Pancake-Motor (Flansch oben), zwei Wangen, Füße mit M3, Zentrierbund Ø 22,5, Langlöcher +-3
-    pz = m2_z1;
-    difference() {
-        union() {
-            box(m2_x - 24, m2_x + 24, -24, 24, pz, pz + 2.5);
-            for (s = [-1, 1]) {
-                box(m2_x - 24, m2_x + 24, s > 0 ? nema_b / 2 + 1 : -nema_b / 2 - 4, s > 0 ? nema_b / 2 + 4 : -nema_b / 2 - 1, z_gp1, pz + 2.5);
-                box(m2_x - 24, m2_x + 24, s > 0 ? nema_b / 2 + 4 : -nema_b / 2 - 12, s > 0 ? nema_b / 2 + 12 : -nema_b / 2 - 4, z_gp1, z_gp1 + 3);
-            }
-        }
-        translate([m2_x, 0, pz - 1]) cylinder(d = 22.5, h = 5);
-        for (sx = [-1, 1]) for (sy = [-1, 1]) hull() for (dx = [-3, 3])
-            translate([m2_x + sx * 15.5 + dx, sy * 15.5, pz - 1]) cylinder(d = m3_d, h = 5);
-        for (sx = [-1, 1]) for (sy = [-1, 1]) translate([m2_x + sx * 15, sy * (nema_b / 2 + 8), z_gp1 - 1]) cylinder(d = m3_d, h = 5);
-    }
-}
-
-module t_hallhalter() {
-    // Arm vom Lagerbock zum 70er-Rad, Stirn des A3144 liegt 1,5 unter dem Rad (Z 41,5)
-    difference() {
-        box(hall_r - 2.5, lb_d / 2 + 2, -4, 4, lb_z1 - 2, lb_z1 + 1.0);
-        translate([hall_r - 2.2, -2.7, lb_z1 - 1.5]) cube([4.4, 5.4, 4]);
-    }
-}
-
 module t_platinenhalter() {
     // zwei Leisten 4 x 4 an den Enden der Lochrasterplatine 70 x 90 (Ebene Y -81), Nut 1 tief, Platine steht ab Z 30
     // (zwischen den Ballaststapeln bei -71 und -120 ist unten kein Platz für breite Füße)
@@ -1381,25 +1342,22 @@ module druck(name) {
     else if (name == "portalscheibe_oben") translate([-(scheibe_zt - scheibe_ov / 2), 0, scheibe_x]) rotate([0, 90, 0]) t_portalscheibe(1);
     else if (name == "fensterscheibe") t_fensterscheibe();
     else if (name == "grundplatte") translate([0, 0, -z_gp0]) t_grundplatte();
-    else if (name == "lagerbock") translate([0, 0, -lb_z0]) t_lagerbock();
     else if (name == "rinne") translate([0, 0, -z_rinne0]) t_rinne();
     else if (name == "rinnendeckel") translate([0, 0, -z_rinne1]) t_rinnendeckel(1);
     else if (name == "saeule") translate([0, 0, -z_gp1]) t_saeule();
     else if (name == "abstreifhalter") t_abstreifhalter_lokal();
+    else if (name == "motorturm") translate([0, 0, -z_gp1]) t_motorturm();
     else if (name == "laufring") translate([0, 0, -z_lr0]) t_laufring();
     else if (name == "karussell") translate([0, 0, z_platte1]) rotate([180, 0, 0]) t_karussell();
     else if (name == "rollenbock") translate([-(bock_r0 + bock_r1) / 2, 0, -bock_z0]) t_rollenbock();
     else if (name == "schlitten") translate([0, 0, -(s_pos - schl_u)]) t_schlitten();
     else if (name == "ausleger") translate([-arm_x0, s_pos + arm_z0 + winkel_h, arm_b / 2]) rotate([90, 0, 0]) t_ausleger();
     else if (name == "bruecke") translate([0, 0, -z_br0]) t_bruecke();
-    else if (name == "gt2_rad") translate([0, 0, gt2_70_z1]) rotate([180, 0, 0]) t_gt2_rad();
     else if (name == "schublade") translate([-schub_x0, 0, -z_schub0]) t_schublade();
     else if (name == "front") translate([-front_x_min, 0, -front_z0]) t_front();
     else if (name == "podest") translate([-zelle_x, 0, z_podest1]) rotate([180, 0, 0]) t_podest();
     else if (name == "waegebock") translate([-zelle_x, -zelle_y0 - 10, -z_gp1]) t_waegebock();
     else if (name == "anschlag") translate([-zelle_x, 0, -(z_gp1 - ues_tasche_t)]) t_anschlag();
-    else if (name == "motor2_winkel") translate([-m2_x, 0, -z_gp1]) t_motor2_winkel();
-    else if (name == "hallhalter") translate([-hall_r, 0, -(lb_z1 - 2)]) t_hallhalter();
     else if (name == "platinenhalter") translate([0, -platine_y, -z_gp1]) t_platinenhalter();
     else if (name == "klebering") translate([0, 0, -(z_kor_teil - 4)]) t_klebering();
     else if (name == "namensschild") t_namensschild();
@@ -1443,8 +1401,7 @@ module kaufteile() {
     rotate([0, 0, phi]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) translate([st_r, 0, 0]) {
         spritze_kauf(z_kp_leer + 0.55 * hub_nutz, farben[p - 1]);
     }
-    // Karussellwelle, Spindel, Führungswellen
-    color([0.55, 0.55, 0.57]) zyl(welle2_d / 2, welle2_z0, welle2_z1);
+    // Spindel, Führungswellen
     color([0.55, 0.55, 0.57]) zyl(spindel_d / 2, spindel_z0, spindel_z1);
     color([0.55, 0.55, 0.57]) for (s = [-1, 1]) translate([0, s * welle_y, 0]) zyl(welle_d / 2, welle_z0, z_br0 + welle_einsp);
     // Mutter am Schlitten (die Wellen laufen direkt im gedruckten Schlitten)
@@ -1454,7 +1411,8 @@ module kaufteile() {
     color([0.2, 0.2, 0.2]) translate([stempel_x, 0, s_pos]) cylinder(d = stempel_d, h = gummi_t);
     // Motoren
     color([0.2, 0.2, 0.22]) translate([-motor1_r - nema_b / 2, -nema_b / 2, z_m1_0]) cube([nema_b, nema_b, m1_l]);
-    color([0.2, 0.2, 0.22]) translate([m2_x - nema_b / 2, -nema_b / 2, m2_z0]) cube([nema_b, nema_b, nema_l2]);
+    color([0.2, 0.2, 0.22]) translate([-nema_b / 2, -nema_b / 2, z_m2_0]) cube([nema_b, nema_b, nema_l2]);
+    color([0.55, 0.55, 0.57]) translate([0, 0, z_m2_top]) cylinder(d = schaft_d, h = schaft_l);
     // Riemenscheiben und Riemen oben
     for (xm = [0, -motor1_r]) color([0.4, 0.4, 0.42]) translate([xm, 0, z_riemen0]) {
         cylinder(d = gt2_20_d, h = gt2_h_nutz);
@@ -1491,7 +1449,7 @@ module montage() {
                 color([0.93, 0.95, 0.96, 0.4]) for (p = fenster_winkel) rotate([0, 0, p * teilung]) fensterscheibe_montage();
             }
             color("#1C1C1E") t_grundplatte();
-            color("#1C1C1E") t_lagerbock();
+            color("#1C1C1E") t_motorturm();
             if (budget == 0) {
                 color("#1C1C1E") t_rinne();
                 color("#1C1C1E") for (sd = [-1, 1]) t_rinnendeckel(sd);
@@ -1505,14 +1463,11 @@ module montage() {
             color("#1C1C1E") t_schlitten();
             color("#1C1C1E") t_ausleger();
             color("#1C1C1E") t_bruecke();
-            color("#1C1C1E") t_gt2_rad();
             color("#F4F2EE") t_schublade();
             color("#0A0A0C") t_front();
             color("#1C1C1E") t_podest();
             color("#1C1C1E") t_waegebock();
             color("#1C1C1E") t_anschlag();
-            color("#1C1C1E") t_motor2_winkel();
-            color("#1C1C1E") t_hallhalter();
             color("#1C1C1E") t_platinenhalter();
             if (budget == 0) color("#1C1C1E") rotate([0, 0, -2.5 * teilung]) for (z = [20, 100, 160, 250, 320, 370]) translate([0, 0, z]) t_kabelclip();
             color("#141417") t_klebering();
