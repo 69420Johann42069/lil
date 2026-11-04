@@ -273,7 +273,7 @@ Standardansicht für das Rendering: Gerät auf einem hellen Holzschreibtisch, Ka
 | Spindel | T8, Steigung 2 (eingängig), Achse X 0, Y 0, Z 250 bis 403, Länge 153 (Kaufmaß 200, gekürzt). Die Mutter sitzt im Schlitten bei S + 20,5 bis S + 35,5, bei S_min also ab Z 255,6, die Spindel reicht dort noch 5,6 tiefer. Hängt im 608 der Brücke. Ein Stellring Ø 8 (16 x 8) unter dem Lager, Z 372,8 bis 380,8, nimmt die Dosierkraft nach oben auf. Oben auf dem Lagerinnenring liegt eine Passscheibe 8 x 14 x 0,5, darauf die GT2-Scheibe 20 Z (Bohrung 8, Kaufteil 16 hoch, Zahnkranz unten, Nabe oben) mit Madenschraube auf einer angeschliffenen Fläche der Spindel, sie hält das Eigengewicht. Keine Kupplung, die Motorwelle trägt nur Riemenzug |
 | Führungswellen | zwei Stahlwellen Ø 10 h6, bei X 0, Y ± 22, Z 225,1 bis 395,1 (Länge 170, Kaufmaß 200), oben 14,3 tief eingespannt in Brücke (7) und geschlitzter Klemmnabe Ø 20 x 10 auf der Brückenoberseite (M3), unten frei |
 | Schlitten | PETG, zylindrisch r 34 mit einer ebenen Fläche bei X 28 (vorne, volle Höhe) für den Winkel, 58 hoch, Z S - 10 bis S + 48. Zwei Bohrungen Ø 19 H7 für je ein LM10LUU (19 x 55) bei Y ± 22, eingeklebt und mit Madenschraube gesichert. Mittig von oben eine Stufenbohrung: Ø 23 x 12,5 tief, darin unten der Flansch der Messingmutter (Ø 22 x 3,5, 4 x M3), oben 9 mm freier Raum für den Stellring. Spindeldurchgang Ø 12 |
-| Ausleger mit Stempel | **ein Teil aus PETG schwarz** (ersetzt Winkelstahl und Stempelscheibe). Senkrechte Platte X 28 bis 36, Y ± 12,5, Z S + 8 bis S + 48, an der ebenen Schlittenfläche X 28 mit 2 x M4 (Zylinderkopf, Senkung Ø 7,6 x 4) in Gewindeeinsätzen bei S + 24 und S + 40 (32 mm Hebel zur Kippkante). Waagrechter Arm X 28 bis 68, Z S + 8 bis S + 16 (8 dick). Stempelfuß Ø 25 x 6 unter dem Arm bei X 53 (Z S + 2 bis S + 8), 4 mm innen von der Spritzenachse, liegt ganz auf der Kolbenplatte Ø 38 (Rand 5,5). Zwei Stützrippen 3 dick bei \|Y\| 9,5 bis 12,5, Dreieck 22 x 20 zwischen Platte und Arm. Darunter klebt eine 2 mm Gummi- oder Silikonauflage Ø 25 (Unterkante S). **Druck liegend auf der Seite (Y nach oben):** das L-Profil steht dann in jeder Schicht, die Last liegt in der Schichtebene, nicht quer dazu. 4 Perimeter, 100 Prozent Füllung. Nachweis Abschnitt 16 |
+| Ausleger mit Stempel | **ein Teil aus PETG schwarz** (ersetzt Winkelstahl und Stempelscheibe). Senkrechte Platte X 28 bis 36, Y ± 12,5, Z S + 8 bis S + 48, an der ebenen Schlittenfläche X 28 mit 2 x M4 (Zylinderkopf, Senkung Ø 7,6 x 4) in Gewindeeinsätzen bei S + 24 und S + 40 (32 mm Hebel zur Kippkante). Waagrechter Arm X 28 bis 68, Z S + 8 bis S + 16 (8 dick). Stempelfuß Ø 25 x 6 unter dem Arm bei X 53 (Z S + 2 bis S + 8), 4 mm innen von der Spritzenachse, liegt ganz auf der Kolbenplatte Ø 38 (Rand 2,5). Zwei Stützrippen 3 dick bei \|Y\| 9,5 bis 12,5, Dreieck 22 x 20 zwischen Platte und Arm. Darunter klebt eine 2 mm Gummi- oder Silikonauflage Ø 25 (Unterkante S). **Druck liegend auf der Seite (Y nach oben):** das L-Profil steht dann in jeder Schicht, die Last liegt in der Schichtebene, nicht quer dazu. 4 Perimeter, 100 Prozent Füllung. Nachweis Abschnitt 16 |
 | Endschalter oben | Mikroschalter in einer Tasche der Brückenunterseite bei X -26, Y 0 (zwischen Schlitten in Park und Brücke sind nur 2 mm), die Schlittenoberkante löst bei S = S_park + 0,5 aus |
 | Motor 1 | NEMA 17, 34 lang (etwa 0,26 Nm), 42,3 x 42,3, hängt unter der Brücke bei θ 180, r 59 (X -59), Körper Z 346,8 bis 380,8, Welle nach oben durch ein Langloch ± 3 (Riemenspannung), auf 23 gekürzt, auf 4 Silikonscheiben 1 mm |
 | Riementrieb | GT2 20 : 20, geschlossener Riemen 158, 6 breit, Achsabstand 59, Riemenebene Z 388,3 bis 396,3, beide Scheiben mit Nabe oben (bis 404,3) |
@@ -640,14 +640,14 @@ Nicht sparen an Wägezelle (Dosierkern), Kleber und Lagern.
 
 ## 15. Kollisionsprüfungen mit Sollabstand
 
-Geprüft mit `python3 hardware/render_farbmischer.py --pruefung`: Spritze (Ventil, Konus, Zylinder, Flansch 45 x 32 radial, Kolbenstange 12 x 12, Kolbenplatte Ø 38) an allen sechs Stationen, Karussell in 1-Grad-Schritten über 360 Grad, Kolbenplatte bei leer (231,5), 2 ml Rest (235,1), halb (276,2) und 50 ml (320,8), gegen alle festen Teile mit Stößel in Parkstellung. Dazu die mitdrehenden Rollenböcke über 360 Grad und die Entnahme einer vollen Spritze radial nach vorne über 0 bis 130 mm. Abstände sind exakt in 2D gerechnet und in 3D als Prismen kombiniert. Sollabstand: drehend gegen fest mindestens 2,0, Entnahme mindestens 3,0, Ventil gegen Becher mindestens 5,0, Stempel über voller Kolbenplatte mindestens 10,0, fest gegen fest in der Hülle mindestens 1,5. Die Tabelle ist die Ausgabe des Skripts, Stand 5.1: 51 von 51 bestanden.
+Geprüft mit `python3 hardware/render_farbmischer.py --pruefung`: Spritze (Ventil, Konus, Zylinder, Flansch 45 x 32 radial, Kolbenstange 12 x 12, Kolbenplatte Ø 38) an allen sechs Stationen, Karussell in 1-Grad-Schritten über 360 Grad, Kolbenplatte bei leer (231,5), 2 ml Rest (235,1), halb (276,2) und 50 ml (320,8), gegen alle festen Teile mit Stößel in Parkstellung. Dazu die mitdrehenden Rollenböcke über 360 Grad und die Entnahme einer vollen Spritze radial nach vorne über 0 bis 130 mm. Abstände sind exakt in 2D gerechnet und in 3D als Prismen kombiniert. Sollabstand: drehend gegen fest mindestens 2,0, Entnahme mindestens 3,0, Ventil gegen Becher mindestens 5,0, Stempel über voller Kolbenplatte mindestens 10,0, fest gegen fest in der Hülle mindestens 1,5. Die Tabelle ist die Ausgabe des Skripts, Stand 6: 50 von 50 bestanden (fünf LED-Prüfungen entfallen, vier neu: Ausleger gegen Brücke 11, Stempelfuß auf Kolbenplatte 12, Ausleger in S_min 13, Goldring gegen Sockelfalz 47; die Nummern sind neu fortlaufend).
 
-Messgrößen: Nr 31 ist der kürzeste Abstand zwischen den Konturen zweier Nachbarschlitze mit Halbkreisende R 16 (17,46). Der Wert 6,75 aus Stand 5 galt für ein eckiges Schlitzende und war falsch. Nr 22 misst den Zylinder gegen die Rampe am Laufringende, Nr 40 den Zuganker gegen Schubladenwand und Schiene (beide bei \|Y\| 35).
+Messgrößen: Nr 33 ist der kürzeste Abstand zwischen den Konturen zweier Nachbarschlitze mit Halbkreisende R 16 (17,46). Der Wert 6,75 aus Stand 5 galt für ein eckiges Schlitzende und war falsch. Nr 24 misst den Zylinder gegen die Rampe am Laufringende, Nr 40 den Zuganker gegen Schubladenwand und Schiene (beide bei \|Y\| 35).
 
 | Nr | Prüfung | Soll | Ist | ok |
 |---|---|---|---|---|
 | 1 | Schlitten tiefste Stellung gegen Karussellplatte oben | 2 | 2,07 | ja |
-| 2 | Wellenende Ø 10 gegen Karussellplatte oben | 2 | 2,07 | ja |
+| 2 | Wellenende Ø10 gegen Karussellplatte oben | 2 | 2,07 | ja |
 | 3 | Laufring (fest, innen r 74,5) gegen Spritzenzylinder beim Drehen | 2 | 2,50 | ja |
 | 4 | Zuganker gegen Rollenbock beim Drehen | 2 | 2,50 | ja |
 | 5 | Zuganker gegen Laufrolle beim Drehen | 2 | 3,78 | ja |
@@ -656,51 +656,50 @@ Messgrößen: Nr 31 ist der kürzeste Abstand zwischen den Konturen zweier Nachb
 | 8 | Schlitten (r 34) gegen Kolbenplatten beim Drehen | 2 | 4,00 | ja |
 | 9 | Schlitten tief gegen Nachbar-Kolbenplatten | 2 | 4,00 | ja |
 | 10 | Stempel in Park gegen Kolbenplatte 50 ml | 10 | 10,00 | ja |
-| 11 | Führungswellen Ø 10 gegen Flansch beim Drehen | 2 | 7,93 | ja |
-| 12 | Zuganker gegen Flansch beim Drehen | 2 | 6,91 | ja |
-| 13 | Abstreiflippe gegen Konus (nur das Ventil darf streifen) | 2 | 9,00 | ja |
-| 14 | Rollenbock gegen Körperwand | 2 | 10,90 | ja |
-| 15 | Arm und Stempel beim Dosieren (tief) gegen Nachbar-Kolbenplatten | 3 | 13,07 | ja |
-| 16 | LED-Träger gegen Kolbenplatte | 2 | 14,96 | ja |
-| 17 | Motor 1 Unterkante gegen Kolbenplatte 50 ml | 10 | 26,00 | ja |
-| 18 | Ventil gegen Becherrand (senkrecht) | 5 | 7,00 | ja |
-| 19 | Nachbarventil beim Dosieren gegen Becherrand (waagrecht) | 5 | 13,96 | ja |
-| 20 | Nächstes Ventil in Parkstellung gegen Becherrand | 5 | 13,96 | ja |
-| 21 | Rolle im Stillstand gegen Rand der Laufringlücke | 2 | 3,96 | ja |
-| 22 | Entnahme: Zylinder gegen Laufringende | 3 | 4,28 | ja |
-| 23 | Entnahme: Zylinder gegen Rollenbock bei ± 25,7 | 3 | 6,52 | ja |
-| 24 | Entnahme: Flansch gegen Rollenbock | 3 | 10,13 | ja |
-| 25 | Entnahme: Kolbenplatte gegen Portalöffnung (seitlich und oben, R 24) | 3 | 7,63 | ja |
-| 26 | Entnahme: Kolbenplatte gegen Stempel oben | 3 | 10,00 | ja |
-| 27 | Entnahme: Kolbenplatte gegen Nachbar-Kolbenplatten | 3 | 11,46 | ja |
-| 28 | Entnahme: Zylinder gegen Nachbarzylinder | 3 | 19,46 | ja |
-| 29 | Entnahme: Ventil und Konus gegen Feuchtrinne | 3 | 30,68 | ja |
-| 30 | Flanschtaschen untereinander (Innenecken R 5) | 2 | 3,12 | ja |
-| 31 | Zylinderschlitze untereinander | 4 | 17,46 | ja |
-| 32 | Rollenbock gegen Zylinderschlitz der Platte | 3 | 5,51 | ja |
-| 33 | Motor 1 Unterkante gegen LED-Träger (senkrecht) | 2 | 2,30 | ja |
-| 34 | Motor 1 gegen Schlitten in Park | 2 | 3,85 | ja |
-| 35 | Zuganker gegen LED-Oberkante der Lichtfuge | 2 | 2,50 | ja |
+| 11 | Ausleger (Arm, Platte S + 48) in Park gegen Brücke (S + 50) | 2 | 2,00 | ja |
+| 12 | Stempelfuß Ø 25 (X 53) ganz auf Kolbenplatte Ø 38 (Rand) | 1,5 | 2,50 | ja |
+| 13 | Ausleger in S_min gegen Karussellplatte und Laufring | 2 | 12,07 | ja |
+| 14 | Führungswellen Ø10 gegen Flansch beim Drehen | 2 | 7,93 | ja |
+| 15 | Zuganker gegen Flansch beim Drehen | 2 | 6,91 | ja |
+| 16 | Abstreiflippe gegen Konus (nur das Ventil darf streifen) | 2 | 9,00 | ja |
+| 17 | Rollenbock gegen Körperwand | 2 | 10,90 | ja |
+| 18 | Arm und Stempel beim Dosieren (tief) gegen Nachbar-Kolbenplatten | 3 | 13,07 | ja |
+| 19 | Motor 1 Unterkante gegen Kolbenplatte 50 ml | 10 | 26,00 | ja |
+| 20 | Ventil gegen Becherrand (senkrecht) | 5 | 7,00 | ja |
+| 21 | Nachbarventil beim Dosieren gegen Becherrand (waagrecht) | 5 | 13,96 | ja |
+| 22 | Nächstes Ventil in Parkstellung gegen Becherrand | 5 | 13,96 | ja |
+| 23 | Rolle im Stillstand gegen Rand der Laufringlücke | 2 | 3,96 | ja |
+| 24 | Entnahme: Zylinder gegen Laufringende | 3 | 4,28 | ja |
+| 25 | Entnahme: Zylinder gegen Rollenbock bei ± 25,7 | 3 | 6,52 | ja |
+| 26 | Entnahme: Flansch gegen Rollenbock | 3 | 10,13 | ja |
+| 27 | Entnahme: Kolbenplatte gegen Portalöffnung (seitlich und oben, R 24) | 3 | 7,63 | ja |
+| 28 | Entnahme: Kolbenplatte gegen Stempel oben | 3 | 10,00 | ja |
+| 29 | Entnahme: Kolbenplatte gegen Nachbar-Kolbenplatten | 3 | 11,46 | ja |
+| 30 | Entnahme: Zylinder gegen Nachbarzylinder | 3 | 19,46 | ja |
+| 31 | Entnahme: Ventil und Konus gegen Feuchtrinne | 3 | 30,68 | ja |
+| 32 | Flanschtaschen untereinander (Innenecken R 5) | 2 | 3,12 | ja |
+| 33 | Zylinderschlitze untereinander | 4 | 17,46 | ja |
+| 34 | Rollenbock gegen Zylinderschlitz der Platte | 3 | 5,51 | ja |
+| 35 | Motor 1 gegen Schlitten in Park | 2 | 3,85 | ja |
 | 36 | Stellring gegen Schlittentasche (Tasche 9 tief, Eintauchen 6) | 2 | 3,00 | ja |
 | 37 | GT2-Rad 70 Z gegen Becher (Z 43 bis 51) | 3 | 4,66 | ja |
 | 38 | Motor 2 gegen Lagerbock | 3 | 16,65 | ja |
 | 39 | Zuganker -32 gegen Wägezelle | 3 | 10,90 | ja |
-| 40 | Zuganker ± 32 gegen Schublade (Wand | Schiene) | 3 | 10,46 | ja |
+| 40 | Zuganker ± 32 gegen Schublade (Wand \| Schiene) | 3 | 10,46 | ja |
 | 41 | Platinenecke gegen Hülle (Z 97 bis 100) | 2 | 2,86 | ja |
 | 42 | Wägezelle festes Ende gegen Sockelwand | 3 | 5,26 | ja |
-| 43 | Podest gegen LED-Ring (Ring 3 dick) | 0,5 | 0,70 | ja |
-| 44 | Überlastanschlag unter dem Lastende | 0,8 | 0,80 | Einstellmaß |
-| 45 | Zuganker gegen Karussellplatte (Rand r 85,5) beim Drehen (neu) | 2 | 2,50 | ja |
-| 46 | Mutter M5 in Tasche (Fläche außen) gegen Körperwand (neu) | 1,5 | 1,90 | ja |
-| 47 | Laufringlasche (Ende r 94,5) gegen Körperwand (neu) | 1,5 | 1,90 | ja |
-| 48 | Zuganker seitlich gegen Fensterstreifen (26 breit) (neu) | 5 | 14,60 | ja |
-| 49 | Ballaststapel gegen Nachbarteile (Grundriss) (neu) | 2 | 5,15 | ja |
-| 50 | Vitrinen-LED unter dem Laufring gegen Zylinder beim Drehen (neu) | 2 | 4,50 | ja |
-| 51 | Stempelachse innerhalb der Flanschauflage (bis r 57) (neu) | 2 | 4,00 | ja |
+| 43 | Überlastanschlag unter dem Lastende | 0,8 | 0,80 | Einstellmaß |
+| 44 | Zuganker gegen Karussellplatte (Rand r 85,5) beim Drehen | 2 | 2,50 | ja |
+| 45 | Mutter M5 in Tasche (Fläche außen) gegen Körperwand | 1,5 | 1,90 | ja |
+| 46 | Laufringlasche (Ende r 94,5) gegen Körperwand | 1,5 | 1,90 | ja |
+| 47 | Goldring innen r 97,3 gegen Sockelfalz (r 97,1) | 0,2 | 0,20 | ja |
+| 48 | Zuganker seitlich gegen Fensterscheibe (26 breit) | 5 | 14,60 | ja |
+| 49 | Ballaststapel gegen Nachbarteile (Grundriss) | 2 | 5,15 | ja |
+| 50 | Stempelachse innerhalb der Flanschauflage (bis r 57) | 2 | 4,00 | ja |
 
 Die Schubladenfront folgt der Sockelkontur, eine rechteckige Front 70 breit würde an den Ecken 0,2 über die Kegelfläche stehen.
 
-Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--pruefung` erneut bestehen. Knapp sind: Schlitten und Wellenende gegen Platte (2,07), Laufring gegen Zylinder (2,50), Zuganker gegen Rollenbock und Platte (2,50), Rinnendeckel gegen Ventil (2,30), Motor 1 gegen LED-Träger (2,30), Muttern und Laschen gegen Körperwand (1,90, fest gegen fest). Wenn eine Spritzenmarke einen längeren Zylinder, einen dickeren Flansch oder einen Zylinder Ø 30,5 hat, verschiebt sich die Kette. Deshalb die Spritzenmessung (17.1) vor dem Druck der Teile 11 und 12.
+Jedes neue Formdetail und jede gemessene Spritzenmarke muss diese Liste mit `--pruefung` erneut bestehen. Knapp sind: Schlitten und Wellenende gegen Platte (2,07), Laufring gegen Zylinder (2,50), Zuganker gegen Rollenbock und Platte (2,50), Rinnendeckel gegen Ventil (2,30), Ausleger gegen Brücke (2,00), Muttern und Laschen gegen Körperwand (1,90, fest gegen fest). Wenn eine Spritzenmarke einen längeren Zylinder, einen dickeren Flansch oder einen Zylinder Ø 30,5 hat, verschiebt sich die Kette. Deshalb die Spritzenmessung (17.1) vor dem Druck der Teile 11 und 12.
 
 ## 16. Rechnungen (Stand 5 aus fm5b.py und fm5d.py, geänderte Zeilen für Stand 5.1 und 6 nachgerechnet)
 

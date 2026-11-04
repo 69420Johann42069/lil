@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Rendering und Prüfung des Farbmischers nach hardware/farbmischer_parameter.md (Stand 5.1).
+Rendering und Prüfung des Farbmischers nach hardware/farbmischer_parameter.md (Stand 6).
 
 Aufruf:  python3 render_farbmischer.py              erzeugt rendering_farbmischer.png (Hero, Schnitt, Draufsicht, Maßskizze)
          python3 render_farbmischer.py --pruefung   rechnet nur alle Kollisionsprüfungen aus Abschnitt 15 des Blatts
 
 Nur numpy, matplotlib und Standardbibliothek. Der Hero ist ein eigener Strahlverfolger (analytische Zylinder,
 Kegel, Ebenen) mit Umgebungslicht aus Softboxen, weichem Tischschatten und Spiegelung. Schnitt, Draufsicht und
-Maßskizze sind exakte 2D-Zeichnungen aus denselben Maßen.
+Maßskizze sind exakte 2D-Zeichnungen aus denselben Maßen. Stand 6: kein Licht im Gerät (nichts leuchtet),
+alles aus PETG gedruckt, Gold sind gedruckte Gold-PETG-Teile.
 
 Koordinaten wie im Blatt: Ursprung Gerätemitte auf der Tischfläche, +X nach vorne (Nutzerin), +Y von vorne gesehen
 nach rechts, +Z oben, Winkel theta von +X aus gegen den Uhrzeigersinn von oben (0 Grad vorne, 90 Grad rechts).
@@ -28,7 +29,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_PNG = os.path.join(HERE, "rendering_farbmischer.png")
 
 # ============================================================
-# Maße aus farbmischer_parameter.md (Stand 5), Abschnitte 3 bis 7
+# Maße aus farbmischer_parameter.md (Stand 6), Abschnitte 3 bis 7 und farbmischer.scad
 # ============================================================
 PITCH = 360.0 / 7.0            # Platzteilung
 RS = 57.0                      # Stationsradius
@@ -37,8 +38,7 @@ ML = 1.786                     # mm je ml (Innen-Ø 26,7)
 # Höhenkette (Abschnitt 3)
 Z_FUSS, Z_GRUND0, Z_GRUND1 = 0.0, 3.0, 7.0
 Z_WZ0, Z_WZ1 = 7.5, 20.2
-Z_LEDR0, Z_LEDR1 = 20.7, 23.7               # LED-Ring Bühne, Kaufteil 3 dick
-Z_POD0, Z_POD1 = 24.4, 26.0                  # Podestscheibe 1,6 dick
+Z_POD0, Z_POD1 = 24.4, 26.0                  # Podestscheibe 1,6 dick (PETG schwarz, Stiel Ø 14 steht frei)
 Z_BODEN0, Z_BODEN1 = 26.0, 27.5
 Z_BECHER0, Z_BECHER1 = 27.5, 60.5
 BECHER_RU, BECHER_RO = 23.5, 31.0
@@ -49,7 +49,7 @@ Z_VENTIL0, Z_VENTIL1 = 67.5, 77.5            # Ventilspitze unten, Ventil bis Ko
 Z_KONUS1 = 97.5                              # Konus bis Zylinderende
 Z_ZYL0, Z_ZYL1 = 97.5, 219.5
 Z_FL0, Z_FL1 = 219.5, 222.5                  # Flansch
-Z_RING0, Z_RING1 = 97.0, 101.0               # Goldring (sichtbar 98 bis 101)
+Z_RING0, Z_RING1 = 97.0, 101.0               # Goldring (Gold-PETG, Ø 202, Z 97 bis 101)
 Z_FENSTER0, Z_FENSTER1 = 108.0, 180.0        # unter dem Laufring, Bogenmitte Z 169
 Z_FENSTER_M = Z_FENSTER1 - 11.0
 Z_LAUF0, Z_LAUF1 = 182.5, 188.5
@@ -63,10 +63,7 @@ Z_SPARK = 330.8
 Z_SMIN = Z_KP_REST
 SL_U, SL_H = -10.0, 58.0                     # Schlitten relativ zu S
 Z_PORTAL_O = 330.0
-Z_LEDT0, Z_LEDT1 = 334.5, 344.5
-R_LEDT0, R_LEDT1, R_LED_OBEN = 82.0, 83.5, 85.5   # Träger und LED-Oberkante (144 LED/m)
-N_FUGE = 75
-Z_FUGE0, Z_FUGE1 = 338.0, 341.0
+Z_FUGE0, Z_FUGE1 = 338.0, 341.0              # Goldband (ersetzt die Lichtfuge), Gold-PETG
 Z_KRONE0, Z_KRONE1 = 341.0, 406.8
 Z_M1_0, Z_M1_1 = 346.8, 380.8            # NEMA 17, 34 mm
 Z_BR0, Z_BR1 = 380.8, 387.8
@@ -77,11 +74,28 @@ Z_WELLE1 = 395.1                             # Führungswellen 170 lang, oben 14
 Z_KOERPER0, Z_KOERPER1 = 101.0, 338.0
 R_KOERPER, WAND = 98.0, 1.6
 R_KOERPER_IN = R_KOERPER - WAND              # 96,4
+SP, FALZ_T = 0.2, 0.7                        # Spiel je Seite, Falz Zapfen und Muffe je eine halbe Wand
+R_GOLDRING_IN = R_KOERPER_IN + FALZ_T + SP   # Goldring innen 97,3 (Sockelfalz geht hindurch, bis r 97,1)
+R_SOCKELFALZ = R_KOERPER_IN + FALZ_T         # 97,1
+Z_KTEIL = 235.0                              # Körperteilung = Schattenfuge (V-Nut 1,0 breit, 0,5 tief)
+FUGE_FASE = 0.5
+GOLDRING_GAP = 39.0                          # Goldring am Portal offen (|Y| < 39)
+# Portalrahmen (Gold-PETG, 3 breit, 1,5 erhaben), Kontur wie rb_in, rb_out, fw_in, fw_out in farbmischer.scad
+RAHMEN_BB, RAHMEN_T = 3.0, 1.5
+HW_PORTAL, Z_PORTAL_U, PORTAL_RO, PORTAL_RU = 36.0, 16.0, 24.0, 8.0
+FW_HW = 39.4                                 # Fensterrahmen innen: 0,4 außerhalb der Falzkante (Scheibe 78 breit)
+FW_Z1 = 333.0 + (FW_HW - 39.0)               # 333,4
+FW_RO = 26.0 + (FW_HW - 39.0)                # 26,4 innen (außen 29,4)
+Z_RB0, Z_RB1 = 13.0, 97.0                    # Bühnenrahmen
+Z_RF0, Z_RF1 = 101.0, FW_Z1 + RAHMEN_BB      # Fensterrahmen 101 bis 336,4
+Z_LIPPE_G0, Z_LIPPE_G1 = 45.0, 48.0          # Goldlippe 3 x 1,5 oben auf der Schubladenfront
+Z_SCHEIBE_NAHT_A, Z_SCHEIBE_NAHT_I = 215.0, 219.0   # Portalscheibe in zwei Hälften: Fuge außen / innen
 R_KRONE, R_RING, R_FUSS_AUSSEN, R_SOCKEL_OBEN = 102.0, 101.0, 102.0, 98.0   # Fuß Ø 204, Kegel auf Ø 196
 H_GESAMT = 406.8
 Z_FASE = H_GESAMT - 6.0
 R_PLATTE = 85.5                              # Karussellplatte Ø 171
 STEMPEL_X = 53.0                             # Stempel 4 mm innen von der Spritzenachse (Kraft liegt in der Flanschauflage)
+STEMPEL_D = 25.0                             # Stempelfuß Ø 25 (gedruckt, 2 mm Gummiauflage darunter)
 SPITZE_KOLBEN = 134.0                        # Kolbenplatte Oberkante minus Kolbenboden (Kolben ganz unten bei Z 97,5)
 ZUGANKER_R, ZUGANKER_RAD = 90.5, 2.5
 ZUGANKER_W = (32.0, -32.0, 2.5 * PITCH, -2.5 * PITCH)   # +-128,57: Mitte zwischen den Fenstern 2 und 3 bzw. 4 und 5
@@ -93,11 +107,12 @@ STATION = [None, "Weiß 1", "Gelb", "Magenta", "Cyan", "Schwarz", "Weiß 2"]   #
 
 FARBEN = {
     "sockel": "#0A0A0C", "koerper": "#141417", "gold": "#C9A44C", "gold_l": "#E8CB7A", "gold_s": "#8A6A22",
-    "rauch": "#2E2E33", "opal": "#F2EFE8", "schublade": "#EDEAE3", "innen": "#1C1C1E", "spritze": "#E9ECEE",
-    "silikon": "#DAD6CC", "stahl": "#8C8D91", "messing": "#B08D57", "fuss": "#1A1A1A", "becher": "#EEEEEE",
+    "rauch": "#2E2E33", "klar": "#E9ECEE", "schublade": "#F4F2EE", "podest": "#1C1C1E", "innen": "#1C1C1E",
+    "spritze": "#E9ECEE", "silikon": "#DAD6CC", "gummi": "#2A2A2C", "stahl": "#8C8D91", "messing": "#B08D57",
+    "fuss": "#1A1A1A", "becher": "#EEEEEE",
     "cyan": "#0093D3", "magenta": "#D4007A", "gelb": "#FFD200", "weiss": "#F6F4EE", "schwarz": "#1B1A19",
-    "licht_warm": "#FFC58F", "licht_neutral": "#FFD9B3", "licht_gold": "#FFB000",
 }
+STATIONSBUCHSTABE = ["W", "Y", "M", "C", "K", "W"]     # Platz 1 bis 6, eingraviert statt Farbring
 PLATZ_FARBE = [None, FARBEN["weiss"], FARBEN["gelb"], FARBEN["magenta"], FARBEN["cyan"], FARBEN["schwarz"], FARBEN["weiss"]]
 ZIELFARBE = "#E0583F"          # Beispiel für die Becherfarbe im Rendering (aus Magenta, Gelb und Weiß gemischt)
 
@@ -293,16 +308,16 @@ def pruefung(verbose=True):
         "Schlitten": (sd_circle(0, 0, 34.0), (S + SL_U, S + SL_U + SL_H)),
         "Führungswelle": (lambda P: np.minimum(sd_circle(0, 22, 5)(P), sd_circle(0, -22, 5)(P)), (Z_SMIN + SL_U, Z_BR0)),
         "Spindel": (sd_circle(0, 0, 4.0), (250.0, Z_BR0)),
-        "Arm": (sd_box(48.0, 0, 20.0, 12.5), (S + 8.0, S + 12.0)),
-        "Winkel": (sd_box(30.0, 0, 2.0, 12.5), (S + 8.0, S + 48.0)),
-        "Stempel": (sd_circle(STEMPEL_X, 0, 14.0), (S, S + 8.0)),
+        # Stand 6: Ausleger mit Stempel ein gedrucktes Teil: Arm X 28 bis 68, Platte X 28 bis 36, Stempelfuß Ø 25 mit Gummi (Z S bis S + 8)
+        "Arm": (sd_box(48.0, 0, 20.0, 12.5), (S + 8.0, S + 16.0)),
+        "Platte": (sd_box(32.0, 0, 4.0, 12.5), (S + 8.0, S + 48.0)),
+        "Rippen": (sd_box(47.0, 0, 11.0, 12.5), (S + 16.0, S + 36.0)),
+        "Stempel": (sd_circle(STEMPEL_X, 0, STEMPEL_D / 2), (S, S + 8.0)),
         "Motor 1": (sd_box(-59.0, 0, 21.15, 21.15), (Z_M1_0, Z_M1_1)),
         "Laufring": (sd_ring(74.5, 86.5, 15.0), (Z_LAUF0, Z_LAUF1)),
         "Feuchtrinne": (sd_ring(45.0, 69.0, 38.0), (Z_RINNE0, Z_RDECKEL)),
         "Schwamm": (sd_ring(48.0, 66.0, 38.0), (Z_RINNE1, Z_SCHWAMM)),
         "Becher": (sd_circle(RS, 0, BECHER_RO), (Z_BECHER0, Z_BECHER1)),
-        "LED-Träger": (sd_ring(R_LEDT0, R_LED_OBEN, 0.0), (Z_LEDT0, Z_LEDT1)),
-        "Vitrinen-LED": (sd_ring(76.5, 83.5, 0.0), (180.5, Z_LAUF0)),
         "Körperwand": (sd_wall(R_KOERPER_IN), (Z_KOERPER0, Z_KOERPER1)),
         "Lippe +40": (sd_box(57.0, 0, 7.0, 0.75, 40.0), (Z_LIPPE0, Z_LIPPE1)),
         "Lippe -40": (sd_box(57.0, 0, 7.0, 0.75, -40.0), (Z_LIPPE0, Z_LIPPE1)),
@@ -347,7 +362,7 @@ def pruefung(verbose=True):
         for k in (1, 6):
             Bp = b_circle(RS, 0, 19.0, 180)
             P = _rot(Bp, k * PITCH)
-            for fn in ("Arm", "Winkel", "Stempel", "Schlitten"):
+            for fn in ("Arm", "Platte", "Stempel", "Schlitten"):
                 sdf, zt = fest[fn]
                 zt = (0.0, 999.0)
                 key = (fn + " tief", "Nachbar-Kolbenplatte")
@@ -366,7 +381,7 @@ def pruefung(verbose=True):
         "Laufringende": (sd_ring(74.5, 86.5, 15.0), (Z_LAUF0, Z_LAUF1)),
         "Feuchtrinne": (sd_ring(45.0, 69.0, 38.0), (Z_RINNE0, Z_RDECKEL)),
         "Schwamm": (sd_ring(48.0, 66.0, 38.0), (Z_RINNE1, Z_SCHWAMM)),
-        "Stempel/Arm": (lambda P: np.minimum(sd_circle(STEMPEL_X, 0, 14)(P), sd_box(48, 0, 20, 12.5)(P)), (S, S + 12.0)),
+        "Stempel/Arm": (lambda P: np.minimum(sd_circle(STEMPEL_X, 0, STEMPEL_D / 2)(P), sd_box(48, 0, 20, 12.5)(P)), (S, S + 16.0)),
     }
     for j in range(7):
         a = (j + 0.5) * PITCH + phi
@@ -440,9 +455,7 @@ def pruefung(verbose=True):
     wand_z92 = min(cone_r(97.0) - WAND, R_KOERPER_IN)
     wz_ecke = math.hypot(63.35, 70.0)
     wand_z202 = cone_r(Z_WZ1) - WAND
-    motor1_led = Z_M1_0 - Z_LEDT1          # Ecken r 82,9 liegen über dem Träger r 82 bis 85,5, also senkrecht gemessen
     motor1_schl = (59.0 - 21.15) - 34.0
-    anker_led = (ZUGANKER_R - ZUGANKER_RAD) - R_LED_OBEN
     rad70_becher = RS - 23.5 - cup_r(51.0)
     motor2_lager = (57.8 - 21.15) - 20.0
     # Rollen im Stillstand gegen den Rand der Laufringlücke (Rolle +-11 tangential bei r 80, Lücke +-15)
@@ -454,7 +467,7 @@ def pruefung(verbose=True):
     anker_platte = (ZUGANKER_R - ZUGANKER_RAD) - R_PLATTE
     mutter_wand = R_KOERPER_IN - (ZUGANKER_R + MUTTER_FL)
     lasche_wand = R_KOERPER_IN - 94.5
-    fen_halb = 13.0                                   # Acrylstreifen 26 breit
+    fen_halb = 13.0                                   # Fensterscheibe (Klar-PETG) 26 breit
     anker_fenster = min(abs(ZUGANKER_R * math.sin(math.radians(a - p * PITCH))) - ZUGANKER_RAD - fen_halb
                         for a in ZUGANKER_W for p in range(1, 7) if math.cos(math.radians(a - p * PITCH)) > 0)
 
@@ -473,63 +486,78 @@ def pruefung(verbose=True):
     ballast_min = min(bl)
     # Flanschauflage: Stempelachse muss innerhalb der Auflage (Halbmond bis r 57) liegen
     flansch_hebel = RS - STEMPEL_X
+    # neue Prüfungen Stand 6 (gedruckter Ausleger, Goldring)
+    ausleger_bruecke = Z_BR0 - (S + 48.0)                         # Platte endet bei S + 48, Brücke unten bei S + 50
+    stempel_auf_kp = 19.0 - (abs(RS - STEMPEL_X) + STEMPEL_D / 2)   # Stempelfuß Ø 25 auf Kolbenplatte Ø 38 um die Spritzenachse
+    S_ = Z_SMIN                                                   # tiefste Stellung, Stempelunterkante (Gummi) auf der Kolbenplatte bei 235,1
+    teile_smin = [(b_box(48.0, 0, 20.0, 12.5), (S_ + 8.0, S_ + 16.0)),      # Arm
+                  (b_box(32.0, 0, 4.0, 12.5), (S_ + 8.0, S_ + 48.0)),       # senkrechte Platte
+                  (b_circle(STEMPEL_X, 0, STEMPEL_D / 2, 180), (S_, S_ + 8.0))]   # Stempelfuß mit Gummi
+    unten_smin = [(sd_circle(0, 0, R_PLATTE), (Z_PLATTE0, Z_PLATTE1)), (sd_ring(74.5, 86.5, 15.0), (Z_LAUF0, Z_LAUF1))]
+    ausleger_smin = min(gap3(sdf, B, zs, zt) for B, zs in teile_smin for sdf, zt in unten_smin)
+    goldring_falz = R_GOLDRING_IN - R_SOCKELFALZ                  # 97,3 gegen 97,1
 
     R = res
     E = ent
-    rows += [
-        (1, "Schlitten tiefste Stellung gegen Karussellplatte oben", 2.0, Z_SMIN + SL_U - Z_PLATTE1, 2.07, ""),
-        (2, "Wellenende Ø10 gegen Karussellplatte oben", 2.0, (Z_SMIN + SL_U) - Z_PLATTE1, 2.07, ""),
-        (3, "Laufring (fest, innen r 74,5) gegen Spritzenzylinder beim Drehen", 2.0, R[("Laufring", "Zylinder")], 2.50, "dreht"),
-        (4, "Zuganker gegen Rollenbock beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rollenbock")] for a in ZUGANKER_W), 2.50, "dreht"),
-        (5, "Zuganker gegen Laufrolle beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rolle")] for a in ZUGANKER_W), 3.78, "dreht"),
-        (6, "Feuchtrinne gegen Ventil beim Drehen", 2.0, R[("Feuchtrinne", "Ventil")], 2.30, "dreht"),
-        (7, "Schwamm nass gegen Ventil", 1.5, R[("Schwamm", "Ventil")], 2.00, "dreht"),
-        (8, "Schlitten (r 34) gegen Kolbenplatten beim Drehen", 2.0, R[("Schlitten", "Kolbenplatte")], 4.00, "dreht"),
-        (9, "Schlitten tief gegen Nachbar-Kolbenplatten", 2.0, R[("Schlitten tief", "Nachbar-Kolbenplatte")], 4.00, ""),
-        (10, "Stempel in Park gegen Kolbenplatte 50 ml", 10.0, S - Z_KP_50, 10.00, ""),
-        (11, "Führungswellen Ø10 gegen Flansch beim Drehen", 2.0, R[("Führungswelle", "Flansch")], 7.93, "dreht"),
-        (12, "Zuganker gegen Flansch beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Flansch")] for a in ZUGANKER_W), 6.91, "dreht"),
-        (13, "Abstreiflippe gegen Konus (nur das Ventil darf streifen)", 2.0, min(R[("Lippe +40", "Konus")], R[("Lippe -40", "Konus")]), 9.00, "dreht"),
-        (14, "Rollenbock gegen Körperwand", 2.0, R[("Körperwand", "Rollenbock")], 10.90, "dreht"),
-        (15, "Arm und Stempel beim Dosieren (tief) gegen Nachbar-Kolbenplatten", 3.0,
+    # Nummerierung fortlaufend 1 bis 50 (Stand 6), Zuordnung alt (Stand 5.1) -> neu:
+    #   1-10 -> 1-10 | neu 11, 12, 13 (Ausleger Park/Brücke, Stempelfuß/Kolbenplatte, Ausleger S_min) | 11-15 -> 14-18 | 17-32 -> 19-34
+    #   34 -> 35 | 36-42 -> 36-42 | 44-47 -> 43-46 | neu 47 (Goldring gegen Sockelfalz) | 48, 49 -> 48, 49 | 51 -> 50
+    #   entfallen (nur LED): 16 LED-Träger/Kolbenplatte, 33 Motor 1/LED-Träger, 35 Zuganker/LED-Oberkante, 43 Podest/LED-Ring,
+    #   50 Vitrinen-LED/Zylinder. Das Blatt-Maß der neuen Zeilen ist der hier gerechnete Wert (das Blatt wird nachgezogen).
+    rows_roh = [
+        ("Schlitten tiefste Stellung gegen Karussellplatte oben", 2.0, Z_SMIN + SL_U - Z_PLATTE1, 2.07, ""),
+        ("Wellenende Ø10 gegen Karussellplatte oben", 2.0, (Z_SMIN + SL_U) - Z_PLATTE1, 2.07, ""),
+        ("Laufring (fest, innen r 74,5) gegen Spritzenzylinder beim Drehen", 2.0, R[("Laufring", "Zylinder")], 2.50, "dreht"),
+        ("Zuganker gegen Rollenbock beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rollenbock")] for a in ZUGANKER_W), 2.50, "dreht"),
+        ("Zuganker gegen Laufrolle beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rolle")] for a in ZUGANKER_W), 3.78, "dreht"),
+        ("Feuchtrinne gegen Ventil beim Drehen", 2.0, R[("Feuchtrinne", "Ventil")], 2.30, "dreht"),
+        ("Schwamm nass gegen Ventil", 1.5, R[("Schwamm", "Ventil")], 2.00, "dreht"),
+        ("Schlitten (r 34) gegen Kolbenplatten beim Drehen", 2.0, R[("Schlitten", "Kolbenplatte")], 4.00, "dreht"),
+        ("Schlitten tief gegen Nachbar-Kolbenplatten", 2.0, R[("Schlitten tief", "Nachbar-Kolbenplatte")], 4.00, ""),
+        ("Stempel in Park gegen Kolbenplatte 50 ml", 10.0, S - Z_KP_50, 10.00, ""),
+        ("Ausleger (Arm, Platte S + 48) in Park gegen Brücke (S + 50)", 2.0, ausleger_bruecke, 2.00, ""),
+        ("Stempelfuß Ø 25 (X 53) ganz auf Kolbenplatte Ø 38 (Rand)", 1.5, stempel_auf_kp, 2.50, ""),
+        ("Ausleger in S_min gegen Karussellplatte und Laufring", 2.0, ausleger_smin, 12.07, ""),
+        ("Führungswellen Ø10 gegen Flansch beim Drehen", 2.0, R[("Führungswelle", "Flansch")], 7.93, "dreht"),
+        ("Zuganker gegen Flansch beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Flansch")] for a in ZUGANKER_W), 6.91, "dreht"),
+        ("Abstreiflippe gegen Konus (nur das Ventil darf streifen)", 2.0, min(R[("Lippe +40", "Konus")], R[("Lippe -40", "Konus")]), 9.00, "dreht"),
+        ("Rollenbock gegen Körperwand", 2.0, R[("Körperwand", "Rollenbock")], 10.90, "dreht"),
+        ("Arm und Stempel beim Dosieren (tief) gegen Nachbar-Kolbenplatten", 3.0,
          min(R[("Arm tief", "Nachbar-Kolbenplatte")], R[("Stempel tief", "Nachbar-Kolbenplatte")]), 13.07, ""),
-        (16, "LED-Träger gegen Kolbenplatte", 2.0, R[("LED-Träger", "Kolbenplatte")], 14.96, "dreht"),
-        (17, "Motor 1 Unterkante gegen Kolbenplatte 50 ml", 10.0, Z_M1_0 - Z_KP_50, 26.00, ""),
-        (18, "Ventil gegen Becherrand (senkrecht)", 5.0, Z_VENTIL0 - Z_BECHER1, 7.00, ""),
-        (19, "Nachbarventil beim Dosieren gegen Becherrand (waagrecht)", 5.0, nachbar_ventil, 13.96, ""),
-        (20, "Nächstes Ventil in Parkstellung gegen Becherrand", 5.0, nachbar_ventil, 13.96, ""),
-        (21, "Rolle im Stillstand gegen Rand der Laufringlücke", 2.0, rolle_luecke, 3.96, ""),
-        (22, "Entnahme: Zylinder gegen Laufringende", 3.0, E[("Laufringende", "Zylinder")], 4.28, "Entnahme"),
-        (23, "Entnahme: Zylinder gegen Rollenbock bei ± 25,7", 3.0, min(v for (fn, nm), v in E.items() if fn.startswith("Rollenbock") and nm == "Zylinder"), 6.52, "Entnahme"),
-        (24, "Entnahme: Flansch gegen Rollenbock", 3.0, min(v for (fn, nm), v in E.items() if fn.startswith("Rollenbock") and nm == "Flansch"), 10.13, "Entnahme"),
-        (25, "Entnahme: Kolbenplatte gegen Portalöffnung (seitlich und oben, R 24)", 3.0, E[("Portal", "Kolbenplatte")], 7.63, "Entnahme"),
-        (26, "Entnahme: Kolbenplatte gegen Stempel oben", 3.0, E[("Stempel/Arm", "Kolbenplatte")], 10.00, "Entnahme"),
-        (27, "Entnahme: Kolbenplatte gegen Nachbar-Kolbenplatten", 3.0, E[("Nachbar Kolbenplatte", "Kolbenplatte")], 11.46, "Entnahme"),
-        (28, "Entnahme: Zylinder gegen Nachbarzylinder", 3.0, E[("Nachbar Zylinder", "Zylinder")], 19.46, "Entnahme"),
-        (29, "Entnahme: Ventil und Konus gegen Feuchtrinne", 3.0, min(E[("Feuchtrinne", "Ventil")], E[("Feuchtrinne", "Konus")]), 30.68, "Entnahme"),
-        (30, "Flanschtaschen untereinander (Innenecken R 5)", 2.0, g_pocket, 3.12, ""),
-        (31, "Zylinderschlitze untereinander", 4.0, g_slot, 17.46, ""),
-        (32, "Rollenbock gegen Zylinderschlitz der Platte", 3.0, g_bock_slot, 5.51, ""),
-        (33, "Motor 1 Unterkante gegen LED-Träger (senkrecht)", 2.0, motor1_led, 2.30, ""),
-        (34, "Motor 1 gegen Schlitten in Park", 2.0, motor1_schl, 3.85, ""),
-        (35, "Zuganker gegen LED-Oberkante der Lichtfuge", 2.0, anker_led, 2.50, ""),
-        (36, "Stellring gegen Schlittentasche (Tasche 9 tief, Eintauchen 6)", 2.0, 9.0 - (S + SL_U + SL_H - (Z_BR0 - 8.0)), 3.00, ""),
-        (37, "GT2-Rad 70 Z gegen Becher (Z 43 bis 51)", 3.0, rad70_becher, 4.66, ""),
-        (38, "Motor 2 gegen Lagerbock", 3.0, motor2_lager, 16.65, ""),
-        (39, "Zuganker -32 gegen Wägezelle", 3.0, gap_wz_anker, 10.90, ""),
-        (40, "Zuganker ± 32 gegen Schublade (Wand | Schiene)", 3.0, min(gap_sch_wand, gap_sch_schiene), 10.46, "Wand %.2f, Schiene %.2f" % (gap_sch_wand, gap_sch_schiene)),
-        (41, "Platinenecke gegen Hülle (Z 97 bis 100)", 2.0, wand_z92 - platine_ecke, 2.86, ""),
-        (42, "Wägezelle festes Ende gegen Sockelwand", 3.0, wand_z202 - wz_ecke, 5.26, ""),
-        (43, "Podest gegen LED-Ring (Ring 3 dick)", 0.5, Z_POD0 - Z_LEDR1, 0.70, ""),
-        (44, "Überlastanschlag unter dem Lastende", 0.8, 0.8, 0.8, "Einstellmaß"),
-        (45, "Zuganker gegen Karussellplatte (Rand r 85,5) beim Drehen", 2.0, anker_platte, 2.50, "dreht"),
-        (46, "Mutter M5 in Tasche (Fläche außen) gegen Körperwand", 1.5, mutter_wand, 1.90, ""),
-        (47, "Laufringlasche (Ende r 94,5) gegen Körperwand", 1.5, lasche_wand, 1.90, ""),
-        (48, "Zuganker seitlich gegen Fensterstreifen (26 breit)", 5.0, anker_fenster, 14.60, ""),
-        (49, "Ballaststapel gegen Nachbarteile (Grundriss)", 2.0, ballast_min, 5.15, ""),
-        (50, "Vitrinen-LED unter dem Laufring gegen Zylinder beim Drehen", 2.0, R[("Vitrinen-LED", "Zylinder")], 4.50, "dreht"),
-        (51, "Stempelachse innerhalb der Flanschauflage (bis r 57)", 2.0, flansch_hebel, 4.00, ""),
+        ("Motor 1 Unterkante gegen Kolbenplatte 50 ml", 10.0, Z_M1_0 - Z_KP_50, 26.00, ""),
+        ("Ventil gegen Becherrand (senkrecht)", 5.0, Z_VENTIL0 - Z_BECHER1, 7.00, ""),
+        ("Nachbarventil beim Dosieren gegen Becherrand (waagrecht)", 5.0, nachbar_ventil, 13.96, ""),
+        ("Nächstes Ventil in Parkstellung gegen Becherrand", 5.0, nachbar_ventil, 13.96, ""),
+        ("Rolle im Stillstand gegen Rand der Laufringlücke", 2.0, rolle_luecke, 3.96, ""),
+        ("Entnahme: Zylinder gegen Laufringende", 3.0, E[("Laufringende", "Zylinder")], 4.28, "Entnahme"),
+        ("Entnahme: Zylinder gegen Rollenbock bei ± 25,7", 3.0, min(v for (fn, nm), v in E.items() if fn.startswith("Rollenbock") and nm == "Zylinder"), 6.52, "Entnahme"),
+        ("Entnahme: Flansch gegen Rollenbock", 3.0, min(v for (fn, nm), v in E.items() if fn.startswith("Rollenbock") and nm == "Flansch"), 10.13, "Entnahme"),
+        ("Entnahme: Kolbenplatte gegen Portalöffnung (seitlich und oben, R 24)", 3.0, E[("Portal", "Kolbenplatte")], 7.63, "Entnahme"),
+        ("Entnahme: Kolbenplatte gegen Stempel oben", 3.0, E[("Stempel/Arm", "Kolbenplatte")], 10.00, "Entnahme"),
+        ("Entnahme: Kolbenplatte gegen Nachbar-Kolbenplatten", 3.0, E[("Nachbar Kolbenplatte", "Kolbenplatte")], 11.46, "Entnahme"),
+        ("Entnahme: Zylinder gegen Nachbarzylinder", 3.0, E[("Nachbar Zylinder", "Zylinder")], 19.46, "Entnahme"),
+        ("Entnahme: Ventil und Konus gegen Feuchtrinne", 3.0, min(E[("Feuchtrinne", "Ventil")], E[("Feuchtrinne", "Konus")]), 30.68, "Entnahme"),
+        ("Flanschtaschen untereinander (Innenecken R 5)", 2.0, g_pocket, 3.12, ""),
+        ("Zylinderschlitze untereinander", 4.0, g_slot, 17.46, ""),
+        ("Rollenbock gegen Zylinderschlitz der Platte", 3.0, g_bock_slot, 5.51, ""),
+        ("Motor 1 gegen Schlitten in Park", 2.0, motor1_schl, 3.85, ""),
+        ("Stellring gegen Schlittentasche (Tasche 9 tief, Eintauchen 6)", 2.0, 9.0 - (S + SL_U + SL_H - (Z_BR0 - 8.0)), 3.00, ""),
+        ("GT2-Rad 70 Z gegen Becher (Z 43 bis 51)", 3.0, rad70_becher, 4.66, ""),
+        ("Motor 2 gegen Lagerbock", 3.0, motor2_lager, 16.65, ""),
+        ("Zuganker -32 gegen Wägezelle", 3.0, gap_wz_anker, 10.90, ""),
+        ("Zuganker ± 32 gegen Schublade (Wand | Schiene)", 3.0, min(gap_sch_wand, gap_sch_schiene), 10.46, "Wand %.2f, Schiene %.2f" % (gap_sch_wand, gap_sch_schiene)),
+        ("Platinenecke gegen Hülle (Z 97 bis 100)", 2.0, wand_z92 - platine_ecke, 2.86, ""),
+        ("Wägezelle festes Ende gegen Sockelwand", 3.0, wand_z202 - wz_ecke, 5.26, ""),
+        ("Überlastanschlag unter dem Lastende", 0.8, 0.8, 0.8, "Einstellmaß"),
+        ("Zuganker gegen Karussellplatte (Rand r 85,5) beim Drehen", 2.0, anker_platte, 2.50, "dreht"),
+        ("Mutter M5 in Tasche (Fläche außen) gegen Körperwand", 1.5, mutter_wand, 1.90, ""),
+        ("Laufringlasche (Ende r 94,5) gegen Körperwand", 1.5, lasche_wand, 1.90, ""),
+        ("Goldring innen r 97,3 gegen Sockelfalz (r 97,1)", 0.2, goldring_falz, 0.20, ""),
+        ("Zuganker seitlich gegen Fensterscheibe (26 breit)", 5.0, anker_fenster, 14.60, ""),
+        ("Ballaststapel gegen Nachbarteile (Grundriss)", 2.0, ballast_min, 5.15, ""),
+        ("Stempelachse innerhalb der Flanschauflage (bis r 57)", 2.0, flansch_hebel, 4.00, ""),
     ]
+    rows += [(i + 1,) + t for i, t in enumerate(rows_roh)]
 
     # ---- Zusatzprüfungen (Hinweise, nicht im Blatt)
     extra += [
@@ -547,7 +575,7 @@ def pruefung(verbose=True):
 def _print_pruefung(rows, extra, ketten, dt):
     line = "=" * 118
     print(line)
-    print("PRÜFUNG nach farbmischer_parameter.md, Stand 5.1, Abschnitt 15 (Maße in mm, negativ = Durchdringung, nichts wird verändert)")
+    print("PRÜFUNG nach farbmischer_parameter.md, Stand 6, Abschnitt 15 (Maße in mm, negativ = Durchdringung, nichts wird verändert)")
     print("Drehprüfungen: Karussell 0 bis 359 Grad in 1-Grad-Schritten, vier Füllstände (leer, 2 ml Rest, halb, 50 ml), sechs Stationen,")
     print("sieben Rollenböcke und Rollen drehen mit. Entnahme: Station vorne, Spritze radial 0 bis 130 mm. 2D exakt, 3D als Prismen.")
     print(line)
@@ -684,45 +712,42 @@ def schlick(f0, cosi):
     return f0 + (1.0 - f0) * (1.0 - np.clip(cosi, 0, 1)) ** 5
 
 
-# ---------- Materialtabelle
+# ---------- Materialtabelle (Stand 6: alles unlackiertes PETG, nichts leuchtet)
 class Mat:
-    def __init__(self, albedo, rough=0.5, f0=0.04, metal=False, alpha=1.0, emit=None, interior=False, spill=False,
-                 spec_scale=1.0, tint=None):
+    def __init__(self, albedo, rough=0.5, f0=0.04, metal=False, alpha=1.0, interior=False, spec_scale=1.0):
         self.albedo = np.array(albedo, float)
         self.rough, self.f0, self.metal, self.alpha = rough, f0, metal, alpha
-        self.emit = None if emit is None else np.array(emit, float)
-        self.interior, self.spill, self.spec_scale = interior, spill, spec_scale
-        self.tint = tint
+        self.interior, self.spec_scale = interior, spec_scale
 
 
 GOLD_LIN = lin(FARBEN["gold"])
 MATS = {
-    "sockel": Mat(lin(FARBEN["sockel"]), 0.08, 0.050, spill=True),
-    "krone": Mat(lin(FARBEN["koerper"]), 0.45, 0.050, spill=True),     # seidenmatt (Griff)
-    "koerper": Mat(lin(FARBEN["koerper"]), 0.45, 0.050, spill=True),
-    "gold": Mat(GOLD_LIN, 0.25, 0.0, metal=True, spill=True),
-    "fuge": Mat(lin(FARBEN["opal"]), 0.5, 0.03, emit=np.array([1.0, 0.62, 0.30]) * 2.6),
-    "nut": Mat(lin("#050506"), 0.9, 0.02),
-    "front": Mat(lin(FARBEN["sockel"]), 0.08, 0.050),
-    "glas": Mat(lin(FARBEN["rauch"]), 0.02, 0.045, alpha=0.5, spec_scale=1.0),
+    "sockel": Mat(lin(FARBEN["sockel"]), 0.15, 0.050),                 # PETG schwarz, glänzend (Rauheit etwa 0,15)
+    "krone": Mat(lin(FARBEN["koerper"]), 0.50, 0.050),                 # PETG schwarz matt (Rauheit etwa 0,5)
+    "koerper": Mat(lin(FARBEN["koerper"]), 0.50, 0.050),
+    "gold": Mat(GOLD_LIN, 0.25, 0.0, metal=True),                      # Gold-PETG (Metall 1,0, Rauheit 0,25)
+    "nut": Mat(lin("#050506"), 0.9, 0.0),                             # Schattenfugen (Körperteilung, Fensterfugen)
+    "front": Mat(lin(FARBEN["sockel"]), 0.15, 0.050),                  # Schubladenfront glänzend
+    "glas": Mat(lin(FARBEN["rauch"]), 0.04, 0.045, alpha=0.45),        # Portalscheibe: Rauch-PETG 2 mm
+    "klar": Mat(lin(FARBEN["klar"]), 0.05, 0.045, alpha=0.25),         # Seitenfenster: Klar-PETG 1,6 mm
     "loch": Mat([0, 0, 0], alpha=0.0),
-    "lid": Mat(lin(FARBEN["koerper"]), 0.45, 0.050, spill=False),
+    "lid": Mat(lin(FARBEN["koerper"]), 0.50, 0.050),
     "innen": Mat(lin(FARBEN["innen"]), 0.7, 0.03, interior=True),
     "innen_hell": Mat(lin("#2a2a2e"), 0.7, 0.03, interior=True),
     "stahl": Mat(lin(FARBEN["stahl"]), 0.35, 0.0, metal=True, interior=True),
     "messing": Mat(lin(FARBEN["messing"]), 0.35, 0.0, metal=True, interior=True),
     "barrel": Mat(lin(FARBEN["spritze"]), 0.05, 0.05, alpha=0.20, interior=True),
     "silikon": Mat(lin(FARBEN["silikon"]), 0.3, 0.04, alpha=0.65, interior=True),
+    "gummi": Mat(lin(FARBEN["gummi"]), 0.8, 0.03, interior=True),
     "stab": Mat(lin("#d8dbde"), 0.3, 0.04, alpha=0.30, interior=True),
     "becherwand": Mat(lin(FARBEN["becher"]), 0.15, 0.05, alpha=0.5, interior=True),
-    "opal": Mat(lin(FARBEN["schublade"]), 0.5, 0.03, emit=lin(FARBEN["licht_neutral"]) * 1.15, interior=True),
-    "opal_wand": Mat(lin(FARBEN["schublade"]), 0.5, 0.03, emit=lin(FARBEN["licht_neutral"]) * 0.45, interior=True),
-    "led": Mat(lin("#ffffff"), 0.5, 0.0, emit=lin(FARBEN["licht_neutral"]) * 4.0, interior=True),
+    "schublade": Mat(lin(FARBEN["schublade"]), 0.45, 0.04, interior=True),   # PETG weiß, nicht emissiv
+    "podest": Mat(lin(FARBEN["podest"]), 0.4, 0.04, interior=True),          # PETG schwarz
     "schwamm": Mat(lin("#d9d3c0"), 0.9, 0.02, interior=True),
 }
 for _k, _h in (("cyan", FARBEN["cyan"]), ("magenta", FARBEN["magenta"]), ("gelb", FARBEN["gelb"]),
                ("weiss", FARBEN["weiss"]), ("schwarz", FARBEN["schwarz"]), ("ziel", ZIELFARBE)):
-    MATS["farbe_" + _k] = Mat(lin(_h), 0.22, 0.04, interior=True, spill=False, emit=lin(_h) * (1.0 if _k == "ziel" else 0.42))
+    MATS["farbe_" + _k] = Mat(lin(_h), 0.22, 0.04, interior=True)
 MAT_ID = {k: i for i, k in enumerate(MATS)}
 MAT_NAME = list(MATS)
 
@@ -743,24 +768,40 @@ def win_sdf(u, z):
     return np.where(z >= Z_FENSTER_M, arch, box)
 
 
-M_LOCH, M_RAHMEN, M_GLAS, M_NUT, M_FRONT, M_LIPPE = 1, 2, 3, 4, 5, 6   # Schnittcodes
+def fw_sdf(y, z):
+    """Innenkante des Fensterrahmens (fw_in der SCAD): |Y| 39,4, Oberkante 333,4, obere Ecken R 26,4, unten R 3 (Vorzeichenabstand)."""
+    z0 = 60.0
+    zm, hh, hw = (z0 + FW_Z1) / 2, (FW_Z1 - z0) / 2, FW_HW
+    y, z = np.abs(y), z - zm
+    r = np.where(z > 0, FW_RO, 3.0)
+    qx, qz = y - (hw - r), np.abs(z) - (hh - r)
+    return np.hypot(np.maximum(qx, 0), np.maximum(qz, 0)) + np.minimum(np.maximum(qx, qz), 0) - r
+
+
+def rahmen_feld(y, z):
+    """Abstand zur Innenkante des jeweiligen Rahmens: Bühnenrahmen (unter Z 99, Innenkante = Portalkante) oder Fensterrahmen."""
+    return np.where(z < 99.0, portal_sdf(y, z), fw_sdf(y, z))
+
+
+M_LOCH, M_RAHMEN, M_GLAS, M_NUT, M_FRONT = 1, 2, 3, 4, 5   # Schnittcodes
 
 
 def hull_cut(px, py, pz, with_windows=True, with_portal=True):
-    """Code je Punkt auf der Außenhülle: 0 fest, 1 Loch, 2 Goldrahmen, 3 Fensterglas, 4 Schattenfuge, 5 Schubladenfront, 6 Goldlippe."""
+    """Code je Punkt auf der Außenhülle: 0 fest, 1 Loch, 2 Gold-PETG-Rahmen, 3 Klarfenster, 4 Schattenfuge, 5 Schubladenfront."""
     th = np.degrees(np.arctan2(py, px))
     code = np.zeros(px.shape, int)
     if with_portal:
         front = np.abs(th) < 80.0
         ps = portal_sdf(py, pz)
         inside = front & (ps < 0)
-        frame = front & (ps >= 0) & (ps < 4.0)
-        code = np.where(frame, M_RAHMEN, code)
-        fr = inside & (np.abs(py) <= 34.0) & (pz >= 17.0) & (pz <= 45.0)
-        lip = fr & (pz >= 42.0)
+        # Portalrahmen aus Gold-PETG, 3 breit: Bühnenrahmen Z 13 bis 97 (Innenkante = Portalkante), Fensterrahmen Z 101 bis 336,4
+        fb = front & (ps >= 0) & (ps < RAHMEN_BB) & (pz >= Z_RB0) & (pz <= Z_RB1)
+        fs = fw_sdf(py, pz)
+        ff = front & (fs >= 0) & (fs < RAHMEN_BB) & (pz >= Z_RF0) & (pz <= Z_RF1)
+        code = np.where(fb | ff, M_RAHMEN, code)
+        fr = inside & (np.abs(py) <= 34.0) & (pz >= 17.0) & (pz <= Z_LIPPE_G0)
         code = np.where(inside, M_LOCH, code)
         code = np.where(fr, M_FRONT, code)
-        code = np.where(lip, M_LIPPE, code)
     if with_windows:
         for p in range(1, 7):
             dth = wrap180(th - p * PITCH)
@@ -819,21 +860,20 @@ class Frustum(Prim):
             code = self.cut(P[:, 0], P[:, 1], P[:, 2])
             ex["code"] = code
             mid = np.where(code == M_LOCH, MAT_ID["loch"], mid)
-            mid = np.where(code == M_GLAS, MAT_ID["glas"], mid)
+            mid = np.where(code == M_GLAS, MAT_ID["klar"], mid)
             mid = np.where(code == M_NUT, MAT_ID["nut"], mid)
             mid = np.where(code == M_RAHMEN, MAT_ID["gold"], mid)
             mid = np.where(code == M_FRONT, MAT_ID["front"], mid)
-            mid = np.where(code == M_LIPPE, MAT_ID["gold"], mid)
             fr = code == M_RAHMEN
-            if fr.any():     # erhabener Rahmen: Fasen an beiden Rändern kippen die Normale (Kantenglanz)
+            if fr.any():     # erhabene Rahmenhaut (1,5): Fasen an beiden Rändern kippen die Normale (Kantenglanz)
                 th = np.arctan2(P[fr, 1], P[fr, 0])
                 eu = np.stack([-np.sin(th), np.cos(th), np.zeros_like(th)], 1)
                 ez = np.array([0.0, 0.0, 1.0])
                 e = 0.25
-                f0 = portal_sdf(P[fr, 1], P[fr, 2])
-                gu = (portal_sdf(P[fr, 1] + e, P[fr, 2]) - portal_sdf(P[fr, 1] - e, P[fr, 2])) / (2 * e)
-                gz = (portal_sdf(P[fr, 1], P[fr, 2] + e) - portal_sdf(P[fr, 1], P[fr, 2] - e)) / (2 * e)
-                sgn = np.where(f0 < 0.9, -1.0, np.where(f0 > 3.1, 1.0, 0.0))
+                f0 = rahmen_feld(P[fr, 1], P[fr, 2])
+                gu = (rahmen_feld(P[fr, 1] + e, P[fr, 2]) - rahmen_feld(P[fr, 1] - e, P[fr, 2])) / (2 * e)
+                gz = (rahmen_feld(P[fr, 1], P[fr, 2] + e) - rahmen_feld(P[fr, 1], P[fr, 2] - e)) / (2 * e)
+                sgn = np.where(f0 < 0.7, -1.0, np.where(f0 > RAHMEN_BB - 0.7, 1.0, 0.0))
                 Nf = N[fr] + 1.1 * sgn[:, None] * (gu[:, None] * eu + gz[:, None] * ez)
                 N[fr] = Nf / np.linalg.norm(Nf, axis=1)[:, None]
         return N, mid, ex
@@ -893,7 +933,7 @@ class Box(Prim):
 
 
 class PlaneX(Prim):
-    """Rauchglasscheibe, ebene Fläche bei x = xc, innerhalb der Portalöffnung (Z 99 bis 330)."""
+    """Portalscheibe (Rauch-PETG), ebene Fläche bei x = xc, innerhalb der Portalöffnung (Z 99 bis 330)."""
     def __init__(self, xc, mat):
         self.xc, self.mat, self.interior = xc, mat, False
 
@@ -910,7 +950,7 @@ class PlaneX(Prim):
         return N, np.full(len(P), MAT_ID[self.mat]), {"back": D[:, 0] > 0}
 
 
-# ---------- Textur der Gravur (Deckel)
+# ---------- Textur des Namensschilds (Deckel, 90 x 16, Gold-Schrift)
 _TEXT_IMG = None
 
 
@@ -919,9 +959,9 @@ def text_mask():
     if _TEXT_IMG is None:
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_agg import FigureCanvasAgg
-        fig = Figure(figsize=(6.4, 1.6), dpi=100, facecolor="black")
+        fig = Figure(figsize=(9.0, 1.6), dpi=100, facecolor="black")        # Seitenverhältnis 90 : 16
         cv = FigureCanvasAgg(fig)
-        fig.text(0.5, 0.46, "Atelier", ha="center", va="center", color="white", fontsize=64,
+        fig.text(0.5, 0.46, "NAME Atelier", ha="center", va="center", color="white", fontsize=74,
                  family=["Caladea", "Liberation Serif", "DejaVu Serif"])
         cv.draw()
         _TEXT_IMG = np.asarray(cv.buffer_rgba())[:, :, 0].astype(np.float32) / 255.0
@@ -934,15 +974,30 @@ def build_scene(syr_fill=Z_KP_50, ziel=True):
     # Außenhülle
     cutP = lambda x, y, z: hull_cut(x, y, z, with_windows=False)
     cutW = lambda x, y, z: hull_cut(x, y, z, with_windows=True)
+    # Goldring und Goldlippe: Ausschnitte (Ring am Portal offen, Lippe nur vor der Front)
+    cutRing = lambda x, y, z: np.where((x > 0) & (np.abs(y) < GOLDRING_GAP), M_LOCH, 0)
+    cutFalz = lambda x, y, z: np.where((x > 0) & (np.abs(y) < GOLDRING_GAP) & (portal_sdf(y, z) >= 0), 0, M_LOCH)
+    cutLip = lambda x, y, z: np.where((x > 0) & (np.abs(y) <= 34.0), 0, M_LOCH)
     ext.append(Frustum(R_FUSS_AUSSEN, Z_GRUND0, R_SOCKEL_OBEN, 97.0, "sockel", cut=cutP))
-    ext.append(Frustum(97.6, 97.0, 97.6, 98.0, "nut", cut=cutP))
-    ext.append(Frustum(R_RING, 98.0, R_RING, 101.0, "gold", cut=cutP))
-    ext.append(Disc(101.0, R_KOERPER, R_RING, "gold", cut=cutP))
-    ext.append(Frustum(R_KOERPER, 101.0, R_KOERPER, 338.0, "koerper", cut=cutW))
-    ext.append(Frustum(R_KOERPER, 338.0, R_KOERPER, 341.0, "fuge"))
-    ext.append(Frustum(R_KRONE, 341.0, R_KRONE, Z_FASE, "krone"))
-    ext.append(Frustum(R_KRONE, Z_FASE, 96.0, H_GESAMT, "gold"))
-    ext.append(Disc(H_GESAMT, 0.0, 96.0, "lid"))
+    # Goldring Ø 202 (Gold-PETG) auf dem Sockel, unten außen 0,8 x 45 Grad Fase (Schattenfuge), am Portal offen
+    ext.append(Frustum(R_RING - 0.8, Z_RING0, R_RING, Z_RING0 + 0.8, "gold", cut=cutRing))
+    ext.append(Frustum(R_RING, Z_RING0 + 0.8, R_RING, Z_RING1, "gold", cut=cutRing))
+    ext.append(Disc(Z_RING1, R_KOERPER, R_RING, "gold", cut=cutRing))
+    ext.append(Frustum(R_SOCKELFALZ, Z_RING0, R_SOCKELFALZ, Z_RING1, "sockel", cut=cutFalz))      # Sockelfalz im Ausschnitt des Rings
+    # Körper in zwei Hälften, die Teilung bei Z 235 ist die Schattenfuge (V-Nut 1,0 breit, 0,5 tief)
+    ext.append(Frustum(R_KOERPER, Z_RING1, R_KOERPER, Z_KTEIL - FUGE_FASE, "koerper", cut=cutW))
+    ext.append(Frustum(R_KOERPER, Z_KTEIL - FUGE_FASE, R_KOERPER - FUGE_FASE, Z_KTEIL, "nut", cut=cutW))
+    ext.append(Frustum(R_KOERPER - FUGE_FASE, Z_KTEIL, R_KOERPER, Z_KTEIL + FUGE_FASE, "nut", cut=cutW))
+    ext.append(Frustum(R_KOERPER, Z_KTEIL + FUGE_FASE, R_KOERPER, 338.0, "koerper", cut=cutW))
+    ext.append(Frustum(R_KOERPER, Z_FUGE0, R_KOERPER, Z_FUGE1, "gold"))                            # Goldband
+    ext.append(Frustum(R_KRONE, Z_FUGE1, R_KRONE, Z_FASE, "krone"))
+    ext.append(Frustum(R_KRONE, Z_FASE, R_KRONE - 6.0, H_GESAMT, "gold"))                          # Kronenring (Fase 6 x 45 Grad)
+    ext.append(Disc(H_GESAMT, R_KRONE - 6.0 - 2.0, R_KRONE - 6.0, "gold"))                         # Oberkante des Kronenrings
+    ext.append(Disc(H_GESAMT, 0.0, R_KRONE - 6.0 - 2.0, "lid"))                                    # Kronendeckel mit Namensschild
+    # Goldlippe 3 x 1,5 oben auf der Schubladenfront
+    r_lippe = r_sock(Z_LIPPE_G0) + 1.5
+    ext.append(Frustum(r_lippe, Z_LIPPE_G0, r_lippe, Z_LIPPE_G1, "gold", cut=cutLip))
+    ext.append(Disc(Z_LIPPE_G1, r_sock(Z_LIPPE_G1), r_lippe, "gold", cut=cutLip))
     ext.append(PlaneX(90.5, "glas"))
     # ---- Innenleben
     I = lambda p: (setattr(p, "interior", True), intr.append(p))[1]
@@ -953,14 +1008,12 @@ def build_scene(syr_fill=Z_KP_50, ziel=True):
     I(Disc(51.0, 0.0, 23.5, "innen_hell"))
     # Wägezelle und Stufe der Bühne
     I(Box(50.65, 63.35, -70.0, 10.0, Z_WZ0, Z_WZ1, "stahl"))
-    I(Frustum(25.0, Z_LEDR0, 25.0, Z_LEDR1, "led", cx=RS))                # LED-Ring
-    I(Disc(Z_LEDR1, 18.0, 25.0, "led", cx=RS))
-    I(Frustum(30.0, Z_POD0, 30.0, Z_POD1, "opal", cx=RS))                 # Podestscheibe
-    I(Disc(Z_POD1, 0.0, 30.0, "opal", cx=RS))
-    # Schublade: Boden, Seitenwände
-    I(Box(22.0, 104.0, -33.0, 33.0, Z_BODEN0, Z_BODEN1, "opal"))
-    I(Box(22.0, 104.0, -35.0, -33.0, Z_BODEN0, 45.0, "opal_wand"))
-    I(Box(22.0, 104.0, 33.0, 35.0, Z_BODEN0, 45.0, "opal_wand"))
+    I(Frustum(30.0, Z_POD0, 30.0, Z_POD1, "podest", cx=RS))               # Podestscheibe Ø 60, PETG schwarz
+    I(Disc(Z_POD1, 0.0, 30.0, "podest", cx=RS))
+    # Schublade (PETG weiß): Boden, Seitenwände
+    I(Box(22.0, 104.0, -33.0, 33.0, Z_BODEN0, Z_BODEN1, "schublade"))
+    I(Box(22.0, 104.0, -35.0, -33.0, Z_BODEN0, 45.0, "schublade"))
+    I(Box(22.0, 104.0, 33.0, 35.0, Z_BODEN0, 45.0, "schublade"))
     # Becher mit Farbe
     I(Frustum(BECHER_RU, Z_BECHER0, BECHER_RO, Z_BECHER1, "becherwand", cx=RS))
     zp = Z_BECHER0 + 22.5
@@ -991,10 +1044,12 @@ def build_scene(syr_fill=Z_KP_50, ziel=True):
         I(Frustum(5.0, Z_SMIN + SL_U, 5.0, Z_BR0, "stahl", cy=sy))
     I(Frustum(34.0, S + SL_U, 34.0, S + SL_U + SL_H, "innen_hell"))
     I(Disc(S + SL_U, 0.0, 34.0, "innen_hell"))
-    I(Box(28.0, 68.0, -12.5, 12.5, S + 8.0, S + 12.0, "stahl"))          # Winkelstahl 40 x 40 x 4, waagrechter Schenkel
-    I(Box(28.0, 32.0, -12.5, 12.5, S + 8.0, S + 48.0, "stahl"))          # senkrechter Schenkel am Schlitten
-    I(Frustum(14.0, S, 14.0, S + 8.0, "silikon", cx=STEMPEL_X))
-    I(Disc(S, 0.0, 14.0, "silikon", cx=STEMPEL_X))
+    # Ausleger mit Stempel: ein gedrucktes PETG-Teil (schwarz matt), darunter 2 mm Gummiauflage
+    I(Box(28.0, 36.0, -12.5, 12.5, S + 8.0, S + 48.0, "innen"))          # senkrechte Platte am Schlitten
+    I(Box(28.0, 68.0, -12.5, 12.5, S + 8.0, S + 16.0, "innen"))          # waagrechter Arm
+    I(Frustum(STEMPEL_D / 2, S + 2.0, STEMPEL_D / 2, S + 8.0, "innen", cx=STEMPEL_X))   # Stempelfuß Ø 25
+    I(Frustum(STEMPEL_D / 2, S, STEMPEL_D / 2, S + 2.0, "gummi", cx=STEMPEL_X))         # Gummiauflage
+    I(Disc(S, 0.0, STEMPEL_D / 2, "gummi", cx=STEMPEL_X))
     I(Box(-80.15, -37.85, -21.15, 21.15, Z_M1_0, Z_M1_1, "innen_hell"))
     I(Disc(Z_BR0, 0.0, 98.0, "innen"))
     # Zuganker
@@ -1081,7 +1136,6 @@ class Hero:
         self.vspan = 590.0                       # sichtbare Höhe in mm in der Zielebene
         self.fpx = (self.HS / 2) / (self.vspan / 2 / self.dist)
         self.shift_y = -8.0                      # Bildmitte etwas nach unten schieben (Gerät sitzt im Bild)
-        self.emis = None
 
     def ray_dirs(self, i0, i1):
         ii, jj = np.mgrid[i0:i1, 0:self.WS]
@@ -1098,28 +1152,14 @@ class Hero:
         V = -D
         cosv = np.clip((N * V).sum(1), 0.0, 1.0)
         R = D - 2.0 * (N * D).sum(1)[:, None] * N
+        irr = AMB_COL[None, :] * (0.55 + 0.45 * np.clip(N[:, 2] * 0.5 + 0.5, 0, 1))[:, None] \
+            + KEY_COL[None, :] * np.clip((N * KEY_DIR).sum(1), 0, 1)[:, None]
         if m.interior:
+            # Innenteile bekommen nur das Umgebungslicht, das durch die Hülle fällt: die Bühne (unter Z 97) ist nach vorne offen,
+            # darüber kommt es durch das Rauch-PETG-Portal und die sechs Klarfenster (etwa ein Drittel)
             zz = P[:, 2]
-            warm = np.array([1.0, 0.76, 0.52])
-            vit = 0.55 * smoothstep(95.0, 120.0, zz) * smoothstep(186.0, 170.0, zz)       # Vitrinen-LEDs unter dem Laufring
-            irr = warm[None, :] * (0.05 + 0.20 * smoothstep(60.0, 330.0, zz) + 0.45 * smoothstep(75.0, 20.0, zz) + vit)[:, None]
-            irr = irr * (0.65 + 0.35 * np.clip(N[:, 2] * 0.5 + 0.5, 0, 1))[:, None]
-        else:
-            irr = AMB_COL[None, :] * (0.55 + 0.45 * np.clip(N[:, 2] * 0.5 + 0.5, 0, 1))[:, None] \
-                + KEY_COL[None, :] * np.clip((N * KEY_DIR).sum(1), 0, 1)[:, None]
+            irr = irr * (0.30 + 0.58 * smoothstep(112.0, 80.0, zz))[:, None]
         diff = m.albedo[None, :] * irr * (0.0 if m.metal else 1.0)
-        if m.emit is not None:
-            diff = diff + m.emit[None, :]
-        if mat == "fuge":      # Opalring: Helligkeit zur Mitte des Streifens leicht höher
-            zc = np.abs(P[:, 2] - 339.5) / 1.5
-            diff = diff * (1.15 - 0.30 * np.clip(zc, 0, 1))[:, None]
-        spill_add = None
-        if m.spill:
-            dzs = np.abs(P[:, 2] - 339.5)
-            sp = np.exp(-np.maximum(dzs - 1.5, 0.0) / 9.0)
-            spill_add = np.array([1.0, 0.58, 0.28])[None, :] * sp[:, None]
-            if not m.metal:
-                diff = diff + spill_add * 0.10
         sc = m.spec_scale * (0.12 if m.interior else 1.0)
         if m.f0 > 0 or m.metal:
             En = env(P, R, m.rough)
@@ -1132,20 +1172,19 @@ class Hero:
                     base = sh[None, :] + (li - sh)[None, :] * smoothstep(0.02, 0.9, lum)[:, None]
                     spec = base * (0.55 + 0.45 * np.minimum(lum * 2.0, 1.0))[:, None] * 1.1 + 0.25 * En * li[None, :] * np.minimum(lum, 3.0)[:, None]
                     diff = diff * 0
-                    spec = spec + spill_add * 0.55
             else:
                 F = schlick(m.f0, cosv)[:, None]
                 spec = F * En * sc
         else:
             spec = np.zeros((n, 3))
         if mat == "lid":
-            # Gravur "Atelier": Gold im Deckel, Leserichtung von vorne (Zeilenkopf zeigt nach hinten, -X)
+            # Namensschild 90 x 16 im Deckel (schwarze Basis, Gold-Schrift), Leserichtung von vorne (Zeilenkopf zeigt nach hinten, -X)
             img = text_mask()
             hh, ww = img.shape
-            iu = np.clip(((0.5 + P[:, 1] / 137.0) * ww).astype(int), 0, ww - 1)
-            iv = np.clip(((0.5 + P[:, 0] / 34.0) * hh).astype(int), 0, hh - 1)
+            iu = np.clip(((0.5 + P[:, 1] / 90.0) * ww).astype(int), 0, ww - 1)
+            iv = np.clip(((0.5 + P[:, 0] / 16.0) * hh).astype(int), 0, hh - 1)
             msk = img[iv, iu]
-            gl = lin(FARBEN["gold"]) * (0.45 + 0.55 * np.minimum(En.mean(1) * 3.0, 1.0))[:, None]
+            gl = lin(FARBEN["gold"]) * (0.8 + 0.8 * np.minimum(En.mean(1) * 3.0, 1.0))[:, None]
             diff = diff * (1 - msk)[:, None] + gl * msk[:, None]
             spec = spec * (1 - msk)[:, None]
         alpha = np.full(n, m.alpha)
@@ -1175,7 +1214,6 @@ class Hero:
         T = np.ones((n, 3))
         t0 = np.zeros(n)
         inside = np.zeros(n, bool)
-        emis = np.zeros((n, 3))
         # Begrenzung: nur Strahlen, die den Zylinder r 112, z -5 bis 405 treffen, laufen in den Gerätepfad
         ox, oy, oz = O[:, 0], O[:, 1], O[:, 2]
         a = D[:, 0] ** 2 + D[:, 1] ** 2
@@ -1228,10 +1266,8 @@ class Hero:
                     d_, s_, a_ = self.shade(name, P[s2], N[s2], Da[sel][s2], exs) if name != "loch" else \
                         (np.zeros((len(s2), 3)), np.zeros((len(s2), 3)), np.zeros(len(s2)))
                     diffs[s2], specs[s2], alph[s2] = d_, s_, a_
-                    if name == "loch" or name == "glas":
+                    if name in ("loch", "glas", "klar"):
                         inside[gi[s2]] = True
-                    if MATS[name].emit is not None and MATS[name].alpha >= 1.0:
-                        emis[gi[s2]] += d_ * T[gi[s2]]
                 col[gi] += T[gi] * (alph[:, None] * diffs + specs)
                 T[gi] = T[gi] * (1.0 - alph)[:, None]
                 t0[gi] = tH
@@ -1245,7 +1281,7 @@ class Hero:
             esc_O.append(O[active] + t0[active][:, None] * D[active])
             esc_D.append(D[active])
             esc_T.append(T[active])
-        return col, T, emis, (np.concatenate(esc_idx) if esc_idx else np.zeros(0, int),
+        return col, T, (np.concatenate(esc_idx) if esc_idx else np.zeros(0, int),
                               np.vstack(esc_O) if esc_O else np.zeros((0, 3)),
                               np.vstack(esc_D) if esc_D else np.zeros((0, 3)),
                               np.vstack(esc_T) if esc_T else np.zeros((0, 3)))
@@ -1318,7 +1354,7 @@ class Hero:
                 for mm in np.unique(mid):
                     s2 = np.where(mid == mm)[0]
                     name = MAT_NAME[mm]
-                    if name in ("loch", "glas"):
+                    if name in ("loch", "glas", "klar"):
                         c = np.tile(np.array([0.012, 0.012, 0.014]), (len(s2), 1))
                     else:
                         d_, s_, a_ = self.shade(name, Q[s2], N[s2], Dj[sel][s2],
@@ -1336,17 +1372,15 @@ class Hero:
         t0 = time.time()
         H, W = self.HS, self.WS
         img = np.zeros((H, W, 3), np.float32)
-        emis = np.zeros((H, W, 3), np.float32)
         rows = 96
         gnd_O, gnd_D, gnd_I, gnd_T = [], [], [], []
         for i0 in range(0, H, rows):
             i1 = min(H, i0 + rows)
             D = self.ray_dirs(i0, i1)
-            col, T, em, (ei, eO, eD, eT) = self.trace_block(D)
+            col, T, (ei, eO, eD, eT) = self.trace_block(D)
             base = i0 * W
             flat = img.reshape(-1, 3)
             flat[base:base + len(D)] = col
-            emis.reshape(-1, 3)[base:base + len(D)] = em
             # Strahlen ohne Trefferweg direkt zum Tisch (außerhalb der Begrenzung)
             all_idx = np.arange(len(D))
             handled = np.zeros(len(D), bool)
@@ -1373,32 +1407,16 @@ class Hero:
             flat[gi[sl]] += (gT[sl] * c).astype(np.float32)
             if verbose:
                 print("   Tisch %d von %d, %.0f s" % (s, len(gi), time.time() - t0), flush=True)
-        self.raw, self.emis = img, emis
-        return img, emis
+        self.raw = img
+        return img
 
 
 # ============================================================
 # Nachbearbeitung des Hero (Bloom, Tonwerte, Vignette) und Zeichnungen in 2D
 # ============================================================
-def blur_fft(img, sigma):
-    """Gauß-Weichzeichnung über FFT (ohne scipy), img (H,W,3)."""
-    H, W = img.shape[:2]
-    ky = np.fft.fftfreq(H)[:, None]
-    kx = np.fft.rfftfreq(W)[None, :]
-    g = np.exp(-2 * (np.pi ** 2) * (sigma ** 2) * (kx ** 2 + ky ** 2))
-    out = np.empty_like(img)
-    for c in range(img.shape[2]):
-        out[:, :, c] = np.fft.irfft2(np.fft.rfft2(img[:, :, c]) * g, s=(H, W))
-    return out
-
-
-def tonemap(raw, emis, ss):
+def tonemap(raw):
+    """Tonwerte und Vignette (Stand 6: kein Glühen, nichts leuchtet, daher kein Bloom)."""
     img = raw.astype(np.float64)
-    em = emis.astype(np.float64)
-    b1 = blur_fft(em, 5.0 * ss)
-    b2 = blur_fft(em, 18.0 * ss)
-    b3 = blur_fft(em, 55.0 * ss)
-    img = img + 0.30 * b1 + 0.20 * b2 + 0.10 * b3
     exposure = 1.18
     c = 1.0 - np.exp(-exposure * np.clip(img, 0, None))
     # leichte S-Kurve für Kontrast
@@ -1444,7 +1462,7 @@ GOLDD = "#9C7B2E"
 CUT = "#2A2A2F"
 CUT_EDGE = "#0B0B0D"
 STEELC = "#A9ABB1"
-OPALC = "#F4F0E6"
+WEISSC = FARBEN["schublade"]          # PETG weiß (Schublade)
 SILIC = "#E4DDC9"
 GLASC = "#6C6C74"
 
@@ -1571,29 +1589,54 @@ def draw_schnitt(ax):
     P(sil, "#ECE7DC", ec="none", z=1)
     # ---- Hülle, hinten (X < 0)
     P([(-r_sock(3), 3), (-r_sock(97), 97), (-r_sock(97) + WAND, 97), (-r_sock(3) + WAND, 3)], CUT, z=7)
-    R(-R_RING, -R_KOERPER, 98.0, 101.0, GOLDC, z=8)
-    R(-98.8, -R_KOERPER_IN + 0.8, 97.0, 98.0, "#111", z=7, lw=0.3)
+    # Goldring (Gold-PETG) auf dem Sockel, innen r 97,3, unten außen 0,8 Fase; Sockelfalz geht bis Z 104 hindurch
+    P([(-R_GOLDRING_IN, Z_RING0), (-(R_RING - 0.8), Z_RING0), (-R_RING, Z_RING0 + 0.8), (-R_RING, Z_RING1), (-R_GOLDRING_IN, Z_RING1)],
+      GOLDC, ec=GOLDD, lw=0.4, z=9)
+    R(-R_SOCKELFALZ, -R_KOERPER_IN, Z_RING0, Z_RING1 + 3.0, CUT, z=7, lw=0.3)
+    # Körper mit Schattenfuge bei Z 235 (V-Nut 1,0 breit, 0,5 tief, Kerbe an der Außenkante)
     R(-R_KOERPER, -R_KOERPER_IN, 101.0, 338.0, CUT, z=7)
-    R(-R_KOERPER, -R_KOERPER + 1.2, Z_FUGE0, Z_FUGE1, "#FFE7C7", z=9, lw=0.4)
-    # Krone (Schnitt als Hohlprofil), Fase gold
-    krone = [(-R_KRONE, 341), (-R_KRONE, Z_FASE), (-96, H_GESAMT), (96, H_GESAMT), (R_KRONE, Z_FASE), (R_KRONE, 341),
-             (R_KRONE - 2, 341), (R_KRONE - 2, Z_FASE - 0.7), (94.4, H_GESAMT - 2.0), (-94.4, H_GESAMT - 2.0), (-R_KRONE + 2, Z_FASE - 0.7), (-R_KRONE + 2, 341)]
-    P(krone, "#0E0E11", z=8)
+    ue = 2.4      # Kerbe im Bild 2,4fach überhöht (wahre Größe 1,0 x 0,5 wäre nur etwa 1 Pixel)
+    P([(-R_KOERPER - 0.3, Z_KTEIL - ue * FUGE_FASE - 0.3), (-R_KOERPER + ue * FUGE_FASE, Z_KTEIL), (-R_KOERPER - 0.3, Z_KTEIL + ue * FUGE_FASE + 0.3)],
+      CARD, ec="none", z=10)
+    # Goldband (Gold-PETG, Wand 1,6) Z 338 bis 341 mit Steckern 2 mm in Körper und Krone (Wand 1,2)
+    R(-R_KOERPER, -R_KOERPER + 1.6, Z_FUGE0, Z_FUGE1, GOLDC, ec=GOLDD, lw=0.4, z=9)
+    R(-(R_KOERPER_IN - SP), -(R_KOERPER_IN - SP - 1.2), Z_FUGE0 - 2.0, Z_FUGE0, GOLDC, ec=GOLDD, lw=0.3, z=9)
+    R(-(R_KOERPER_IN - SP), -(R_KOERPER_IN - SP - 1.2), Z_FUGE1, Z_FUGE1 + 2.0, GOLDC, ec=GOLDD, lw=0.3, z=9)
+    # Krone (schwarzer Körper, Hohlprofil nach der SCAD) mit Kronenring aus Gold-PETG auf der Fase
     for sg in (-1, 1):
-        P([(sg * R_KRONE, Z_FASE), (sg * 96, H_GESAMT), (sg * 94.9, H_GESAMT - 1.6), (sg * (R_KRONE - 1.7), Z_FASE - 1.1)], GOLDC, ec=GOLDD, lw=0.4, z=9)
-    R(-30, 30, H_GESAMT - 1.0, H_GESAMT, GOLDC, ec="none", z=9)         # Namensschild als Einlage im Deckel (angedeutet)
+        kr = [(99.6, Z_FUGE1), (R_KRONE, Z_FUGE1), (R_KRONE, Z_FASE), (R_KRONE - 2.0, Z_FASE), (R_KRONE - 8.0, H_GESAMT), (0, H_GESAMT),
+              (0, H_GESAMT - 2.0), (R_KRONE - 8.4, H_GESAMT - 2.0), (R_KRONE - 4.4, Z_FASE), (R_KRONE - 4.4, Z_FASE - 3.0), (99.6, Z_FASE - 3.0)]
+        P([(sg * x, z) for x, z in kr], "#0E0E11", z=8)
+        P([(sg * R_KRONE, Z_FASE), (sg * (R_KRONE - 6.0), H_GESAMT), (sg * (R_KRONE - 8.0), H_GESAMT), (sg * (R_KRONE - 2.0), Z_FASE)],
+          GOLDC, ec=GOLDD, lw=0.4, z=9)
+    # Namensschild 90 x 16 x 1,2 in der Krone: schwarze Basis, Gold-Schrift (hier im Schnitt als Streifen angedeutet)
+    R(-8, 8, H_GESAMT - 1.2, H_GESAMT - 0.6, "#050506", ec="none", z=9)
+    R(-6, 6, H_GESAMT - 0.6, H_GESAMT, GOLDC, ec="none", z=9)
     # ---- Hülle, vorne (X > 0): nur unterhalb und oberhalb des Portals
     P([(r_sock(3), 3), (r_sock(16), 16), (r_sock(16) - WAND, 16), (r_sock(3) - WAND, 3)], CUT, z=7)
     R(R_KOERPER_IN, R_KOERPER, Z_PORTAL_O, 338.0, CUT, z=7)
-    R(R_KOERPER, R_KOERPER + 1.5, Z_PORTAL_O, 334.0, GOLDC, ec=GOLDD, lw=0.4, z=9)       # Goldrahmen oben
-    R(r_sock(14) - 0.2, r_sock(12) + 1.5, 12.0, 16.0, GOLDC, ec=GOLDD, lw=0.4, z=9)     # Rahmen unten
-    R(R_KOERPER_IN, R_KOERPER, Z_FUGE0, Z_FUGE1, "#FFE7C7", z=9, lw=0.4)
+    # Portalrahmen aus Gold-PETG, 3 breit, 1,5 erhaben: oben der Balken des Fensterrahmens Z 333,4 bis 336,4, unten der Bühnenrahmen Z 13 bis 16
+    R(R_KOERPER, R_KOERPER + RAHMEN_T, FW_Z1, Z_RF1, GOLDC, ec=GOLDD, lw=0.4, z=9)
+    P([(r_sock(Z_RB0), Z_RB0), (r_sock(Z_RB0) + RAHMEN_T, Z_RB0), (r_sock(Z_PORTAL_U) + RAHMEN_T, Z_PORTAL_U), (r_sock(Z_PORTAL_U), Z_PORTAL_U)],
+      GOLDC, ec=GOLDD, lw=0.4, z=9)
+    R(R_KOERPER_IN, R_KOERPER, Z_FUGE0, Z_FUGE1, GOLDC, ec=GOLDD, lw=0.4, z=9)                   # Goldband
+    R(R_KOERPER_IN - SP - 1.2, R_KOERPER_IN - SP, Z_FUGE0 - 2.0, Z_FUGE0, GOLDC, ec=GOLDD, lw=0.3, z=9)
+    R(R_KOERPER_IN - SP - 1.2, R_KOERPER_IN - SP, Z_FUGE1, Z_FUGE1 + 2.0, GOLDC, ec=GOLDD, lw=0.3, z=9)
     R(R_KOERPER, R_KRONE, 341.0, 341.8, "#222", ec="none", z=8)
-    # Portalscheibe, Rauchacryl 2 mm
-    R(88.5, 90.5, 99.0, 333.0, GLASC, ec="#444", lw=0.5, z=9, alpha=0.9)
-    # Schubladenfront (folgt der Sockelkontur) mit Goldlippe
+    # Portalscheibe, Rauch-PETG 2 mm, zwei Hälften mit Überlappung (Fuge außen Z 215, innen Z 219, hinter der Karussellplatte)
+    xi, xm, xa = 88.5, 89.5, 90.5
+    R(xi, xa, 99.0, Z_SCHEIBE_NAHT_A, GLASC, ec="none", z=9, alpha=0.9)
+    R(xi, xm, Z_SCHEIBE_NAHT_A, Z_SCHEIBE_NAHT_I, GLASC, ec="none", z=9, alpha=0.9)
+    R(xm, xa, Z_SCHEIBE_NAHT_A, Z_SCHEIBE_NAHT_I, "#7E7E86", ec="none", z=9, alpha=0.9)
+    R(xi, xa, Z_SCHEIBE_NAHT_I, 333.0, GLASC, ec="none", z=9, alpha=0.9)
+    ax.add_patch(Rectangle((xi, 99.0), xa - xi, 333.0 - 99.0, fc="none", ec="#444", lw=0.5, zorder=9))
+    Ln([xm, xa], [Z_SCHEIBE_NAHT_A] * 2, c="#444", lw=0.5, z=10)
+    Ln([xi, xm], [Z_SCHEIBE_NAHT_I] * 2, c="#444", lw=0.5, z=10)
+    Ln([xm, xm], [Z_SCHEIBE_NAHT_A, Z_SCHEIBE_NAHT_I], c="#444", lw=0.5, z=10)
+    # Schubladenfront (folgt der Sockelkontur, glänzend) mit Goldlippe 3 x 1,5 oben
     P([(r_sock(17) - 8, 17), (r_sock(17), 17), (r_sock(45), 45), (r_sock(45) - 8, 45)], "#0B0B0D", z=8)
-    P([(r_sock(42), 42), (r_sock(42) + 1.5, 42), (r_sock(45) + 1.5, 45), (r_sock(45), 45)], GOLDC, ec=GOLDD, lw=0.4, z=9)
+    P([(r_sock(Z_LIPPE_G0) - 3.0, Z_LIPPE_G0), (r_sock(Z_LIPPE_G0) + 1.5, Z_LIPPE_G0), (r_sock(Z_LIPPE_G0) + 1.5, Z_LIPPE_G1),
+       (r_sock(Z_LIPPE_G0) - 3.0, Z_LIPPE_G1)], GOLDC, ec=GOLDD, lw=0.4, z=9)
     # ---- Grundplatte, Füße, Ballast (hinter der Ebene), Zuganker (hinter der Ebene)
     R(-100, 100, Z_GRUND0, Z_GRUND1, "#3A3A40", z=6)
     for sx in (-1, 1):
@@ -1606,6 +1649,7 @@ def draw_schnitt(ax):
         R(cx - 2.5, cx + 2.5, Z_GRUND1, Z_BR1, "#C7C9CE", ec="#8C8D91", lw=0.4, z=3, alpha=0.8)
         for zm in (Z_LAUF0 - 4.0, Z_LAUF1, 331.0, Z_BR0 - 4.0):
             R(cx - 4.0, cx + 4.0, zm, zm + 4.0, "#A9ABB1", ec="#6E7076", lw=0.3, z=3, alpha=0.8)   # Muttern M5
+        R(cx - 5.0, cx + 5.0, 333.0, 336.0, "#3A3A40", ec="none", z=3, alpha=0.8)                   # Fugenhalter unter dem Goldband
     # ---- Lagerbock, Welle, Lager
     R(-20, -11, 7, 40, "#3A3A40", z=6)
     R(11, 20, 7, 40, "#3A3A40", z=6)
@@ -1625,15 +1669,13 @@ def draw_schnitt(ax):
     R(-65.8, -49.8, 43, 51, "#6E7076", z=6, lw=0.4)
     Ln([-49.8, -23.5], [43.4, 43.4], c="#222", lw=1.0)
     Ln([-49.8, -23.5], [50.6, 50.6], c="#222", lw=1.0)
-    # ---- Wägezelle, LED-Ring, Podest, Schublade, Becher
+    # ---- Wägezelle, Podest, Schublade, Becher
     R(50.65, 63.35, Z_WZ0, Z_WZ1, "#C9CCD2", ec="#6E7076", lw=0.6, z=6, hatch="////")
     R(53, 61, 6.0, Z_WZ0 - 0.0, "#F0B040", ec="none", z=6)
-    for x0 in (32, 75):
-        R(x0, x0 + 7, Z_LEDR0, Z_LEDR1, "#FFC98F", ec="#A06A2A", lw=0.4, z=7)
-    R(50, 64, Z_WZ1, Z_POD0, "#EDEAE3", ec="#888", lw=0.4, z=6)
-    R(27, 87, Z_POD0, Z_POD1, OPALC, ec="#8A867C", lw=0.5, z=7)
-    R(22, r_sock(27.5) - 8, Z_BODEN0, Z_BODEN1, "#F8F4EA", ec="#8A867C", lw=0.5, z=7)
-    R(22, r_sock(40), 27.5, 45, "#F4F0E6", ec="#9A968C", lw=0.4, z=4, alpha=0.55)     # Seitenwand hinter der Ebene
+    R(50, 64, Z_WZ1, Z_POD0, FARBEN["podest"], ec="#888", lw=0.4, z=6)                    # Stiel Ø 14
+    R(27, 87, Z_POD0, Z_POD1, FARBEN["podest"], ec="#8A867C", lw=0.5, z=7)                # Podest Ø 60, PETG schwarz
+    R(22, r_sock(27.5) - 8, Z_BODEN0, Z_BODEN1, WEISSC, ec="#8A867C", lw=0.5, z=7)        # Schublade PETG weiß
+    R(22, r_sock(40), 27.5, 45, WEISSC, ec="#9A968C", lw=0.4, z=4, alpha=0.55)           # Seitenwand hinter der Ebene
     # Becher
     cwall = [(RS - BECHER_RU, Z_BECHER0), (RS - BECHER_RO, Z_BECHER1), (RS - BECHER_RO + 0.9, Z_BECHER1),
              (RS - BECHER_RU + 0.9, Z_BECHER0 + 0.9), (RS + BECHER_RU - 0.9, Z_BECHER0 + 0.9), (RS + BECHER_RO - 0.9, Z_BECHER1),
@@ -1658,7 +1700,6 @@ def draw_schnitt(ax):
     R(-83.5, -76.5, Z_ROLLE0, Z_ROLLE1, STEELC, ec="#55575C", lw=0.5, z=7)
     R(-85.5, -74.5, Z_BOCK0, Z_PLATTE0, "#4C4C54", ec="none", z=5, alpha=0.65)
     R(-81.0, -79.0, 197.0, 202.0, "#E0A030", ec="none", z=8)
-    R(-83.5, -76.5, 180.5, Z_LAUF0, "#FFC98F", ec="none", z=7)            # Vitrinen-LED unter dem Laufring
     # ---- Spritze Platz 4 (Cyan) vorne
     R(RS - 15, RS + 15, Z_ZYL0, Z_ZYL1, "#DCE6EC", ec="#6A7A84", lw=0.6, z=5, alpha=0.55)
     R(RS - 13.4, RS + 13.4, Z_ZYL0 + 0.1, pb, cyan, ec="none", z=6)
@@ -1673,12 +1714,16 @@ def draw_schnitt(ax):
     R(RS - 0.7, RS + 0.7, zf + 1.0, Z_VENTIL0 - 0.2, cyan, ec="none", z=7)
     ax.add_patch(Circle((RS, zf + 0.9), 1.6, fc=cyan, ec="none", zorder=7))
     # ---- Stößel
-    R(STEMPEL_X - 14, STEMPEL_X + 14, S, S + 8, "#17171A", z=8)
-    R(STEMPEL_X - 14, STEMPEL_X + 14, S, S + 2, "#444", ec="none", z=9)
-    R(28, 68, S + 8, S + 12, STEELC, ec="#55575C", lw=0.5, z=8)
-    R(28, 32, S + 8, S + 48, STEELC, ec="#55575C", lw=0.5, z=8)
-    for zs in (S + 16, S + 42):
-        R(20, 32, zs - 2, zs + 2, "#8C8D91", ec="none", z=8)
+    # Ausleger mit Stempel: ein gedrucktes PETG-Teil (schwarz matt), Platte X 28 bis 36, Arm bis X 68, Stempelfuß Ø 25, Gummi 2 mm
+    AUSL = "#1C1C1E"
+    R(28, 36, S + 8, S + 48, AUSL, ec="#000", lw=0.5, z=8)
+    R(28, 68, S + 8, S + 16, AUSL, ec="#000", lw=0.5, z=8)
+    R(STEMPEL_X - STEMPEL_D / 2, STEMPEL_X + STEMPEL_D / 2, S + 2, S + 8, AUSL, ec="#000", lw=0.5, z=8)
+    R(STEMPEL_X - STEMPEL_D / 2, STEMPEL_X + STEMPEL_D / 2, S, S + 2, "#5A5A5E", ec="#000", lw=0.4, z=9)      # Gummiauflage
+    P([(36, S + 16), (58, S + 16), (36, S + 36)], "#8E8E96", ec="#55575C", lw=0.4, z=7, alpha=0.7)             # Stützrippe hinter der Ebene
+    for zs in (S + 24, S + 40):      # zwei M4 in Gewindeeinsätzen im Schlitten, Senkung in der Platte
+        R(20, 34, zs - 2, zs + 2, "#8C8D91", ec="#55575C", lw=0.3, z=9)
+        R(32, 36, zs - 3.4, zs + 3.4, "#8C8D91", ec="#55575C", lw=0.3, z=9)
     R(-34, 28, S + SL_U, S + SL_U + SL_H, "#3C3C42", z=6)
     R(-11, 11, S + 35.5, S + 39.0, FARBEN["messing"], ec="#6B5530", lw=0.4, z=8)          # Flansch Messingmutter
     R(-5, 5, S + 20.5, S + 35.5, FARBEN["messing"], ec="#6B5530", lw=0.4, z=8)
@@ -1700,10 +1745,6 @@ def draw_schnitt(ax):
     Ln([-51, -8], [Z_RIEMEN1 - 1.2, Z_RIEMEN1 - 1.2], c="#222", lw=1.0)
     R(-80.15, -37.85, Z_M1_0, Z_M1_1, "#4A4A50", z=6)
     R(-60.5, -57.5, Z_M1_1, Z_GT2_OBEN - 0.5, STEELC, ec="none", z=7)
-    # LED-Träger der Lichtfuge
-    for sg in (-1, 1):
-        R(min(sg * R_LEDT0, sg * R_LEDT1), max(sg * R_LEDT0, sg * R_LEDT1), Z_LEDT0, Z_LEDT1, "#3A3A40", z=6)
-        R(min(sg * R_LEDT1, sg * R_LED_OBEN), max(sg * R_LEDT1, sg * R_LED_OBEN), 337.0, 342.0, "#FFC98F", ec="none", z=7)
     # ---- Geisterspritzen (volle Spritzen hinter der Ebene, y > 0)
     ghost = [(51.43, FARBEN["schwarz"]), (102.86, FARBEN["weiss"])]
     for th, fcol in ghost:
@@ -1717,37 +1758,39 @@ def draw_schnitt(ax):
         R(cx - 4.5, cx + 4.5, Z_VENTIL0, Z_VENTIL1, "#DAD6CC", ec="#9AA8B0", lw=0.4, z=2, alpha=0.6)
     # ---- Maßpfeile am Rand (Schnittebene, vorne)
     # Pfeil "vorne"
-    ax.annotate("", xy=(148, 205), xytext=(112, 205), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.0, mutation_scale=9), zorder=2)
+    ax.annotate("", xy=(205, -44), xytext=(160, -44), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.0, mutation_scale=9), zorder=2)
+    ax.text(182, -37, "vorne", fontsize=9.5, color=INK2, ha="center", va="center", zorder=2)
 
     # ---- Beschriftungen: (x, z, Titel, Detail, Seite)
     L = [
-        (-99.0, 395.0, "Krone, abnehmbar", "PLA seidenmatt, Fase gold", "l"),
+        (-99.0, 395.0, "Krone, abnehmbar", "PETG matt, Kronenring Gold-PETG", "l"),
         (-30.0, 392.0, "Riemen GT2 20 : 20", "Scheiben 16 hoch, Brücke mit 608", "l"),
         (-59.0, 365.0, "Motor 1, NEMA 17", "34 mm, hängt unter der Brücke", "l"),
-        (-98.0, 339.5, "Lichtfuge", "Opalring 1,2, 75 LED (144/m)", "l"),
-        (-97.2, 275.0, "Körper Ø 196", "PLA seidenmatt, Wand 1,6", "l"),
-        (-80.0, 200.0, "Laufrolle 608 und Laufring", "7 Rollen, darunter Vitrinen-LED", "l"),
+        (-98.0, 339.5, "Goldband, Gold-PETG", "Z 338 bis 341, Fugenhalter darunter", "l"),
+        (-100.8, 235.0, "Schattenfuge Körperteilung", "V-Nut 1,0 x 0,5, Z 235 (Kerbe überhöht)", "l"),
+        (-97.2, 275.0, "Körper Ø 196", "PETG matt, Wand 1,6", "l"),
+        (-80.0, 200.0, "Laufrolle 608 und Laufring", "7 Rollen", "l"),
         (-60.0, 217.0, "Karussellplatte Ø 171", "PETG schwarz, Nabe zentriert", "l"),
         (-4.0, 150.0, "Karussellwelle Ø 8", "Lagerbock mit zwei 608", "l"),
+        (-100.5, 99.0, "Goldring Ø 202, Gold-PETG", "unten Fase 0,8, am Portal offen", "l"),
         (-58.0, 60.0, "Feuchtrinne mit Deckel", "Schwamm nass, 6 Löcher Ø 14", "l"),
         (-22.0, 47.0, "GT2-Rad 70 Z", "1 : 3,5, Magnet für Hall", "l"),
         (-58.0, 29.0, "Motor 2, Pancake 23 mm", "Karussell, Silikondämpfer", "l"),
         (-44.0, 14.5, "Ballast 0,48 kg", "4 Stapel M20, hinter der Ebene", "l"),
-        (-99.5, 80.0, "Sockel, Hochglanz", "Kegel Ø 204 auf 196", "l"),
+        (-99.5, 70.0, "Sockel, glänzend", "PETG, Kegel Ø 204 auf 196", "l"),
         (4.0, 362.0, "Spindel T8, Steigung 2", "selbsthemmend, Stellring oben", "r"),
         (24.0, 304.0, "Schlitten mit Messingmutter", "2 x LM10LUU auf Wellen Ø 10", "r"),
-        (30.0, 330.0, "Ausleger und Stempel", "Winkelstahl 40 x 40 x 4, 2 x M4", "r"),
-        (99.0, 332.0, "Portalrahmen, Gold", "Anreibewachs, 1,5 erhaben", "r"),
-        (89.5, 260.0, "Portalscheibe, Rauchacryl", "2 mm, 78 x 234, Magnete", "r"),
-        (83.0, 340.0, "LED-Träger Lichtfuge", "r 82 bis 83,5", "r"),
+        (32.0, 318.0, "Ausleger mit Stempel, PETG (ein Teil)", "schwarz matt, Gummi 2 mm, 2 x M4", "r"),
+        (99.0, 335.0, "Portalrahmen, Gold-PETG", "3 breit, 1,5 erhaben", "r"),
+        (89.5, 260.0, "Portalscheibe, Rauch-PETG 2 mm", "78 x 234, zwei Hälften, Magnete", "r"),
         (70.0, KP_D - 1.5, "Kolbenplatte Ø 38", "Stempel 4 mm innen", "r"),
         (70.0, 150.0, "Spritze 60 ml, Cyan", "Nutzfüllung 50 ml, Füllmarke", "r"),
         (76.0, 221.0, "Flansch in der Tasche", "Rastzunge, Einlaufschräge", "r"),
         (58.5, 72.0, "Entenschnabelventil", "Spitze 7 mm über dem Becherrand", "r"),
         (RS + 22.0, 40.0, "Becher 60 ml, Zielfarbe", "Sitz konisch, bis 50 g", "r"),
-        (91.0, 22.0, "Schublade, Front mit Goldlippe", "liegt zum Wiegen auf dem Podest", "r"),
+        (91.0, 46.0, "Schublade, Front mit Goldlippe", "PETG weiß, Lippe Gold-PETG 3 x 1,5", "r"),
+        (57.0, 22.0, "Podest Ø 60, PETG schwarz", "liegt zum Wiegen auf der Wägezelle", "r"),
         (57.0, 14.0, "Wägezelle 500 g", "unter Podest und Schublade", "r"),
-        (78.5, 22.0, "LED-Ring Bühne", "12 WS2812, 4000 K beim Dosieren", "r"),
         (-12.7 + 12.0, 262.0, "Volle Spritzen", "hinter der Schnittebene", "r"),
     ]
     return L
@@ -1814,7 +1857,13 @@ def pocket_poly(th_deg, rout=R_PLATTE):
 def draw_draufsicht(ax):
     # Sockel, Goldring
     ax.add_patch(Circle((0, 0), R_FUSS_AUSSEN, fc="#E4DED0", ec="#B7AF9E", lw=0.8, zorder=1))
-    ax.add_patch(Circle((0, 0), R_RING, fc="none", ec=GOLDC, lw=2.2, zorder=3))
+    # Goldring Ø 202 (Gold-PETG, innen r 97,3), am Portal offen (|Y| < 39)
+    ga = math.degrees(math.asin(GOLDRING_GAP / R_RING))
+    ax.add_patch(Wedge((0, 0), R_RING, ga - 90, 360 - ga - 90, width=R_RING - R_GOLDRING_IN, fc=GOLDC, ec=GOLDD, lw=0.5, zorder=3))
+    # Bühnenrahmen auf dem Sockelkegel (|Y| 36 bis 39, Z 13 bis 97), von oben als schmale Leisten neben dem Portal
+    for sg in (-1, 1):
+        x0, x1 = sorted((sg * HW_PORTAL, sg * (HW_PORTAL + RAHMEN_BB)))
+        ax.add_patch(Rectangle((x0, -R_FUSS_AUSSEN + 0.5), x1 - x0, R_FUSS_AUSSEN - R_KOERPER - 0.5, fc=GOLDC, ec=GOLDD, lw=0.4, zorder=3))
     # Körperwand mit Portal und Fenstern (Lücken)
     gaps = [(-math.degrees(math.asin(36.0 / R_KOERPER)), math.degrees(math.asin(36.0 / R_KOERPER)), "portal")]
     half_w = math.degrees(math.asin(11.0 / R_KOERPER))
@@ -1831,10 +1880,13 @@ def draw_draufsicht(ax):
         ax.add_patch(Wedge((0, 0), R_KOERPER + 0.0, a0 - 90, a1 - 90, width=WAND + 0.2, fc="#111114", ec="#111114", lw=0.3, zorder=4))
     for g0, g1, kind in gaps:
         if kind == "fenster":
-            ax.add_patch(Wedge((0, 0), R_KOERPER, g0 - 90, g1 - 90, width=WAND, fc=GLASC, ec="#333", lw=0.4, zorder=4))
+            ax.add_patch(Wedge((0, 0), R_KOERPER, g0 - 90, g1 - 90, width=WAND, fc=FARBEN["klar"], ec="#333", lw=0.4, zorder=4))
         else:
-            for a0, a1 in ((g0 - 2.4, g0), (g1, g1 + 2.4)):
-                ax.add_patch(Wedge((0, 0), R_KOERPER + 1.5, a0 - 90, a1 - 90, width=WAND + 1.5, fc=GOLDC, ec=GOLDD, lw=0.4, zorder=5))
+            # Fensterrahmen (Gold-PETG, |Y| 39,4 bis 42,4, 1,5 erhaben) links und rechts vom Portal
+            for sg in (-1, 1):
+                aa = sorted((math.degrees(math.asin(FW_HW / R_KOERPER)), math.degrees(math.asin((FW_HW + RAHMEN_BB) / R_KOERPER))))
+                a0, a1 = (aa[0], aa[1]) if sg > 0 else (-aa[1], -aa[0])
+                ax.add_patch(Wedge((0, 0), R_KOERPER + RAHMEN_T, a0 - 90, a1 - 90, width=WAND + RAHMEN_T, fc=GOLDC, ec=GOLDD, lw=0.4, zorder=5))
     ax.add_patch(Circle((0, 0), R_KOERPER_IN, fc="#F2EEE4", ec="none", zorder=2))
     # Verdeckte Teile darunter (gestrichelt)
     dash = dict(ls=(0, (4, 3)), lw=0.9, zorder=6)
@@ -1857,8 +1909,10 @@ def draw_draufsicht(ax):
         th = p * PITCH
         ax.add_patch(Polygon(pocket_poly(th), closed=True, fc="#44444C", ec="none", zorder=9))
         ax.add_patch(Polygon(slot_poly(th), closed=True, fc="#F2EEE4", ec="#16161A", lw=0.7, zorder=10))
-        # Kennring in Stationsfarbe außen auf der Platte
-        ax.add_patch(Wedge((0, 0), R_PLATTE - 0.5, th - 90 - 9, th - 90 + 9, width=2.2, fc=PLATZ_FARBE[p], ec="#555", lw=0.3, zorder=11))
+        # Stationsbuchstabe (C, M, Y, W, K, W) 0,6 tief eingraviert neben der Tasche, Leserichtung von vorne
+        lx, ly_ = pxy(*rot_xy([(76.0, 16.5 + 8.2)], th)[0])
+        ax.text(lx, ly_, STATIONSBUCHSTABE[p - 1], fontsize=11, fontweight="bold", color="#8A8A94", ha="center", va="center",
+                rotation=th, rotation_mode="anchor", zorder=11, family=SANS)
     # Laufringlücke (verdeckt)
     for sg in (-1, 1):
         ax.plot(*zip(pl(74.5, sg * 15), pl(86.5, sg * 15)), color="#8A857A", lw=1.0, ls=(0, (3, 2)), zorder=11)
@@ -1884,13 +1938,14 @@ def draw_draufsicht(ax):
     for sy in (-22.0, 22.0):
         ax.add_patch(Circle((sy, 0), 5.0, fc="#C8CAD0", ec="#55575C", lw=0.6, zorder=17))
     ax.add_patch(Circle((0, 0), 4.0, fc="#E6E8EC", ec="#55575C", lw=0.6, zorder=18))
-    ax.add_patch(Rectangle((-12.5, -68.0), 25.0, 40.0, fc=STEELC, ec="#55575C", lw=0.6, alpha=0.9, zorder=17))
-    ax.add_patch(Circle(pxy(STEMPEL_X, 0), 14.0, fc="#17171A", ec="#000", lw=0.6, zorder=18))
-    # Zuganker, LED-Träger
+    ax.add_patch(Rectangle((-12.5, -68.0), 25.0, 40.0, fc="#1C1C1E", ec="#55575C", lw=0.6, alpha=0.95, zorder=17))     # Ausleger, PETG
+    for y0 in (-12.5, 9.5):
+        ax.add_patch(Rectangle((y0, -58.0), 3.0, 22.0, fc="#34343A", ec="#55575C", lw=0.4, zorder=17.5))               # Stützrippen
+    ax.add_patch(Circle(pxy(STEMPEL_X, 0), STEMPEL_D / 2, fc="#2A2A2C", ec="#000", lw=0.6, zorder=18))                  # Stempel mit Gummi
+    # Zuganker
     for a in ZUGANKER_W:
         x, y = pl(ZUGANKER_R, a)
         ax.add_patch(Circle((x, y), ZUGANKER_RAD, fc="#C8CAD0", ec="#55575C", lw=0.6, zorder=9))
-    ax.add_patch(Wedge((0, 0), R_LED_OBEN, 0, 360, width=R_LED_OBEN - R_LEDT0, fc="#FFC98F", ec="none", alpha=0.55, zorder=3))
     for r_, a in BALLAST:
         ax.add_patch(Circle(pl(r_, a), 18.5, fc="none", ec="#8A857A", **dash))
     # Winkelstrahlen und Beschriftung der Plätze
@@ -1930,11 +1985,11 @@ def draw_masse(ax):
            (-R_KRONE, 341.0), (-R_KRONE, Z_FASE), (-96, H_GESAMT), (96, H_GESAMT), (R_KRONE, Z_FASE), (R_KRONE, 341.0),
            (R_KOERPER, 341.0), (R_KOERPER, 101.0), (R_RING, 101.0), (R_RING, 97.0), (r_sock(97), 97), (r_sock(3), 3)]
     ax.add_patch(Polygon(sil, closed=True, fc="#17171A", ec="#000", lw=0.8, zorder=3))
-    ax.add_patch(Rectangle((-R_RING, 98.0), 2 * R_RING, 3.0, fc=GOLDC, ec="none", zorder=4))
-    ax.add_patch(Rectangle((-R_KOERPER, 338.0), 2 * R_KOERPER, 3.0, fc="#FFD9A8", ec="none", zorder=4))
-    ax.add_patch(Polygon([(-R_KRONE, Z_FASE), (-96, H_GESAMT), (96, H_GESAMT), (R_KRONE, Z_FASE)], closed=True, fc=GOLDC, ec="none", zorder=4, alpha=0.0))
-    ax.plot([-R_KRONE, -96], [Z_FASE, H_GESAMT], color=GOLDC, lw=1.6, zorder=5)
+    ax.add_patch(Rectangle((-R_RING, Z_RING0), 2 * R_RING, Z_RING1 - Z_RING0, fc=GOLDC, ec="none", zorder=4))        # Goldring
+    ax.add_patch(Rectangle((-R_KOERPER, Z_FUGE0), 2 * R_KOERPER, Z_FUGE1 - Z_FUGE0, fc=GOLDC, ec="none", zorder=4))   # Goldband
+    ax.plot([-R_KRONE, -96], [Z_FASE, H_GESAMT], color=GOLDC, lw=1.6, zorder=5)                                        # Kronenring
     ax.plot([R_KRONE, 96], [Z_FASE, H_GESAMT], color=GOLDC, lw=1.6, zorder=5)
+    ax.plot([-R_KOERPER, R_KOERPER], [Z_KTEIL, Z_KTEIL], color="#000", lw=0.8, zorder=5)                               # Schattenfuge
     # Portal und Fenster als helle Andeutung
     ax.add_patch(FancyBboxPatch((-12, 16), 24, 314, boxstyle="round,pad=0,rounding_size=6", fc="#2E2E33", ec=GOLDC, lw=0.8, zorder=5, alpha=0.9))
     # Maßlinien
@@ -1971,7 +2026,7 @@ def draw_masse(ax):
     for k, c in enumerate(("#0093D3", "#D4007A", "#FFD200", "#E0583F")):
         ax.add_patch(Circle((px0 + 14 + k * 14.5, ph * 0.52), 5.2, fc=c, ec="none", zorder=5))
     ax.add_patch(Rectangle((px0 + 10, ph * 0.26), pw - 20, 14, fc=ZIELFARBE, ec="none", zorder=5))
-    ax.text(px0 + pw / 2, -9, "Handy\n148 x 72", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
+    ax.text(px0 + pw / 2, -9, "Handy\n148 × 72", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
     # Kaffeetasse (Ø 82 x 95, Henkel)
     mx, mw, mh = 276.0, 82.0, 95.0
     ax.add_patch(Polygon([(mx - mw / 2, mh), (mx + mw / 2, mh), (mx + mw / 2 - 7, 4), (mx + mw / 2 - 12, 0), (mx - mw / 2 + 12, 0), (mx - mw / 2 + 7, 4)],
@@ -1979,12 +2034,12 @@ def draw_masse(ax):
     ax.add_patch(Ellipse((mx, mh), mw, 9, fc="#5A3A22", ec="#3B3935", lw=0.8, zorder=4))
     ax.add_patch(Arc((mx + mw / 2 - 1, mh * 0.55), 40, 52, theta1=-80, theta2=80, ec="#3B3935", lw=4.0, zorder=2))
     ax.add_patch(Arc((mx + mw / 2 - 1, mh * 0.55), 40, 52, theta1=-80, theta2=80, ec="#F4F1EA", lw=2.0, zorder=2.5))
-    ax.text(mx, -9, "Kaffeetasse\nØ 82 x 95", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
+    ax.text(mx, -9, "Kaffeetasse\nØ 82 × 95", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
     # Portionsbecher (Ø 62 x 33, Mischbecher), daneben A4-Breite als Linie
     bx = 392.0
     ax.add_patch(Polygon([(bx - 31, 33), (bx + 31, 33), (bx + 23.5, 0), (bx - 23.5, 0)], closed=True, fc="#EEEEEE", ec="#3B3935", lw=0.9, zorder=3, alpha=0.95))
     ax.add_patch(Polygon([(bx - 27.8, 21), (bx + 27.8, 21), (bx + 23.2, 1.0), (bx - 23.2, 1.0)], closed=True, fc=ZIELFARBE, ec="none", zorder=4))
-    ax.text(bx, -9, "Mischbecher\nØ 62 x 33", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
+    ax.text(bx, -9, "Mischbecher\nØ 62 × 33", fontsize=9.2, color=ink2, ha="center", va="top", zorder=9)
     # Maßstab 100 mm
     ax.plot([168, 268], [262, 262], color=ink, lw=2.0, zorder=9, solid_capstyle="butt")
     for x in (168, 218, 268):
@@ -2010,10 +2065,10 @@ def tafel(ss=1.5, verbose=True):
 
     # ---- Kopfzeile
     bg.text(48, 62, "Farbmischer", fontsize=46, family=SERIF, color=INK, ha="left", va="center")
-    bg.text(48, 118, "Stand 5.1   ·   schwarzer Flakon mit Goldlinien   ·   Ø 204 x 407 mm   ·   sechs Spritzen, zwei Motoren, eine Lichtfuge",
+    bg.text(48, 118, "Stand 6 · schwarzer Flakon mit Goldlinien · Ø 204 × 407 mm · sechs Spritzen, zwei Motoren, alles aus PETG gedruckt",
             fontsize=13.5, color=INK2, ha="left", va="center")
     bg.plot([48, FW - 48], [148, 148], color=GOLDC, lw=1.4)
-    stats = [("406,8 mm", "Höhe"), ("Ø 204 mm", "Fuß und Krone"), ("3,8 kg", "mit Ballast"), ("6 x 50 ml", "Farbvorrat"), ("2", "Motoren")]
+    stats = [("406,8 mm", "Höhe"), ("Ø 204 mm", "Fuß und Krone"), ("3,8 kg", "mit Ballast"), ("6 × 50 ml", "Farbvorrat"), ("2", "Motoren")]
     x = FW - 48
     for big, small in stats[::-1]:
         bg.text(x, 56, big, fontsize=19, color=INK, ha="right", va="center", fontweight="bold")
@@ -2031,20 +2086,20 @@ def tafel(ss=1.5, verbose=True):
     top = fig.add_axes([0, 0, 1, 1], facecolor='none', zorder=50)
     top.set_xlim(0, FW); top.set_ylim(FH, 0); top.set_axis_off()
     hero = Hero(900, hh, ss=ss)
-    raw, em = hero.render(verbose=verbose)
-    img = downsample(tonemap(raw, em, ss), 900, hh)
+    raw = hero.render(verbose=verbose)
+    img = downsample(tonemap(raw), 900, hh)
     axh = fig.add_axes([40 / FW, 1 - (y0 + hh) / FH, 900 / FW, hh / FH])
     axh.imshow(img, aspect="auto", interpolation="lanczos")
     axh.set_axis_off()
     top.add_patch(Rectangle((40, y0), 900, hh, fc="none", ec="#CFC7B6", lw=1.0, zorder=5))
     top.add_patch(Rectangle((40, y0), 900, 62, fc=(0, 0, 0, 0.45), ec="none", zorder=6))
     top.text(64, y0 + 31, "1", fontsize=18, color=GOLDC, ha="left", va="center", fontweight="bold", zorder=7, family=SERIF)
-    top.text(92, y0 + 31, "Das Gerät in Ruhe auf dem Schreibtisch, Lichtfuge warmweiß", fontsize=13.5, color="white", ha="left", va="center",
+    top.text(92, y0 + 31, "Das Gerät in Ruhe auf dem Schreibtisch", fontsize=13.5, color="white", ha="left", va="center",
             zorder=7)
     top.add_patch(Rectangle((40, y0 + hh - 66), 900, 66, fc=(0, 0, 0, 0.45), ec="none", zorder=6))
-    top.text(64, y0 + hh - 44, "Sockel hochglanz, Körper und Krone seidenmatt, Gold, Rauchglas, Portal, sechs Fenster.", fontsize=12, color="white",
+    top.text(64, y0 + hh - 44, "Sockel und Front glänzend, Körper und Krone matt, Goldteile gedruckt aus Gold-PETG,", fontsize=12, color="white",
             ha="left", va="center", zorder=7)
-    top.text(64, y0 + hh - 20, "In den Fenstern Weiß 1 und Gelb im Vitrinenlicht, auf der Bühne der Becher in der Zielfarbe.",
+    top.text(64, y0 + hh - 20, "Rauch-PETG-Portal, sechs Klarfenster, auf der Bühne der Becher in der Zielfarbe.",
             fontsize=12, color="#E8E2D2", ha="left", va="center", zorder=7)
 
     # ---- 2) Schnitt
@@ -2053,17 +2108,18 @@ def tafel(ss=1.5, verbose=True):
     sc = 2.5
     axs_rect = (960, y0 + 64, 1040, int(487 * sc))
     pane = Pane(fig, *axs_rect, FW, FH)
-    axs = pane.axes(xlim=(-208, 208), ylim=(-62, 425))
+    axs = pane.axes(xlim=(-226, 226), ylim=(-62, 425))
     L = draw_schnitt(axs)
-    draw_schnitt_beschriftung(axs, L, zmin=-54.0, zmax=418.0, xl=-122.0, xr=122.0, fs=11.2, gap=19.0)
+    draw_schnitt_beschriftung(axs, L, zmin=-54.0, zmax=418.0, xl=-112.0, xr=112.0, fs=10.6, gap=18.0)
     # Hinweis vorne und Legende der Werkstoffe
     ly = y0 + 64 + int(487 * sc) + 14
     top.text(986, ly + 8, "Werkstoffe und Farben (CMF)", fontsize=11.5, color=INK, ha="left", va="center", fontweight="bold")
-    chips = [("Hochglanz schwarz", FARBEN["sockel"]), ("Seidenmatt schwarz", FARBEN["koerper"]), ("Gold, Anreibewachs", FARBEN["gold"]),
-             ("Rauchglas 2 mm", FARBEN["rauch"]), ("Opal, PETG natur", FARBEN["opal"]), ("Innenteile PETG", FARBEN["innen"]),
-             ("Stahl verzinkt", FARBEN["stahl"]), ("Messing", FARBEN["messing"]), ("Silikon", FARBEN["silikon"])]
+    chips = [("Hochglanz schwarz (PETG)", FARBEN["sockel"]), ("Seidenmatt schwarz (PETG)", FARBEN["koerper"]), ("Gold-PETG", FARBEN["gold"]),
+             ("Rauch-PETG 2 mm", FARBEN["rauch"]), ("Klar-PETG", FARBEN["klar"]), ("PETG weiß", FARBEN["schublade"]),
+             ("Innenteile PETG", FARBEN["innen"]), ("Stahl verzinkt", FARBEN["stahl"]), ("Messing", FARBEN["messing"]),
+             ("Silikon/Gummi", FARBEN["silikon"])]
     for i, (nm, col) in enumerate(chips):
-        cx = 986 + (i % 5) * 198
+        cx = 986 + (0, 240, 482, 628, 812)[i % 5]
         cy = ly + 42 + (i // 5) * 36
         top.add_patch(Rectangle((cx, cy - 11), 22, 22, fc=col, ec="#8A857A", lw=0.8, zorder=5))
         top.text(cx + 30, cy, nm, fontsize=10, color=INK, ha="left", va="center")
@@ -2078,7 +2134,7 @@ def tafel(ss=1.5, verbose=True):
     draw_draufsicht(axd)
     ly = y0 + 56 + 640 + 6
     items = [("gestrichelt", "verdeckt: Schublade, Becher, Motor 2, Ballast, Laufringlücke ± 15°", "#8A857A"),
-             ("blau", "Feuchtrinne, vorne offen ± 38°", "#5C8DB3"), ("gold", "Abstreiflippen ± 40°, Portalrahmen", "#B8860B"), ("pfeil", "Pfeil unten links: Drehrichtung + (gegen den Uhrzeigersinn)", GOLDD)]
+             ("blau", "Feuchtrinne, vorne offen ± 38°", "#5C8DB3"), ("gold", "Abstreiflippen ± 40°, Goldring und Portalrahmen", "#B8860B"), ("pfeil", "Pfeil unten links: Drehrichtung + (gegen den Uhrzeigersinn)", GOLDD)]
     for i, (a, b, c) in enumerate(items):
         top.plot([2046, 2072], [ly + 10 + i * 19] * 2, color=c, lw=2.0 if i else 1.2, ls=(0, (4, 3)) if i == 0 else "-")
         top.text(2084, ly + 10 + i * 19, b, fontsize=10, color=INK, ha="left", va="center")
@@ -2091,7 +2147,7 @@ def tafel(ss=1.5, verbose=True):
     draw_masse(axm)
 
     # ---- Fuß
-    top.text(48, FH - 26, "Nach hardware/farbmischer_parameter.md, Stand 5.1. Rendering mit eigenem Strahlverfolger, Schnitt, Draufsicht und Maße als Zeichnung "
+    top.text(48, FH - 26, "Nach hardware/farbmischer_parameter.md, Stand 6. Rendering mit eigenem Strahlverfolger, Schnitt, Draufsicht und Maße als Zeichnung "
             "aus denselben Parametern. Koordinaten: +X vorne, +Y rechts, Z = 0 Tischfläche.", fontsize=10, color=INK3, ha="left", va="center")
     fig.savefig(OUT_PNG, dpi=100, facecolor=PAPER)
     plt.close(fig)

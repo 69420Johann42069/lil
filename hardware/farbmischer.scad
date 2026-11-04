@@ -297,7 +297,7 @@ ausleger_hebel = stempel_x - (arm_x0 + platte_dick);        // 17 vom Plattenran
 ausleger_sigma = kraft_max * ausleger_hebel / (arm_b * arm_t * arm_t / 6);   // 15,9 MPa bei 250 N
 schraube_zug = kraft_max * (stempel_x - arm_x0) / (winkel_schraube_z[1] - arm_z0);   // 195 N am oberen Einsatz
 ausleger_fuss_unten = arm_z0 - stempel_t;                   // Stempel Z S + 2 (mit Gummi 2 mm bis S)
-stempel_kp = sp_kp_d / 2 - (stempel_x - st_r + stempel_d / 2) ;   // Stempel liegt innerhalb der Kolbenplatte Ø 38 (Rest zum Plattenrand)
+stempel_kp = sp_kp_d / 2 - (abs(stempel_x - st_r) + stempel_d / 2);   // 2,5: Stempel liegt innerhalb der Kolbenplatte Ø 38 (Rest zum Plattenrand)
 tasche_rinne_becher = st_r * sin(rinne_offen);              // Rinnenende gegen Becherrand seitlich
 becher_rinne_luft = tasche_rinne_becher - becher_do / 2;    // 4,1
 rinne_ventil_luft = (rinne_r1 - wand) - (st_r + vent_d / 2);   // Ventil gegen Außenwand der Rinne
@@ -391,7 +391,7 @@ assert(rdeckel_ventil >= 2.0, "Rinnendeckel gegen Ventil beim Drehen unter 2 mm"
 assert(stempel_versatz >= 2.0, "Stempel liegt nicht innerhalb der Flanschauflage");
 assert(ausleger_sigma <= 20, "Ausleger aus PETG: Biegespannung über 20 MPa (Reserve zu etwa 45 MPa XY und 30 MPa quer zu den Schichten)");
 assert(schraube_zug <= 250, "Ausleger: Zug am oberen M4-Einsatz über 250 N");
-assert(stempel_kp > 0, "Stempel Ø 25 liegt nicht ganz auf der Kolbenplatte Ø 38");
+assert(stempel_kp >= 1.5, "Stempel Ø 25 liegt nicht ganz auf der Kolbenplatte Ø 38");
 assert(rahmen_hw_scheibe >= scheibe_b / 2 + sp, "Fensterrahmen steht im Scheibenfalz");
 assert(platine_luft >= 2.0, "Platinenecke gegen Hülle unter 2 mm");
 assert(z_vent_spitze > z_rinne1, "Rinne höher als die Ventilspitze");
