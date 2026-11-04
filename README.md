@@ -70,6 +70,8 @@ Was sich gegenüber Stand 5.1 ändert: LEDs entfallen komplett (der Fortschritt 
 
 **Stand 8 (Karussell direkt am Motor, Standard in `farbmischer.scad`):** Motor 2 sitzt mittig unter der Karussellplatte in einem gedruckten Kasten (Motorturm), kein Riemen, keine Welle, kein 70-Z-Rad, keine Pancake (beide Motoren sind derselbe NEMA 17, 34 mm). Filament zählt nicht mit. Aufbau auf Stand 7:
 
+Schnelles Rendering Stand 8 (aus den OpenSCAD-Teilen, Scheiben undurchsichtig dargestellt): `hardware/rendering_stand8_aussen.png` und `hardware/rendering_stand8_schnitt.png` (Längsschnitt, Motorturm blau).
+
 **Stand 7 Budget** (Schalter `budget`): ohne Feuchtrinne, Magnete an den Scheiben, gekaufte Linearlager und Gewindeeinsätze (Linearlager sind gedruckt, Ballast wird gratis mit Schrauben aus dem Arbeitsvorrat gefüllt; Portalscheiben, Fensterscheiben, Goldrahmen und Goldlippe bleiben, sie sind gedruckt und kosten nichts extra, die Scheiben werden geklebt), Gerät etwa 83 Euro, alles zusammen etwa 164 Euro, ohne Filament, Schrauben, Muttern, Scheiben und Kleber aus dem Arbeitsvorrat. Einkauf bei einem Shop (Amazon.de, Links, Preise teils unbelegt): `hardware/einkaufsliste_amazon.md`. Einkaufsliste mit Quellen und gekennzeichneten Schätzungen: `hardware/einkaufsliste.md`.
 
 Filament für das ganze Gerät (Stand 6): PETG schwarz etwa 1,4 kg (am besten glänzend für Sockel und Front, matt für Körper und Krone), Gold 35 g, Rauch-PETG 50 g, Klar-PETG 25 g, weiß 40 g.
