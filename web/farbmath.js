@@ -80,7 +80,12 @@
     var zs = latents(primaries);
     var n = primaries.length;
     var targetLab = rgbToLab(targetRgb);
-    var cost = function (w) { return deltaE(rgbToLab(mixLatents(zs, w)), targetLab); };
+    // Kleiner Strafterm auf die Summe der Quadrate: bei fast gleichwertigen Mischungen wird
+    // die ausgewogenere gewählt, das Rezept springt dadurch nicht bei winzigen Farbunterschieden.
+    var cost = function (w) {
+      var q = 0; for (var k = 0; k < w.length; k++) q += w[k] * w[k];
+      return deltaE(rgbToLab(mixLatents(zs, w)), targetLab) + q;
+    };
 
     var starts = [];
     starts.push(new Array(n).fill(1 / n));
@@ -119,7 +124,7 @@
     });
 
     var predicted = mixLatents(zs, best);
-    return { weights: best, predictedRgb: predicted, deltaE: bestCost };
+    return { weights: best, predictedRgb: predicted, deltaE: deltaE(rgbToLab(predicted), targetLab) };
   }
 
   // Gewichte -> Rezept in Gramm. Anteile unter `minGrams` werden auf 0
@@ -129,19 +134,29 @@
     var w = weights.map(function (x) { return x * totalGrams >= minGrams ? x : 0; });
     var s = w.reduce(function (a, b) { return a + b; }, 0) || 1;
     w = w.map(function (x) { return x / s; });
+    // Auf 0,1 g genau verteilen (größter Rest), damit die Summe exakt der Gesamtmenge entspricht.
+    var U = Math.max(1, Math.round(totalGrams * 10));
+    var raw = w.map(function (x) { return x * U; });
+    var u = raw.map(Math.floor);
+    var left = U - u.reduce(function (a, b) { return a + b; }, 0);
+    raw.map(function (r, i) { return [r - u[i], i]; })
+      .sort(function (a, b) { return b[0] - a[0] || a[1] - b[1]; })
+      .slice(0, left).forEach(function (q) { u[q[1]]++; });
+    var wr = u.map(function (x) { return x / U; });
     var rows = [];
     primaries.forEach(function (p, i) {
-      var g = Math.round(w[i] * totalGrams * 10) / 10;
-      rows.push({ id: p.id, name: p.name, rgb: p.rgb, grams: g, percent: Math.round(w[i] * 1000) / 10 });
+      rows.push({ id: p.id, name: p.name, rgb: p.rgb, grams: u[i] / 10, percent: Math.round(wr[i] * 1000) / 10 });
     });
-    return { rows: rows, totalGrams: totalGrams, predictedRgb: predict(primaries, w), weights: w };
+    // Vorhersage aus den tatsächlich dosierten (gerundeten) Mengen, nicht aus den Idealwerten.
+    return { rows: rows, totalGrams: U / 10, predictedRgb: predict(primaries, wr), weights: wr };
   }
 
   function rating(dE) {
+    // Schwellen passen zur Hamster-Stimmung in index.html: unter 3 zufrieden, bis 8 skeptisch, darüber Panik.
     if (dE < 2) return 'sehr nah, mit bloßem Auge kaum zu unterscheiden';
-    if (dE < 5) return 'gut, kleine Korrektur mit einem Klecks reicht';
-    if (dE < 10) return 'grob, die Richtung stimmt, Nachmischen nötig';
-    return 'mit diesen Primärfarben nicht erreichbar, zu leuchtend oder außerhalb des Farbraums';
+    if (dE < 3) return 'gut, kleine Korrektur mit einem Klecks reicht';
+    if (dE < 8) return 'grob, die Richtung stimmt, Nachmischen nötig';
+    return 'weit daneben, mit diesen Grundfarben kaum zu treffen, vielleicht zu leuchtend';
   }
 
   function hexToRgb(hex) {

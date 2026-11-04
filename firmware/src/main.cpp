@@ -127,6 +127,7 @@ static bool homeStation(Station& s) {
     i++;
     if ((i & 0xff) == 0) server.handleClient();
   }
+  if (stopRequested) { s.homed = false; lastError = "abgebrochen"; return false; }
   if (!endstopPressed(s)) {
     s.homed = false;
     lastError = String("Endschalter ") + s.id + " nicht erreicht";
@@ -140,6 +141,13 @@ static bool homeStation(Station& s) {
   return true;
 }
 
+// Passt die Menge noch in die Spritze? Wird auch vor dem Start geprüft, damit
+// ein Rezept nicht halb dosiert wird und im Becher eine falsche Farbe landet.
+static bool fitsInSyringe(const Station& s, float grams) {
+  long steps = lroundf(grams / s.gPerMl * stepsPerMl(s));
+  return s.posSteps + steps + s.retractedSteps <= maxTravelSteps();
+}
+
 // Dosiert `grams` aus Station s. Vorher wird der letzte Rückzug kompensiert,
 // danach wieder ein Stück zurückgezogen.
 static bool dispenseGrams(Station& s, float grams) {
@@ -147,7 +155,7 @@ static bool dispenseGrams(Station& s, float grams) {
   long steps = lroundf(grams / s.gPerMl * stepsPerMl(s));
   long retract = lroundf(RETRACT_ML * stepsPerMl(s));
   long total = steps + s.retractedSteps;
-  if (s.posSteps + total > maxTravelSteps()) {
+  if (!fitsInSyringe(s, grams)) {
     lastError = String("Spritze ") + s.id + " leer, bitte nachfüllen";
     return false;
   }
@@ -283,6 +291,10 @@ static void handleDispense() {
       sendError(409, String("Station ") + stations[i].id + " zuerst referenzieren (/home)");
       return;
     }
+    if (j.grams[i] >= MIN_DOSE_G && !fitsInSyringe(stations[i], j.grams[i])) {
+      sendError(409, String("Spritze ") + stations[i].id + " reicht nicht, bitte nachfüllen und Referenzfahrt machen");
+      return;
+    }
   }
   job = j;
   JsonDocument out;
@@ -375,6 +387,7 @@ static void handleConfigPost() {
 static void handleRoot() {
   File f = LittleFS.open("/index.html", "r");
   if (!f) { server.send(500, "text/plain", "index.html fehlt, uploadfs ausführen"); return; }
+  server.sendHeader("Cache-Control", "no-cache");
   server.streamFile(f, "text/html");
   f.close();
 }
@@ -417,6 +430,7 @@ void setup() {
   Serial.println();
   if (WiFi.status() == WL_CONNECTED) {
     Serial.print("IP: "); Serial.println(WiFi.localIP());
+    WiFi.setSleep(false);  // Modem-Schlaf aus, sonst antwortet das Gerät auf dem iPhone verzögert
     if (MDNS.begin(MDNS_NAME)) {
       MDNS.addService("http", "tcp", 80);
       Serial.println("Erreichbar unter http://" MDNS_NAME ".local");
@@ -430,10 +444,13 @@ void setup() {
 
   server.enableCORS(true);
   server.on("/", HTTP_GET, handleRoot);
-  server.serveStatic("/farbmath.js", LittleFS, "/farbmath.js", "max-age=3600");
+  // Alles außer der unveränderlichen Bibliothek ohne Cache, sonst sieht Iliana nach einem
+  // Update eine neue index.html mit alten Skripten. Der Server schickt keine ETags, die
+  // Dateien (gut 300 KB) werden dann bei jedem Öffnen neu geladen.
+  server.serveStatic("/farbmath.js", LittleFS, "/farbmath.js", "no-cache");
   server.serveStatic("/mixbox.js", LittleFS, "/mixbox.js", "max-age=86400");
-  server.serveStatic("/icon.png", LittleFS, "/icon.png", "max-age=86400");
-  server.serveStatic("/hamster.js", LittleFS, "/hamster.js", "max-age=86400");
+  server.serveStatic("/icon.png", LittleFS, "/icon.png", "no-cache");
+  server.serveStatic("/hamster.js", LittleFS, "/hamster.js", "no-cache");
   server.on("/status", HTTP_GET, handleStatus);
   server.on("/dispense", HTTP_POST, handleDispense);
   server.on("/home", HTTP_POST, handleHome);
@@ -449,5 +466,14 @@ void setup() {
 void loop() {
   server.handleClient();
   if (job.type != JOB_NONE && !busy) runJob();
+  // Läuft das Gerät nur im Notfall-Access-Point (Router war beim Start nicht erreichbar),
+  // nach zwei Minuten im Leerlauf ohne Client neu starten und das WLAN wieder suchen.
+  static unsigned long apSince = 0;
+  if (WiFi.getMode() == WIFI_AP && !busy && job.type == JOB_NONE && WiFi.softAPgetStationNum() == 0) {
+    if (!apSince) apSince = millis() + 1;
+    if (millis() - apSince > 120000UL) ESP.restart();
+  } else {
+    apSince = 0;
+  }
   delay(1);
 }

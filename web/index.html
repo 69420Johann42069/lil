@@ -64,21 +64,23 @@
 
   .hexline { text-align:center; margin:0 0 14px; }
   .hexline input { width:9ch; text-align:center; border:none; background:none; font-family:var(--mono); font-size:1rem; letter-spacing:.06em;
-    color:var(--muted); border-bottom:1px solid transparent; outline:none; padding:2px 0; }
+    color:var(--muted); border-bottom:1px solid transparent; outline:none; padding:12px 0; }
+  .hexline input.invalid { color:var(--bad); border-bottom-color:var(--bad); }
   .hexline input:focus { color:var(--ink); border-bottom-color:var(--hair); }
 
   .controls { display:flex; justify-content:center; align-items:center; gap:14px; }
-  .round { width:46px; height:46px; border-radius:50% 46% 54% 50% / 46% 54% 46% 54%; border:var(--line) solid var(--ink); background:var(--paper); color:var(--ink); display:inline-flex; align-items:center;
+  .round { flex:none; width:46px; height:46px; border-radius:50% 46% 54% 50% / 46% 54% 46% 54%; border:var(--line) solid var(--ink); background:var(--paper); color:var(--ink); display:inline-flex; align-items:center;
     justify-content:center; cursor:pointer; font-size:1.4rem; font-weight:500; line-height:1; transition:transform .1s; }
   .round:active { transform:scale(.92); }
   .round svg { width:20px; height:20px; }
   .round input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; }
   label.round { position:relative; }
   .grams { display:inline-flex; align-items:baseline; gap:4px; font-family:var(--serif); font-size:1.5rem; min-width:88px; justify-content:center; }
-  .grams input { width:3.2ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:0; }
+  .grams input { width:3.4ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:8px 0; }
   .grams input::-webkit-inner-spin-button, .grams input::-webkit-outer-spin-button { -webkit-appearance:none; }
   .grams small { font-size:1rem; color:var(--muted); font-family:var(--round); }
   .sep { width:1px; height:28px; background:var(--hair); margin:0 4px; }
+  @media (max-width:360px) { .controls { gap:8px; } .sep { display:none; } .grams { min-width:64px; } }
   #canvas { display:none; width:100%; border-radius:22px; margin-top:18px; touch-action:pan-y; cursor:crosshair; }
   .photohint { display:none; text-align:center; font-size:.85rem; color:var(--muted); margin:8px 0 0; }
 
@@ -109,8 +111,8 @@
   .rc { position:relative; width:74px; text-align:center; background:none; border:none; padding:0; cursor:pointer; }
   .rc .chip { display:block; width:64px; height:64px; margin:0 auto 4px; transition:transform .15s; }
   .rc:active .chip { transform:scale(.94); }
-  .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:.76rem; line-height:1.25; color:var(--muted); }
-  .rc .del { position:absolute; top:-6px; right:0; width:22px; height:22px; border-radius:50%; border:2px solid var(--ink); background:var(--paper); color:var(--ink); font-size:.9rem; line-height:22px; cursor:pointer; padding:0; }
+  .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; hyphens:auto; font-size:.76rem; line-height:1.25; color:var(--muted); }
+  .rc .del { position:absolute; top:-10px; right:-6px; width:30px; height:30px; border-radius:50%; border:2px solid var(--ink); background:var(--paper); color:var(--ink); font-size:1rem; line-height:26px; cursor:pointer; padding:0; }
   .save { display:flex; gap:10px; margin-top:22px; }
   .save input { flex:1; min-width:0; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; }
   .save input:focus { border-bottom-color:var(--ink); }
@@ -119,25 +121,26 @@
   .btn.warn { background:var(--paper); border-color:var(--bad); color:var(--bad); }
   .btn:active { opacity:.85; }
   .toast { position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translate(-50%, 20px); opacity:0; padding:10px 18px;
-    border-radius:18px 22px 20px 24px / 22px 18px 24px 20px; background:var(--ink); color:var(--paper); font-size:.9rem; font-weight:700; pointer-events:none; transition:opacity .25s, transform .25s; z-index:9; }
+    border-radius:18px 22px 20px 24px / 22px 18px 24px 20px; background:var(--ink); color:var(--paper); font-size:.9rem; font-weight:700; pointer-events:none; width:max-content; max-width:calc(100vw - 44px); text-align:center; overflow-wrap:anywhere; transition:opacity .25s, transform .25s; z-index:9; }
   .toast.show { opacity:1; transform:translate(-50%, 0); }
 
   /* Einstellungen, zugeklappt */
   footer { margin-top:40px; text-align:center; }
   details { text-align:left; }
-  details summary { list-style:none; cursor:pointer; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; padding:8px; }
+  details summary { list-style:none; cursor:pointer; font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-align:center; padding:15px 8px; }
   details summary::-webkit-details-marker { display:none; }
   details[open] summary { margin-bottom:14px; }
   .set { padding:16px 0; border-top:1px dashed var(--hair); }
   .set h3 { font-family:var(--serif); font-weight:500; font-size:1.1rem; margin:0 0 6px; }
   .set p { font-size:.85rem; color:var(--muted); margin:0 0 12px; }
-  .prim { display:grid; grid-template-columns:38px 1fr auto; gap:12px; align-items:center; padding:5px 0; }
-  .prim input[type=color] { width:38px; height:38px; border:none; padding:0; background:none; border-radius:50%; -webkit-appearance:none; appearance:none; overflow:hidden; box-shadow:inset 0 0 0 1px var(--hair); }
+  .prim { display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; padding:5px 0; }
+  .prim input[type=color] { width:44px; height:44px; border:none; padding:0; background:none; border-radius:50%; -webkit-appearance:none; appearance:none; overflow:hidden; box-shadow:inset 0 0 0 1px var(--hair); }
   .prim input[type=color]::-webkit-color-swatch-wrapper { padding:0; }
   .prim input[type=color]::-webkit-color-swatch { border:none; border-radius:50%; }
   .prim .muted { font-family:var(--mono); font-size:.82rem; color:var(--muted); }
   .field { width:100%; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; margin-bottom:12px; }
   .btnrow { display:flex; gap:8px; flex-wrap:wrap; }
+  textarea.field { border:1px solid var(--hair); border-radius:12px; padding:10px; resize:none; font-family:var(--mono); font-size:1rem; }
   #devStatus { font-size:.85rem; color:var(--muted); margin:12px 0 0; }
   pre { background:var(--soft); padding:10px 12px; border-radius:14px; overflow:auto; font-size:.78rem; margin:12px 0 0; }
   pre:empty { display:none; }
@@ -195,7 +198,7 @@
     <div class="dabs" id="recipes"></div>
     <p class="empty">Noch leer. Misch dir eine Farbe und merk sie dir hier, dann kannst du sie jederzeit genau so wieder anrühren.</p>
     <div class="save">
-      <input type="text" id="recipeName" placeholder="Name, z. B. Himmel über Hamburg">
+      <input type="text" id="recipeName" placeholder="Name, z. B. Himmel" maxlength="40">
       <button class="btn" id="saveRecipe">merken</button>
     </div>
   </section>
@@ -210,8 +213,14 @@
         <div class="btnrow" style="margin-top:10px"><button class="btn ghost" id="resetPrims">Zurücksetzen</button></div>
       </div>
       <div class="set">
+        <h3>Palette sichern</h3>
+        <p>Safari und die Home-Bildschirm-App speichern getrennt voneinander. Kopier dir die Palette ab und zu als Text und heb ihn zum Beispiel in einer Notiz auf. Zum Zurückholen den Text hier einfügen. Die Primärfarben sind darin nicht enthalten.</p>
+        <textarea class="field" id="palText" rows="3" spellcheck="false" autocapitalize="off" aria-label="Palette als Text"></textarea>
+        <div class="btnrow"><button class="btn" id="palExport">Palette kopieren</button><button class="btn ghost" id="palImport">Text einlesen</button></div>
+      </div>
+      <div class="set">
         <h3>Gerät</h3>
-        <p>Schickt das Rezept an den Farbmischer im WLAN. Vor dem ersten Dosieren eine Referenzfahrt machen.</p>
+        <p>Schickt das Rezept an den Farbmischer im WLAN. Vor dem ersten Dosieren eine Referenzfahrt machen. Nach jedem Neustart des Geräts die Spritzen frisch füllen und wieder eine Referenzfahrt machen.</p>
         <input class="field" type="url" id="devUrl" value="http://farbmixer.local" aria-label="Adresse des Geräts">
         <div class="btnrow">
           <button class="btn" id="send">Rezept dosieren</button>
@@ -245,11 +254,14 @@
   var KEY = 'farbmischer.primaries';
 
   function loadPrims() {
+    var def = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES));
     try {
-      var s = localStorage.getItem(KEY);
-      if (s) return JSON.parse(s);
+      var st = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (Array.isArray(st) && st.length === def.length && st.every(function (q, i) {
+        return q && q.id === def[i].id && Array.isArray(q.rgb) && q.rgb.length === 3 && q.rgb.every(function (c) { return isFinite(c); });
+      })) return st;
     } catch (e) {}
-    return JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES));
+    return def;
   }
   var prims = loadPrims();
   function savePrims() { try { localStorage.setItem(KEY, JSON.stringify(prims)); } catch (e) {} }
@@ -270,7 +282,7 @@
 
   var KURZ = { C: 'Cyan', M: 'Magenta', Y: 'Gelb', W: 'Wei\u00df', K: 'Schwarz' };
   // Hamster-Sprite: 160 px je Bild. Stimmung nach Abweichung, welcher genau nach Farbwert.
-  var FRAMES = { ok: [0, 1, 2], mid: [3, 4, 5], bad: [6, 7, 8], neutral: [9] };
+  var FRAMES = { ok: [0, 1, 2], mid: [3, 4, 5, 9], bad: [6, 7, 8] };
   var sheet = new Image(), sheetReady = false;
   sheet.onload = function () { sheetReady = true; update(); renderRecipes(); };
   sheet.src = window.HAMSTER_SPRITE || 'hamster.png';
@@ -291,11 +303,15 @@
       return;
     }
     var p = d.data;
-    var lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-    var line = lum > 0.42 ? [22, 22, 22] : [255, 255, 255];
+    // Linienfarbe nach relativer Leuchtdichte (WCAG), damit Grün und Magenta dunkle Linien bekommen.
+    var lin = function (c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    var Y = 0.2126 * lin(rgb[0]) + 0.7152 * lin(rgb[1]) + 0.0722 * lin(rgb[2]);
+    var lightLine = Y <= 0.2;
+    var line = lightLine ? [255, 255, 255] : [22, 22, 22];
     for (var i = 0; i < p.length; i += 4) {
       if (p[i + 3] === 0) continue;
       var r = p[i], g = p[i + 1], b = p[i + 2];
+      if (r < 12 && g === 0 && b === 0) { p[i] = 22; p[i + 1] = 22; p[i + 2] = 22; continue; }   // Mundinneres (Bild 6) bleibt dunkel
       var mx = Math.max(r, g, b), mn = Math.min(r, g, b);
       if (mx > 110 && (mx - mn) / mx > 0.2) continue;
       var L = Math.min(1, Math.max(0, ((r + g + b) / 765 - 0.3) / 0.6));
@@ -304,6 +320,7 @@
       p[i + 2] = line[2] + (rgb[2] - line[2]) * L;
     }
     x.putImageData(d, 0, 0);
+    if (frame === 7) x.clearRect(0, 131, 22, 29);   // Stufe an der abgeschnittenen Vorlage
     // Unten und seitlich weich ausblenden, die Vorlage ist dort abgeschnitten.
     x.globalCompositeOperation = 'destination-in';
     var gv = x.createLinearGradient(0, 0, 0, 160);
@@ -317,15 +334,23 @@
   var lastFrame = -1;
   function rgba(rgb, a) { return 'rgba(' + rgb.map(Math.round).join(',') + ',' + a + ')'; }
   var last = null;
+  var curRgb = farbmath.hexToRgb($('hex').value), curHex = farbmath.rgbToHex(curRgb);
+  function getGrams() {
+    var g = parseFloat(String($('grams').value).replace(',', '.'));
+    if (!isFinite(g)) g = 20;
+    return Math.min(500, Math.max(1, g));
+  }
   function update() {
-    var rgb = farbmath.hexToRgb($('hex').value);
-    if (!rgb) return;
-    var grams = Math.max(1, parseFloat($('grams').value) || 20);
+    // Ungültige Eingaben (halb getipptes Hex) lassen die zuletzt gültige Farbe stehen.
+    var rgb = farbmath.hexToRgb($('hex').value) || curRgb;
+    curRgb = rgb;
+    var grams = getGrams();
     $('gramsShow').textContent = String(grams).replace('.', ',');
     var sol = farbmath.solve(rgb, prims);
     var rec = farbmath.recipe(sol.weights, prims, grams);
     last = rec;
     var hex = farbmath.rgbToHex(rgb);
+    curHex = hex;
     $('swTarget').style.background = hex;
     $('hamCanvas').style.filter = 'drop-shadow(0 16px 22px ' + rgba(rgb, .45) + ')';
     $('swPred').style.background = farbmath.rgbToHex(rec.predictedRgb);
@@ -348,19 +373,29 @@
     tintHamster($('hamCanvas'), frame, rgb);
     if (frame !== lastFrame && lastFrame >= 0) { var hc = $('hamCanvas'); hc.classList.remove('pop'); void hc.offsetWidth; hc.classList.add('pop'); }
     lastFrame = frame;
-    var payload = { total_g: grams, grams: {} };
+    var payload = { total_g: rec.totalGrams, grams: {} };
     rec.rows.forEach(function (r) { payload.grams[r.id] = r.grams; });
     $('json').textContent = JSON.stringify(payload, null, 2);
   }
 
   $('color').addEventListener('input', function () { $('hex').value = $('color').value; update(); });
   $('hex').addEventListener('input', function () {
-    var rgb = farbmath.hexToRgb($('hex').value);
+    var v = $('hex').value, rgb = farbmath.hexToRgb(v);
+    $('hex').classList.toggle('invalid', !rgb && v.trim() !== '');
     if (rgb) { $('color').value = farbmath.rgbToHex(rgb); update(); }
   });
+  $('hex').addEventListener('change', function () {
+    var v = $('hex').value.trim(), m = /^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(v);
+    if (m) v = '#' + m[1] + m[1] + m[2] + m[2] + m[3] + m[3];
+    var rgb = farbmath.hexToRgb(v);
+    if (rgb) { $('hex').value = farbmath.rgbToHex(rgb); $('color').value = $('hex').value; update(); }
+    else $('hex').value = curHex;
+    $('hex').classList.remove('invalid');
+  });
   $('grams').addEventListener('input', update);
+  $('grams').addEventListener('change', function () { $('grams').value = getGrams(); update(); });
   function stepGrams(d) {
-    var g = Math.max(1, parseFloat($('grams').value) || 20);
+    var g = getGrams();
     var step = g >= 50 ? 10 : 5;
     g = d > 0 ? Math.ceil((g + 0.01) / step) * step : Math.max(1, Math.floor((g - 0.01) / step) * step);
     $('grams').value = Math.min(500, g); update();
@@ -368,36 +403,65 @@
   $('gMinus').addEventListener('click', function () { stepGrams(-1); });
   $('gPlus').addEventListener('click', function () { stepGrams(1); });
   $('resetPrims').addEventListener('click', function () {
+    if (!confirm('Prim\u00e4rfarben auf die Startwerte zur\u00fccksetzen? Eigene Kalibrierung geht verloren.')) return;
     prims = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES)); savePrims(); renderPrims(); update();
   });
   // Wird die Seite vom ESP32 selbst ausgeliefert, ist das Gerät die eigene Adresse.
   if (location.protocol.indexOf('http') === 0) $('devUrl').value = location.origin;
   function devBase() { return $('devUrl').value.replace(/\/+$/, ''); }
-  function post(path, body) {
-    return fetch(devBase() + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body || '{}' })
-      .then(function (r) { return r.json().then(function (j) { return r.ok ? j : Promise.reject(new Error(j.error || ('HTTP ' + r.status))); }); });
+  // Antwort immer mit Zeitlimit lesen, sonst bleibt die Anzeige bei einem Aussetzer ewig auf "sende".
+  function fetchJson(url, opts, ms) {
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctl) ctl.abort(); }, ms);
+    opts = opts || {}; if (ctl) opts.signal = ctl.signal;
+    return fetch(url, opts).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, status: r.status, json: j }; });
+    }).then(function (x) { clearTimeout(timer); return x; }, function (e) { clearTimeout(timer); throw e; });
   }
-  var pollTimer = null;
+  function devErr(e) {
+    if (e && e.name === 'AbortError') return 'Das Ger\u00e4t antwortet nicht. Ist der Farbmischer an und im selben WLAN?';
+    if (e && e.name === 'TypeError') return 'Keine Verbindung zum Ger\u00e4t. Adresse und WLAN pr\u00fcfen.';
+    if (e && e.name === 'SyntaxError') return 'Unerwartete Antwort vom Ger\u00e4t. Ist das die richtige Adresse?';
+    return 'Fehler: ' + (e && e.message ? e.message : e);
+  }
+  function post(path, body, ms) {
+    return fetchJson(devBase() + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body || '{}' }, ms || 8000)
+      .then(function (x) { if (!x.ok) throw new Error((x.json && x.json.error) || ('HTTP ' + x.status)); return x.json; });
+  }
+  var pollTimer = null, pollFails = 0;
   function poll() {
     clearTimeout(pollTimer);
-    fetch(devBase() + '/status').then(function (r) { return r.json(); }).then(function (s) {
-      var st = $('devStatus');
-      if (s.busy) { st.textContent = 'läuft, Station ' + s.station + ' …'; pollTimer = setTimeout(poll, 700); }
+    fetchJson(devBase() + '/status', null, 6000).then(function (x) {
+      pollFails = 0;
+      var s = x.json, st = $('devStatus');
+      if (s.busy) { st.textContent = 'l\u00e4uft, Station ' + s.station + ' \u2026'; pollTimer = setTimeout(poll, 700); }
       else if (s.error) { st.textContent = 'Fehler: ' + s.error; }
       else {
         var rest = Object.keys(s.stations).map(function (k) { return k + ' ' + s.stations[k].remaining_ml.toFixed(0) + ' ml'; }).join(', ');
         st.textContent = 'fertig. Vorrat: ' + rest;
       }
-    }).catch(function (e) { $('devStatus').textContent = 'Keine Verbindung: ' + e.message; });
+    }).catch(function (e) {
+      // kurze Aussetzer (WLAN, Motor beschaeftigt) ueberbruecken, erst nach vier Fehlern aufgeben
+      if (++pollFails < 4) { pollTimer = setTimeout(poll, 1200); return; }
+      pollFails = 0; $('devStatus').textContent = devErr(e);
+    });
   }
-  function run(path, body) {
-    $('devStatus').textContent = 'sende …';
-    post(path, body).then(function () { pollTimer = setTimeout(poll, 500); })
-      .catch(function (e) { $('devStatus').textContent = 'Fehler: ' + e.message; });
+  var sending = false;
+  function run(path, body, ms) {
+    if (sending) return;
+    sending = true;
+    $('devStatus').textContent = 'sende \u2026';
+    post(path, body, ms).then(function () { pollFails = 0; pollTimer = setTimeout(poll, 500); })
+      .catch(function (e) { $('devStatus').textContent = devErr(e); })
+      .then(function () { sending = false; });
   }
-  $('send').addEventListener('click', function () { run('/dispense', $('json').textContent); });
+  $('send').addEventListener('click', function () {
+    var total = last ? last.totalGrams : getGrams();
+    if (!confirm('Steht der Becher unter der D\u00fcse? Es werden ' + String(total).replace('.', ',') + ' g dosiert.')) return;
+    run('/dispense', $('json').textContent);
+  });
   $('home').addEventListener('click', function () { run('/home'); });
-  $('stop').addEventListener('click', function () { run('/stop'); });
+  $('stop').addEventListener('click', function () { sending = false; run('/stop', null, 4000); });
 
   // ---- Farbe aus Foto: Bild auf Canvas, Tippen liest 5x5 Pixel gemittelt.
   var canvas = $('canvas'), ctx = canvas.getContext('2d');
@@ -420,7 +484,8 @@
     var r = canvas.getBoundingClientRect();
     var x = Math.round((ev.clientX - r.left) * canvas.width / r.width);
     var y = Math.round((ev.clientY - r.top) * canvas.height / r.height);
-    var d = ctx.getImageData(Math.max(0, x - 2), Math.max(0, y - 2), 5, 5).data;
+    var w = Math.min(5, canvas.width), h = Math.min(5, canvas.height);
+    var d = ctx.getImageData(Math.max(0, Math.min(canvas.width - w, x - 2)), Math.max(0, Math.min(canvas.height - h, y - 2)), w, h).data;
     var sum = [0, 0, 0], n = d.length / 4;
     for (var i = 0; i < d.length; i += 4) { sum[0] += d[i]; sum[1] += d[i + 1]; sum[2] += d[i + 2]; }
     var rgb = sum.map(function (v) { return Math.round(v / n); });
@@ -429,15 +494,23 @@
 
   // ---- Gespeicherte Farben im Browser.
   var RKEY = 'farbmischer.recipes';
-  function loadRecipes() { try { return JSON.parse(localStorage.getItem(RKEY) || '[]'); } catch (e) { return []; } }
-  function saveRecipes(list) { try { localStorage.setItem(RKEY, JSON.stringify(list)); } catch (e) {} }
+  function loadRecipes() {
+    try {
+      var l = JSON.parse(localStorage.getItem(RKEY) || '[]');
+      if (!Array.isArray(l)) return [];
+      return l.filter(function (r) { return r && typeof r.name === 'string' && farbmath.hexToRgb(String(r.hex)); })
+        .map(function (r) { var g = parseFloat(r.grams); return { name: r.name, hex: String(r.hex), grams: isFinite(g) ? g : 20 }; });
+    } catch (e) { return []; }
+  }
+  function saveRecipes(list) { try { localStorage.setItem(RKEY, JSON.stringify(list)); return true; } catch (e) { return false; } }
+  function shortName(n) { return n.length > 28 ? n.slice(0, 27) + '\u2026' : n; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function renderRecipes() {
     var tb = $('recipes'); tb.innerHTML = '';
     loadRecipes().forEach(function (rc, i) {
       var b = document.createElement('div'); b.className = 'rc';
       b.innerHTML = '<canvas class="chip load" data-i="' + i + '" width="160" height="160"></canvas>' +
-        '<span class="n load" data-i="' + i + '">' + esc(rc.name) + '</span>' +
+        '<span class="n load" data-i="' + i + '" title="' + esc(rc.name) + '">' + esc(rc.name) + '</span>' +
         '<button class="del" data-i="' + i + '" aria-label="Löschen">×</button>';
       tb.appendChild(b);
       var crgb = farbmath.hexToRgb(rc.hex);
@@ -445,22 +518,38 @@
     });
   }
   $('saveRecipe').addEventListener('click', function () {
-    var name = $('recipeName').value.trim() || $('hex').value;
+    var name = $('recipeName').value.trim() || curHex;
     var list = loadRecipes();
-    list.unshift({ name: name, hex: $('hex').value, grams: parseFloat($('grams').value) || 20 });
-    saveRecipes(list.slice(0, 50)); $('recipeName').value = ''; $('recipeName').blur(); renderRecipes();
-    toast('\u2661 ' + name + ' gemerkt');
+    list.unshift({ name: name, hex: curHex, grams: getGrams() });
+    var full = list.length > 50;
+    if (!saveRecipes(list.slice(0, 50))) { toast('Speichern geht hier nicht (privater Modus?)'); return; }
+    $('recipeName').value = ''; $('recipeName').blur(); renderRecipes();
+    toast(full ? 'Palette voll, die \u00e4lteste Farbe ist weg' : '\u2661 ' + shortName(name) + ' gemerkt');
   });
   $('recipes').addEventListener('click', function (ev) {
     var t = ev.target.closest('.del, .load'); if (!t) return;
     var list = loadRecipes(), i = parseInt(t.dataset.i, 10);
     if (t.classList.contains('del')) {
-      if (!confirm('„' + list[i].name + '“ aus der Palette entfernen?')) return;
+      if (!confirm('„' + shortName(list[i].name) + '“ aus der Palette entfernen?')) return;
       list.splice(i, 1); saveRecipes(list); renderRecipes(); return;
     }
     $('hex').value = list[i].hex; $('color').value = list[i].hex; $('grams').value = list[i].grams; update();
-    toast(list[i].name);
+    toast(shortName(list[i].name));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  $('palExport').addEventListener('click', function () {
+    var t = $('palText'); t.value = JSON.stringify(loadRecipes());
+    t.focus(); t.select(); t.setSelectionRange(0, t.value.length);
+    var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    toast(ok ? 'Palette kopiert' : 'Text markiert, bitte kopieren');
+  });
+  $('palImport').addEventListener('click', function () {
+    var l; try { l = JSON.parse($('palText').value); } catch (e) {}
+    if (!Array.isArray(l) || !l.length || !l.every(function (r) { return r && typeof r.name === 'string' && farbmath.hexToRgb(String(r.hex)) && isFinite(parseFloat(r.grams)); })) { toast('Text nicht lesbar'); return; }
+    if (!confirm(l.length + ' Farben einlesen und die Palette ersetzen?')) return;
+    if (!saveRecipes(l.slice(0, 50))) { toast('Speichern geht hier nicht (privater Modus?)'); return; }
+    renderRecipes(); toast('Palette eingelesen');
   });
 
   renderPrims();

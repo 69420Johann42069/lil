@@ -30,8 +30,8 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 
 ## Stufe 0: Web-App
 
-1. `mixbox.js` herunterladen und nach `web/` legen. Quelle: Repository `scrtwpns/mixbox` auf GitHub, Datei `javascript/mixbox.js`. Lizenz CC BY-NC 4.0, für ein privates Geschenk in Ordnung, nicht für Verkauf. Die Datei steht in `.gitignore`.
-2. `web/index.html` im Browser öffnen. Für das Handy im gleichen WLAN:
+1. `sh web/paket.sh` ausführen. Das Skript lädt `mixbox.js` von GitHub, falls die Datei fehlt, baut `hamster.js` neu und legt `farbmischer-web.zip` im Hauptverzeichnis des Repos an (ein Ordner `farbmischer-web` mit allen Dateien). `mixbox.js` steht unter CC BY-NC 4.0, für ein privates Geschenk in Ordnung, nicht für Verkauf, und liegt darum in `.gitignore`. Ohne Skript: `javascript/mixbox.js` aus dem GitHub-Repository `scrtwpns/mixbox` nach `web/` legen.
+2. `web/index.html` im Browser öffnen, Doppelklick reicht. Für das Handy im gleichen WLAN:
 
 ```
 cd web
@@ -40,17 +40,28 @@ python3 -m http.server 8000
 
 Dann am Handy `http://<IP des Rechners>:8000` aufrufen.
 
-Funktionen: Farbwähler oder Hex-Wert, Farbe aus einem Foto antippen (Handykamera), Gesamtmenge in Gramm, Rezept mit Vorhersage-Swatch und Abweichung, Farben mit Namen merken und wieder laden, Primärfarben kalibrieren, Gerät steuern.
+Funktionen: Farbwähler oder Hex-Wert, Farbe aus einem Foto antippen (Kamera oder Fotomediathek), Gesamtmenge in Gramm, Rezept in 0,1-g-Schritten mit Vorhersage und Abweichung, Farben mit Namen merken, laden und als Text sichern, Primärfarben kalibrieren, Gerät steuern.
 
 ### Hamster
 
-`web/hamster.png` ist ein Sprite mit zehn freigestellten Meme-Hamstern (160 px je Bild). Die Seite färbt im Browser nur die weißen Flächen in die Zielfarbe, Linien und Nase bleiben. Welche Stimmung erscheint, hängt von der Abweichung ab: zufrieden unter ΔE 3, skeptisch bis 8, Panik darüber. Das Einfärben braucht Canvas-Zugriff, darum die Seite immer über http öffnen (ESP32 oder `python3 -m http.server`), bei `file://` bleibt der Hamster weiß.
+`web/hamster.png` ist ein Sprite mit zehn freigestellten Meme-Hamstern (160 px je Bild). Die Seite färbt im Browser nur die weißen Flächen in die Zielfarbe, Linien und Nase bleiben, auf dunklen Farben werden die Linien hell. Die Stimmung hängt von der Abweichung ΔE ab: zufrieden unter 3, skeptisch bis 8, Panik darüber. Der Text unter dem Rezept nutzt dieselben Schwellen.
 
-### Widmung und Home-Bildschirm
+Das Sprite wird als `hamster.js` ausgeliefert (Datenadresse in einem Skript), weil Bilder von `file://` den Canvas sperren und der Hamster beim Doppelklick sonst weiß bliebe. Nach Änderungen an `hamster.png` `python3 web/build_hamster.py` ausführen oder `sh web/paket.sh`.
 
-Oben in `web/index.html` steht ein kleiner Block `WIDMUNG` mit Name, Vorname, Ort und Jahr. Der Name steht groß unter „Ein Geschenk, nur für“, der Vorname macht aus der Palette „<Vorname>s Palette“. Auf dem iPhone in Safari „Zum Home-Bildschirm“ wählen, dann startet die App wie eine eigene mit dem Icon `web/icon.png` und ohne Browserleiste.
+### Widmung
 
-Die Farbmathematik liegt in `web/farbmath.js`: Mixbox mischt die Primärfarben im Latentraum, ein projizierter Gradientenabstieg sucht die Anteile mit kleinster Lab-Abweichung zur Zielfarbe.
+Oben in `web/index.html` steht ein kleiner Block `WIDMUNG` mit Name, Vorname, Ort und Jahr. Der Name steht groß unter „Ein Geschenk, nur für“, der Vorname macht aus der Palette „<Vorname>s Palette“.
+
+### iPhone
+
+- Die Seite in Safari über die Adresse des Geräts öffnen (`http://farbmixer.local`, das iPhone muss im selben WLAN sein), dann „Teilen“ und „Zum Home-Bildschirm“. Danach nur noch die App vom Home-Bildschirm benutzen.
+- Safari und die Home-Bildschirm-App speichern getrennt. Farben, die in Safari gemerkt wurden, fehlen in der App. Safari kann Webseitendaten nach sieben Tagen ohne Nutzung löschen, Apps auf dem Home-Bildschirm sind davon ausgenommen. Unter „Einstellungen“ gibt es „Palette sichern“: Text kopieren, in einer Notiz aufheben, bei Bedarf wieder einfügen. Die Primärfarben sind darin nicht enthalten.
+- Findet das iPhone `farbmixer.local` nicht, die IP-Adresse aus dem Seriellen Monitor oder der Geräteliste des Routers verwenden.
+- Ohne bekanntes WLAN öffnet der ESP32 den Access Point `Farbmixer`. Das iPhone meldet dort „Kein Internet“, dann „Verbunden bleiben“ wählen. Nach zwei Minuten ohne Client im Leerlauf startet das Gerät neu und sucht das WLAN wieder.
+- Nach einem Neustart des Geräts kennt es den Füllstand der Spritzen nicht mehr: frisch füllen, dann eine Referenzfahrt machen.
+- Nach einem Update der Web-App (`./sync_web.sh && pio run -t uploadfs`) reicht es, die Seite neu zu öffnen. Das Gerät schickt `index.html` und die Skripte ohne Cache, nur `mixbox.js` darf der Browser behalten.
+
+Die Farbmathematik liegt in `web/farbmath.js`: Mixbox mischt die Primärfarben im Latentraum, ein projizierter Gradientenabstieg sucht die Anteile mit kleinster Lab-Abweichung zur Zielfarbe. Die Gramm werden auf 0,1 g so verteilt, dass die Summe genau der Gesamtmenge entspricht. Vorhersage und Abweichung gelten für diese gerundeten Mengen.
 
 ### Primärfarben kalibrieren
 
@@ -146,7 +157,7 @@ pio run -t upload                                 # Firmware
 pio device monitor                                # IP-Adresse ablesen
 ```
 
-Danach ist das Gerät unter `http://farbmixer.local` erreichbar. Ohne WLAN-Verbindung öffnet der ESP32 einen eigenen Access Point namens `Farbmixer`.
+`sync_web.sh` bricht ab, wenn `web/mixbox.js` fehlt (siehe Stufe 0). Danach ist das Gerät unter `http://farbmixer.local` erreichbar. Ohne WLAN-Verbindung öffnet der ESP32 einen eigenen Access Point namens `Farbmixer`.
 
 Die Firmware ist bisher nur mit Stub-Headern auf Syntax geprüft, nicht auf einem ESP32 gelaufen. Beim ersten Start ohne Farbe testen: Referenzfahrt, dann `/prime` mit 1 ml pro Station, Richtung und Weg kontrollieren.
 
