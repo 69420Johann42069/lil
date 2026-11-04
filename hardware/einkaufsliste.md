@@ -1,72 +1,82 @@
-# Einkaufsliste Farbmischer (Stand 6 und Slim)
+# Einkaufsliste Farbmischer Stand 7 (Budget)
 
-Stand: 2026-11-04. PETG zu **10 Euro je kg** (Angabe Johann), alle Sorten (schwarz, Gold, Rauch, Klar, weiß) mit demselben Kilopreis gerechnet.
+Stand: 2026-11-04. PETG zu **10 Euro je kg** (Angabe Johann). Umrechnung AliExpress: **1 US-Dollar = 0,92 Euro (Annahme)**.
 
-## Ehrlicher Vorbehalt zu den Preisen
+## Wie belastbar die Preise sind
 
-Die Shops (berrybase.de, reichelt.de) sind in dieser Sitzung gesperrt, die Websuche liefert nur Schnappschüsse. **Nur vier Teile haben einen belegten Preis** (Status „gefunden“): NEMA 17, Wägezelle, Spindel, LM10LUU. Alle anderen sind Schätzungen aus dem Parameterblatt. Genaue Preise gibt es erst mit einem Warenkorb: entweder die Domains in den Netzwerkeinstellungen der Umgebung freigeben (Umgebungsmenü in der Titelleiste, Edit, Allowed domains) oder die Links aus deinem Warenkorb schicken, dann rechne ich neu.
-
-## Filament (exakt, 10 Euro je kg)
-
-| Variante | netto | mit 20 Prozent Fehldruck | Kosten |
-|---|---|---|---|
-| Stand 6 (33 Druckteile) | 1,488 kg | 1,786 kg | 17,86 Euro |
-| Slim (26 Druckteile) | 1,345 kg | 1,614 kg | 16,14 Euro |
+AliExpress, Berrybase, Reichelt und Boesner sind in dieser Sitzung gesperrt (auch Obscura kommt dort nicht hin). Alle Preise stammen aus Suchtreffern und deren Kurztexten (Amazon.de, eBay.de, AliExpress-Suchseiten), keine Seite wurde im Warenkorb geprüft. Von 220,75 Euro sind **189,46 Euro belegt** und **31,29 Euro geschätzt** (Status „Schätzung“). Versand ist nirgends enthalten. Bei AliExpress-Preisen unter 1,10 USD (Wellen, Lager, Magnete, Schrauben) vor dem Kauf prüfen, ob Länge und Variante stimmen, die Treffertexte nennen nur den günstigsten Startpreis.
 
 ## Kaufteile
 
-| Gruppe | Teil | Stand 6 | Slim | Einzelpreis | Status | Quelle oder Hinweis |
+| Gruppe | Teil | Menge | Einzelpreis | Summe in EUR | Status | Quelle oder Hinweis |
 |---|---|---|---|---|---|---|
-| Elektronik | ESP32 DevKit 30 Pin | 1 | 1 | 8,00 | Schätzung | Treffer-Spanne 6 bis 15 Euro (eBay, Fruugo) |
-| Elektronik | TMC2209 StepStick | 2 | 2 | 5,00 | Schätzung | Original Watterott 11,50 Euro je Stück, Nachbauten (AliExpress) etwa 4 bis 6 |
-| Elektronik | NEMA 17, 34 mm, 0,26 Nm (Stößel) | 1 | 1 | 9,96 | gefunden | StepperOnline 17HS13-0404S1, eBay.de 9,96 Euro |
-| Elektronik | NEMA 17 Pancake 23 mm (Karussell) | 1 | 0 | 8,00 | Schätzung | entfällt in Slim, zweiter NEMA 34 statt dessen |
-| Elektronik | NEMA 17, 34 mm (Karussell, direkt) | 0 | 1 | 9,96 | gefunden | gleicher Motor wie Stößel, nur Slim |
-| Elektronik | Wägezelle 1 kg mit HX711 | 1 | 1 | 7,96 | gefunden | Soldered über Elecena 7,96 Euro; Zelle 1 kg statt 500 g, gleiche Bauform 80 x 12,7 x 12,7 |
-| Elektronik | Hall A3144, Magnet, 4,7 kΩ, 100 nF | 1 | 0 | 1,50 | Schätzung | entfällt in Slim (Mikroschalter am Karussell) |
-| Elektronik | Mikroschalter mit Rollenhebel | 1 | 2 | 1,00 | Schätzung | Slim: einer oben am Stößel, einer am Karussell |
-| Elektronik | Reed-Kontakt mit Magnet | 1 | 0 | 1,00 | Schätzung | entfällt in Slim (Waage erkennt die Schublade) |
-| Elektronik | 2 x 100 µF, 10 kΩ, 1 kΩ | 1 | 1 | 0,50 | Schätzung |  |
-| Elektronik | Netzteil 12 V 3 A mit Einbaubuchse | 1 | 1 | 9,00 | Schätzung |  |
-| Elektronik | Step-down MP1584 5 V | 1 | 1 | 1,00 | Schätzung |  |
-| Elektronik | Lochraster 70 x 90, Buchsenleisten, Klemmen, Litze | 1 | 1 | 7,00 | Schätzung |  |
-| Mechanik | T8-Spindel Steigung 2 mit Messingmutter | 1 | 1 | 15,99 | gefunden | eBay.de, Länge 100 bis 1200 mm wählbar (200 mm bestellen), 15,99 Euro |
-| Mechanik | Linearwelle Ø 10 x 200 | 2 | 2 | 3,00 | Schätzung |  |
-| Mechanik | LM10LUU | 2 | 2 | 3,50 | gefunden | Prusa 3,69 US-Dollar, 3djake 6,75 CHF; Mehrfachpackungen bei eBay billiger |
-| Mechanik | Welle Ø 8 x 250 | 1 | 1 | 3,00 | Schätzung |  |
-| Mechanik | Kugellager 608, 10er-Pack | 1 | 1 | 4,00 | Schätzung |  |
-| Mechanik | Stellring Ø 8 | 3 | 3 | 1,00 | Schätzung |  |
-| Mechanik | GT2-Scheiben 20 Z (3 Stück Stand 6, 2 Stück Slim) | 1 | 1 | 5,00 / 3,50 | Schätzung |  |
-| Mechanik | GT2-Riemen geschlossen (158 und 210 Stand 6, nur 158 Slim) | 1 | 1 | 4,00 / 2,00 | Schätzung |  |
-| Mechanik | Gewindestange M5 2 x 1 m, Muttern, Scheiben, Schraubensicherung | 1 | 1 | 5,00 | Schätzung |  |
-| Mechanik | Schrauben, 2 Gewindeeinsätze M4, Magnete, Stahlscheiben | 1 | 1 | 8,00 | Schätzung |  |
-| Mechanik | Ballast 28 Scheiben M20, Filz, Füße, Dämpfer, Gummiauflage | 1 | 1 | 6,50 | Schätzung |  |
+| Elektronik | ESP32 DevKit 30 Pin (Set mit 2 Boards, 1 Reserve) | 1 | 12,99 EUR | 12,99 | belegt | Amazon.de B0CP416CFV; AliExpress vermutlich billiger, kein Preis im Treffer |
+| Elektronik | A4988 Treiber (5er-Pack, 2 genutzt) | 1 | 4,59 USD | 4,22 | belegt | StepperOnline, Snippet, Währung unklar. Billig-Variante ohne UART und StallGuard |
+| Elektronik | NEMA 17 34 mm 0,4 A (Stößel) | 1 | 6,49 EUR | 6,49 | belegt | eBay.de, 1 Motor 0,28 Nm (Zuordnung der URL unsicher). AliExpress 10er-Pack 94,00 USD |
+| Elektronik | NEMA 17 Pancake 23 mm (Karussell) | 1 | 8,00 EUR | 8,00 | belegt | Tinytronics NL, 0,13 Nm, 1,0 A |
+| Elektronik | Wägezelle 1 kg mit HX711 | 1 | 7,96 EUR | 7,96 | belegt | Soldered über Elecena (Amazon.de 2er-Set 8,98 EUR) |
+| Elektronik | Netzteil 12 V 3 A, 5,5 x 2,1 | 1 | 15,99 EUR | 15,99 | belegt | eBay.de KesCom; AliExpress kein Preis im Treffer |
+| Elektronik | Einbaubuchse 5,5 x 2,1 | 1 | 1,15 EUR | 1,15 | belegt | BerryBase |
+| Elektronik | Step-down Mini-360 oder MP1584 | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
+| Elektronik | Mikroschalter mit Rollenhebel (10er-Pack, 1 genutzt) | 1 | 1,75 EUR | 1,75 | belegt | eBay.de |
+| Elektronik | Hall A3144 (Pack) | 1 | 1,17 EUR | 1,17 | belegt | eBay.de, Zuordnung unsicher |
+| Elektronik | Lochraster-Set mit Schraubklemmen und Stiftleisten (68 Teile) | 1 | 10,99 EUR | 10,99 | belegt | Amazon.de B09N28GWSV |
+| Elektronik | 2 x 100 µF, Widerstände, 100 nF | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
+| Mechanik | T8-Spindel 200 mm, Steigung 2, Messingmutter (2er-Pack) | 1 | 9,99 EUR | 9,99 | belegt | Amazon.de B0C5M5SD2C |
+| Mechanik | Linearwelle Ø 10 x 200 (AliExpress, Stück) | 2 | 1,09 USD | 2,01 | belegt | Suchseite, Länge 200 mm wählbar, Verchromung nicht belegt. eBay.de 7,22 EUR je Stück |
+| Mechanik | LM10LUU (2er-Pack) | 1 | 7,89 USD | 7,26 | belegt | AliExpress-Treffer; eBay.de 3,50 EUR je Stück |
+| Mechanik | Welle Ø 8 x 250 | 1 | 1,09 USD | 1,00 | belegt | AliExpress Suchseite, 250 mm wählbar |
+| Mechanik | Kugellager 608ZZ (10er) | 1 | 0,33 USD | 0,30 | belegt | AliExpress Suchseite (eBay.de 6,90 EUR) |
+| Mechanik | Stellring Ø 8 mit Madenschraube | 3 | 1,00 EUR | 3,00 | belegt | eBay.de |
+| Mechanik | GT2-Riemenscheibe 20 Z (Bohrung 5 oder 8) | 3 | 1,09 USD | 3,01 | belegt | AliExpress, Titel nennt 10 mm Riemen, Breite 6 mm prüfen |
+| Mechanik | GT2-Riemen geschlossen 158 mm (10er-Mix) | 1 | 0,99 USD | 0,91 | belegt | AliExpress Zusammenfassung |
+| Mechanik | GT2-Riemen geschlossen 210 mm | 1 | 2,00 EUR | 2,00 | Schätzung | nicht gefunden, eBay.de 158 und 200 mm je 4,29 EUR |
+| Mechanik | Gewindestange M5 1 m verzinkt | 2 | 1,00 EUR | 2,00 | belegt | eBay.de, Versand extra |
+| Mechanik | Muttern M5 (30 Stück) | 1 | 1,50 EUR | 1,50 | Schätzung | kein belegter Preis |
+| Mechanik | Magnete 6 x 2 (10er) für Krone und Schublade | 1 | 0,99 USD | 0,91 | belegt | AliExpress Suchseite (Amazon.de 4,20 EUR) |
+| Mechanik | Magnet 5 x 2 für den Hall-Sensor | 1 | 1,00 EUR | 1,00 | Schätzung | kein belegter Preis |
+| Mechanik | Gewindeeinsätze M4 (200er-Pack, 2 genutzt) | 1 | 6,29 USD | 5,79 | belegt | AliExpress Suchseite |
+| Mechanik | Schraubensortiment M3 und M4 (2510 Teile) | 1 | 0,99 USD | 0,91 | belegt | AliExpress Suchseite |
+| Mechanik | Gummi- oder Filzfüße, Gummiauflage | 1 | 1,00 EUR | 1,00 | Schätzung | Möbelgleiter aus dem Haushalt möglich |
+| Gehäuse | PETG 1,556 kg (1,297 kg netto plus 20 Prozent) zu 10 Euro je kg | 1 | 15,56 EUR | 15,56 | belegt | Angabe Johann |
+| Kleber | 2K-Epoxid 25 ml (APP EP4) | 1 | 6,95 EUR | 6,95 | belegt | eBay.de |
+| Kleber | Sekundenkleber 3 g (Roxolid X-Press) | 1 | 2,25 EUR | 2,25 | belegt | Hornbach Trefferzusammenfassung |
+| Startpaket | Wund- und Blasenspritze 50/60 ml Luer (6 im Gerät) | 6 | 0,94 EUR | 5,64 | belegt | medikamente-per-klick.de, Versand nicht genannt, Luer statt Katheteransatz |
+| Startpaket | Silikon-Entenschnabelventile (Pack) | 1 | 5,00 EUR | 5,00 | Schätzung | kein belegter Preis |
+| Startpaket | Portionsbecher 60 ml mit Deckel, 100er | 1 | 6,00 EUR | 6,00 | Schätzung | kein belegter Preis |
+| Farbe | Marabu 500 ml Cyan | 1 | 12,79 EUR | 12,79 | belegt | kaufland.at Treffer |
+| Farbe | Marabu 500 ml Magenta | 1 | 12,79 EUR | 12,79 | belegt | kaufland.at Treffer |
+| Farbe | Marabu 500 ml Gelb | 1 | 13,49 EUR | 13,49 | belegt | kaufland.at Treffer |
+| Farbe | Marabu Artist Titanweiß 500 ml | 1 | 12,19 EUR | 12,19 | belegt | eBay.de zuzüglich Versand |
+| Farbe | Schwarz 500 ml (Marabu) | 1 | 12,79 EUR | 12,79 | Schätzung | kein belegter Preis, angenommen wie Cyan |
 
 ## Summen
 
-| | Stand 6 | Slim |
-|---|---|---|
-| Elektronik | 64,92 | 65,38 |
-| Mechanik | 67,49 | 63,99 |
-| Filament (10 Euro je kg, mit Zuschlag) | 17,86 | 16,14 |
-| Kleber | 7,00 | 7,00 |
-| **Gerät** | **157,27** | **152,51** |
-| Startpaket (Spritzen, Ventile, Becher, ggf. Schwammtücher) | 36,00 | 23,00 |
-| Farbe (5 Flaschen Studienacryl) | 50,00 | 50,00 |
-| **Alles zusammen** | **243,27** | **225,51** |
+| Gruppe | EUR |
+|---|---|
+| Elektronik | 72,71 |
+| Mechanik | 42,59 |
+| Filament | 15,56 |
+| Kleber | 9,20 |
+| **Gerät** | **140,06** |
+| Startpaket (6 Spritzen, Ventile, Becher) | 16,64 |
+| Farbe (5 Flaschen Marabu 500 ml) | 64,05 |
+| **Alles zusammen** | **220,75** |
 
-Kaufposten: 23 (Stand 6) gegen 21 (Slim). Druckteile: 33 gegen 26. Das Geld ändert sich kaum, die Teilezahl schon.
+Die Farbe ist der größte Einzelposten. Boesner Scene Acryl (laut Treffer Studienqualität) kostet 7,85 Euro je Liter-Packung, die Farbtöne sind nicht belegt: sie wären bei fünf Flaschen etwa 39 Euro statt 64.
 
-## Was Slim streicht (Vorschlag, noch nicht gebaut)
+## Was Stand 7 gegenüber Stand 6 weglässt
 
-| Maßnahme | Spart | Folge für die Funktion |
-|---|---|---|
-| Karussell direkt am Motor (kein Riemen 210, keine 20-Z-Scheibe, kein 70-Z-Rad), zweiter NEMA 34 statt Pancake | 1 Druckteil, 1 Riemen, 1 Scheibe | Moment am Motor 0,063 Nm gegen etwa 0,15 Nm verfügbar, Schritte je Platz 457,14, also gerundet. Referenz mit Mikroschalter statt Hall |
-| Hall und Reed weg, ein zweiter gleicher Mikroschalter | 2 Posten | Schublade erkennt die Waage (Taraebene), Karussell-Referenz per Schalter |
-| Kein Portalrahmen aus Gold, nur Goldring, Goldband, Kronenring | 1 Druckteil, Kleben und Biegen | Das Portal ist schwarz ohne Goldlinie, weniger Edelanmutung |
-| Keine Rauch- und Klarscheiben (Portal und Fenster offen) | 3 Druckteile | Staub auf den Spritzen, Fenster offen, Farben besser sichtbar |
-| Keine Feuchtrinne mit Schwamm und Abstreifer | 3 Druckteile, Schwamm, Lippen | **Risiko:** Düsen trocknen an, das Ventil allein ist ungetestet (17.2 im Blatt) |
+| Weggelassen | Wirkung |
+|---|---|
+| Portalscheibe (2), Fensterscheiben, Portalrahmen, Goldlippe, Buchsenring | Portal und Fenster offen, Goldteile nur Ring, Band und Kronenring. 7 Druckteile weniger |
+| Feuchtrinne mit Deckel, Säulen, Abstreifhalter, Silikonlippen, Schwamm | 4 Teile weniger. **Risiko:** Düsen trocknen an, nur das Ventil schützt, Ventiltest aus 17.2 ist Pflicht, im Zweifel Luer-Kappen oder Spülen vor jeder Session |
+| Spritzenablage, Einführzunge, Kabelclips | 3 Druckteile weniger (Kabelbinder statt Clips) |
+| Reed-Kontakt | die Waage erkennt die Schublade (Taraebene) |
+| Ballast (28 Scheiben M20, 100er-Packung kostet 32 Euro) | Kippkraft am oberen Rand etwa 6 N statt 7,3 N (Schwerpunkt von Z 190 auf etwa Z 220, Kippwinkel 20 statt 23 Grad), die Becher bleiben leer und werden mit dem Gehäuse gedruckt |
+| TMC2209 gegen A4988 | A4988 kostet etwa 4 Euro für den Pack gegen 16 Euro für zwei TMC2209, ist aber hörbar lauter und hat weder UART noch StallGuard (kein Überlastschutz am Stößel, Strom per Poti einstellen, 0,5 A Stößel). Wer leise will: zwei TMC2209 für etwa 12 bis 16 Euro mehr |
+| Gewindeeinsätze | bleiben (2 Stück aus dem 200er-Pack), M4 direkt in PETG hält 195 N nicht |
 
-Nicht streichbar ohne Funktionsverlust: zwei Motoren mit Treibern, ESP32, Wägezelle, Spindel, zwei Führungen, Ventile.
+Druckteile: 23 Zeilen (Stand 6: 33). Filament netto 1,297 kg (Stand 6: 1,488 kg).
 
-Empfehlung: die ersten vier Zeilen übernehmen, die Feuchtrinne nur streichen, wenn der Ventiltest (zwei Wochen, 17.2) bestanden ist.
+Nicht gebaut: Karussell direkt am Motor (spart Riemen, Scheibe, 70-Z-Rad, Pancake, aber ein neues Wellen- und Motorlayout mit neuer Kollisionsprüfung, etwa 6 Euro). Das Rendering `rendering_farbmischer.png` zeigt noch Stand 6, in `farbmischer.scad` stellt `budget = 1` den Stand 7 ein.

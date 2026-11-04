@@ -27,6 +27,12 @@ Wunsch: die Funktion bleibt, das Gerät bleibt schön, aber fast alles soll sich
 
 Was dabei bewusst schwächer wird: Ohne Licht sind die Farben in den sechs Fenstern nur bei Tageslicht oder Raumlicht zu sehen. Dafür sind die Fenster klar statt rauchgrau. Die Bühne ist nicht mehr beleuchtet, der Becher ist weiß hinterlegt. Der Körper hat jetzt sichtbare Schichtlinien (0,16 mm), die matt-schwarze Hülle verbirgt sie weitgehend.
 
+## 0a. Stand 7 Budget (aktueller Standard in `farbmischer.scad`, `budget = 1`)
+
+Wunsch: so billig wie möglich, viele Teile weglassen. Gegenüber Stand 6 entfallen Portalscheibe, Fensterscheiben, Portalrahmen, Goldlippe, Buchsenring, Feuchtrinne mit Deckel, Säulen und Abstreifhalter (und mit ihnen Silikonlippen und Schwamm), Spritzenablage, Einführzunge, Kabelclips, der Reed-Kontakt und der Ballast. Treiber wahlweise A4988 statt TMC2209. Druckteile 23 statt 33 Zeilen, Filament netto 1,297 kg, Gerät etwa 140 Euro, mit Startpaket und Farbe etwa 221 Euro (Details, Quellen und Schätzungen in `hardware/einkaufsliste.md`). `budget = 0` stellt Stand 6 her. Die Abschnitte 4 bis 18 dieses Blattes beschreiben Stand 6 und gelten für Stand 7 mit diesen Streichungen. Das Rendering und die Prüfliste (Abschnitt 15) zeigen noch Stand 6, die Streichungen machen keine Prüfung schlechter.
+
+**Folgen:** Portal und Fenster sind offen (Staub, dafür sehen Spritzen und Farben ohne Licht klar). Ohne Feuchtrinne trocknen die Düsen an: Ventiltest (17.2) ist Pflicht, vor jeder Session Düsen wischen. Ohne Ballast sinkt die Kippkraft am oberen Rand von 7,3 N auf etwa 6 N (Schwerpunkt etwa Z 220, Kippwinkel etwa 20 Grad, Schätzung). Mit A4988 entfallen UART und StallGuard: Strom per Poti (Stößel 0,5 A), kein Überlastschutz.
+
 ## 0b. Änderungen in Stand 5.1 (Abnahme durch die vier Rollen, zur Information)
 
 | Befund | Änderung |

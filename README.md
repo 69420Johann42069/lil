@@ -68,7 +68,9 @@ Entstanden aus der Kritik von vier Rollen (Kosten, Design, Ingenieur, Kunstliebh
 
 Was sich gegenüber Stand 5.1 ändert: LEDs entfallen komplett (der Fortschritt steht nur in der App). Alles ist PETG, kein Spachteln, kein Lack, kein Anreibewachs. Gold sind gedruckte Gold-PETG-Teile (Goldring, Goldband, Kronenring, Portalrahmen in drei Leistenarten, Lippe, Buchsenring, Namensschild-Schrift). Portalscheibe (zwei Hälften) und Fensterscheiben sind gedruckt (Rauch- und Klar-PETG), der Ausleger mit Stempel ersetzt den Winkelstahl. Die Teilung des Körpers bei Z 235 ist eine gewollte Schattenfuge. Details in Abschnitt 0 des Parameterblatts.
 
-Filament für das ganze Gerät: PETG schwarz etwa 1,4 kg (am besten glänzend für Sockel und Front, matt für Körper und Krone), Gold 35 g, Rauch-PETG 50 g, Klar-PETG 25 g, weiß 40 g.
+**Stand 7 Budget** (Standard in `farbmischer.scad`, Schalter `budget`): ohne Scheiben, Portalrahmen, Feuchtrinne und Ballast, Gerät etwa 140 Euro, alles zusammen etwa 221 Euro. Einkaufsliste mit Quellen und gekennzeichneten Schätzungen: `hardware/einkaufsliste.md`.
+
+Filament für das ganze Gerät (Stand 6): PETG schwarz etwa 1,4 kg (am besten glänzend für Sockel und Front, matt für Körper und Krone), Gold 35 g, Rauch-PETG 50 g, Klar-PETG 25 g, weiß 40 g.
 
 ## Stufe 1: Revolver (Stand 4, abgelöst)
 
