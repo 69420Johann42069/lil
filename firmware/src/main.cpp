@@ -148,6 +148,12 @@ static bool fitsInSyringe(const Station& s, float grams) {
   return s.posSteps + steps + s.retractedSteps <= maxTravelSteps();
 }
 
+// Größte Menge, die in eine frisch gefüllte, referenzierte Spritze passt
+// (1 mm Vorschub nach der Referenzfahrt).
+static float capacityG(const Station& s) {
+  return (maxTravelSteps() - (long)(1.0f * STEPS_PER_MM)) / stepsPerMl(s) * s.gPerMl;
+}
+
 // Dosiert `grams` aus Station s. Vorher wird der letzte Rückzug kompensiert,
 // danach wieder ein Stück zurückgezogen.
 static bool dispenseGrams(Station& s, float grams) {
@@ -289,6 +295,10 @@ static void handleDispense() {
   for (int i = 0; i < N_STATIONS; i++) {
     if (j.grams[i] >= MIN_DOSE_G && !stations[i].homed) {
       sendError(409, String("Station ") + stations[i].id + " zuerst referenzieren (/home)");
+      return;
+    }
+    if (j.grams[i] > capacityG(stations[i])) {
+      sendError(409, String("Menge ") + stations[i].id + " größer als eine volle Spritze (höchstens etwa " + String((int)capacityG(stations[i])) + " g), bitte weniger Gramm wählen");
       return;
     }
     if (j.grams[i] >= MIN_DOSE_G && !fitsInSyringe(stations[i], j.grams[i])) {

@@ -16,15 +16,15 @@
 </script>
 <style>
   :root {
-    --paper:#fdfcf8; --ink:#161616; --muted:#7c7a74; --hair:rgba(22,22,22,.18); --soft:rgba(22,22,22,.05);
+    --paper:#fdfcf8; --ink:#161616; --muted:#67655f; --hair:rgba(22,22,22,.18); --soft:rgba(22,22,22,.05);
     --rose:#fbd3e0; --rose-ink:#c9437a; --btn:#161616; --nose:#f7a6c1; --line:2.5px;
     --round: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Helvetica Neue", sans-serif;
     --serif: ui-serif, "New York", Georgia, serif;
     --mono: ui-monospace, "SF Mono", Menlo, monospace;
-    --ok:#5fae74; --mid:#e0b04a; --bad:#d9655a;
+    --ok:#5fae74; --mid:#e0b04a; --bad:#c0392b;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --paper:#1a1a19; --ink:#f3f1ea; --muted:#9d9a90; --hair:rgba(243,241,234,.2); --soft:rgba(243,241,234,.06);
+    :root { --paper:#1a1a19; --ink:#f3f1ea; --muted:#9d9a90; --bad:#ff7a6b; --hair:rgba(243,241,234,.2); --soft:rgba(243,241,234,.06);
       --rose:#4a2a38; --rose-ink:#f3a9c6; --btn:#f3f1ea; }
   }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -76,7 +76,7 @@
   .round input { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; pointer-events:none; }
   label.round { position:relative; }
   .grams { display:inline-flex; align-items:baseline; gap:4px; font-family:var(--serif); font-size:1.5rem; min-width:88px; justify-content:center; }
-  .grams input { width:3.4ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:8px 0; }
+  .grams input { width:4ch; text-align:right; border:none; background:none; font:inherit; outline:none; -moz-appearance:textfield; padding:12px 4px; }
   .grams input::-webkit-inner-spin-button, .grams input::-webkit-outer-spin-button { -webkit-appearance:none; }
   .grams small { font-size:1rem; color:var(--muted); font-family:var(--round); }
   .sep { width:1px; height:28px; background:var(--hair); margin:0 4px; }
@@ -112,7 +112,8 @@
   .rc .chip { display:block; width:64px; height:64px; margin:0 auto 4px; transition:transform .15s; }
   .rc:active .chip { transform:scale(.94); }
   .rc .n { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; hyphens:auto; font-size:.76rem; line-height:1.25; color:var(--muted); }
-  .rc .del { position:absolute; top:-10px; right:-6px; width:30px; height:30px; border-radius:50%; border:2px solid var(--ink); background:var(--paper); color:var(--ink); font-size:1rem; line-height:26px; cursor:pointer; padding:0; }
+  .rc .del { position:absolute; z-index:1; top:-14px; right:-14px; width:36px; height:36px; background:none; border:none; color:var(--ink); font-size:1rem; line-height:36px; cursor:pointer; padding:0; }
+  .rc .del::before { content:''; position:absolute; z-index:-1; inset:5px; border:2px solid var(--ink); border-radius:50%; background:var(--paper); }
   .save { display:flex; gap:10px; margin-top:22px; }
   .save input { flex:1; min-width:0; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; }
   .save input:focus { border-bottom-color:var(--ink); }
@@ -138,7 +139,7 @@
   .prim input[type=color]::-webkit-color-swatch-wrapper { padding:0; }
   .prim input[type=color]::-webkit-color-swatch { border:none; border-radius:50%; }
   .prim .muted { font-family:var(--mono); font-size:.82rem; color:var(--muted); }
-  .field { width:100%; border:none; border-bottom:1px solid var(--hair); background:none; padding:8px 2px; font-size:1rem; outline:none; margin-bottom:12px; }
+  .field { width:100%; border:none; border-bottom:1px solid var(--hair); background:none; padding:12px 2px; font-size:1rem; outline:none; margin-bottom:12px; }
   .btnrow { display:flex; gap:8px; flex-wrap:wrap; }
   textarea.field { border:1px solid var(--hair); border-radius:12px; padding:10px; resize:none; font-family:var(--mono); font-size:1rem; }
   #devStatus { font-size:.85rem; color:var(--muted); margin:12px 0 0; }
@@ -172,7 +173,7 @@
   <div class="hexline"><input type="text" id="hex" value="#e08a3c" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="Hex-Wert"></div>
   <div class="controls">
     <button class="round" id="gMinus" aria-label="weniger">−</button>
-    <span class="grams"><input type="number" id="grams" value="20" min="1" max="500" step="1" inputmode="numeric"><small>g</small></span>
+    <span class="grams"><input type="number" id="grams" value="20" min="1" max="70" step="1" inputmode="numeric"><small>g</small></span>
     <button class="round" id="gPlus" aria-label="mehr">+</button>
     <span class="sep"></span>
     <label class="round" for="photo" aria-label="Farbe aus Foto">
@@ -258,7 +259,7 @@
     try {
       var st = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (Array.isArray(st) && st.length === def.length && st.every(function (q, i) {
-        return q && q.id === def[i].id && Array.isArray(q.rgb) && q.rgb.length === 3 && q.rgb.every(function (c) { return isFinite(c); });
+        return q && q.id === def[i].id && Array.isArray(q.rgb) && q.rgb.length === 3 && q.rgb.every(function (c) { return typeof c === 'number' && c >= 0 && c <= 255; });
       })) return st;
     } catch (e) {}
     return def;
@@ -309,9 +310,9 @@
     var lightLine = Y <= 0.2;
     var line = lightLine ? [255, 255, 255] : [22, 22, 22];
     for (var i = 0; i < p.length; i += 4) {
-      if (p[i + 3] === 0) continue;
+      if (p[i + 3] < 64) { p[i + 3] = 0; continue; }   // halbtransparenter Weißschleier bleibt weg
       var r = p[i], g = p[i + 1], b = p[i + 2];
-      if (r < 12 && g === 0 && b === 0) { p[i] = 22; p[i + 1] = 22; p[i + 2] = 22; continue; }   // Mundinneres (Bild 6) bleibt dunkel
+      if (frame === 6 && r === 3 && g === 0 && b === 0) { p[i] = 22; p[i + 1] = 22; p[i + 2] = 22; continue; }   // Mundinneres (Bild 6) bleibt dunkel
       var mx = Math.max(r, g, b), mn = Math.min(r, g, b);
       if (mx > 110 && (mx - mn) / mx > 0.2) continue;
       var L = Math.min(1, Math.max(0, ((r + g + b) / 765 - 0.3) / 0.6));
@@ -320,34 +321,35 @@
       p[i + 2] = line[2] + (rgb[2] - line[2]) * L;
     }
     x.putImageData(d, 0, 0);
-    if (frame === 7) x.clearRect(0, 131, 22, 29);   // Stufe an der abgeschnittenen Vorlage
+    if (frame === 7) x.clearRect(0, 131, 26, 29);   // Stufe an der abgeschnittenen Vorlage
     // Unten und seitlich weich ausblenden, die Vorlage ist dort abgeschnitten.
     x.globalCompositeOperation = 'destination-in';
     var gv = x.createLinearGradient(0, 0, 0, 160);
-    gv.addColorStop(0, '#000'); gv.addColorStop(0.84, '#000'); gv.addColorStop(1, 'rgba(0,0,0,0)');
+    gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(0.07, '#000'); gv.addColorStop(0.84, '#000'); gv.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = gv; x.fillRect(0, 0, 160, 160);
     var gh = x.createLinearGradient(0, 0, 160, 0);
     gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(0.08, '#000'); gh.addColorStop(0.92, '#000'); gh.addColorStop(1, 'rgba(0,0,0,0)');
     x.fillStyle = gh; x.fillRect(0, 0, 160, 160);
     x.globalCompositeOperation = 'source-over';
   }
-  var lastFrame = -1;
+  var lastFrame = -1, repick = true;
   function rgba(rgb, a) { return 'rgba(' + rgb.map(Math.round).join(',') + ',' + a + ')'; }
   var last = null;
   var curRgb = farbmath.hexToRgb($('hex').value), curHex = farbmath.rgbToHex(curRgb);
   function getGrams() {
     var g = parseFloat(String($('grams').value).replace(',', '.'));
     if (!isFinite(g)) g = 20;
-    return Math.min(500, Math.max(1, g));
+    return Math.round(Math.min(70, Math.max(1, g)) * 10) / 10;
   }
   function update() {
     // Ungültige Eingaben (halb getipptes Hex) lassen die zuletzt gültige Farbe stehen.
     var rgb = farbmath.hexToRgb($('hex').value) || curRgb;
     curRgb = rgb;
     var grams = getGrams();
-    $('gramsShow').textContent = String(grams).replace('.', ',');
+    if (farbmath.hexToRgb($('hex').value)) $('hex').classList.remove('invalid');
     var sol = farbmath.solve(rgb, prims);
-    var rec = farbmath.recipe(sol.weights, prims, grams);
+    var rec = farbmath.recipe(sol.weights, prims, grams, null, rgb);
+    $('gramsShow').textContent = String(rec.totalGrams).replace('.', ',');
     last = rec;
     var hex = farbmath.rgbToHex(rgb);
     curHex = hex;
@@ -364,12 +366,13 @@
         '<span class="g">' + r.grams.toFixed(1).replace('.', ',') + '<small>g</small></span>';
       tb.appendChild(div);
     });
-    var dE = farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb));
+    var dE = Math.round(farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb)) * 10) / 10;   // gerundet wie angezeigt, damit Text und Ampel nie widersprechen
     var rt = $('rating');
     rt.innerHTML = '<b>Ziel · Vorhersage · ΔE ' + dE.toFixed(1).replace('.', ',') + '</b>' + farbmath.rating(dE);
     var mood = dE < 3 ? 'ok' : dE < 8 ? 'mid' : 'bad';
     rt.className = 'rating ' + mood;
-    var frame = pick(mood, hex);
+    var frame = (!repick && lastFrame >= 0 && FRAMES[mood].indexOf(lastFrame) >= 0) ? lastFrame : pick(mood, hex);
+    repick = false;
     tintHamster($('hamCanvas'), frame, rgb);
     if (frame !== lastFrame && lastFrame >= 0) { var hc = $('hamCanvas'); hc.classList.remove('pop'); void hc.offsetWidth; hc.classList.add('pop'); }
     lastFrame = frame;
@@ -379,6 +382,7 @@
   }
 
   $('color').addEventListener('input', function () { $('hex').value = $('color').value; update(); });
+  $('color').addEventListener('change', function () { repick = true; update(); });
   $('hex').addEventListener('input', function () {
     var v = $('hex').value, rgb = farbmath.hexToRgb(v);
     $('hex').classList.toggle('invalid', !rgb && v.trim() !== '');
@@ -388,7 +392,7 @@
     var v = $('hex').value.trim(), m = /^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(v);
     if (m) v = '#' + m[1] + m[1] + m[2] + m[2] + m[3] + m[3];
     var rgb = farbmath.hexToRgb(v);
-    if (rgb) { $('hex').value = farbmath.rgbToHex(rgb); $('color').value = $('hex').value; update(); }
+    if (rgb) { $('hex').value = farbmath.rgbToHex(rgb); $('color').value = $('hex').value; repick = true; update(); }
     else $('hex').value = curHex;
     $('hex').classList.remove('invalid');
   });
@@ -398,7 +402,7 @@
     var g = getGrams();
     var step = g >= 50 ? 10 : 5;
     g = d > 0 ? Math.ceil((g + 0.01) / step) * step : Math.max(1, Math.floor((g - 0.01) / step) * step);
-    $('grams').value = Math.min(500, g); update();
+    $('grams').value = Math.min(70, g); update();
   }
   $('gMinus').addEventListener('click', function () { stepGrams(-1); });
   $('gPlus').addEventListener('click', function () { stepGrams(1); });
@@ -447,13 +451,19 @@
     });
   }
   var sending = false;
-  function run(path, body, ms) {
-    if (sending) return;
-    sending = true;
+  function run(path, body, ms, force) {
+    if (sending && !force) return;
+    if (!force) sending = true;
     $('devStatus').textContent = 'sende \u2026';
     post(path, body, ms).then(function () { pollFails = 0; pollTimer = setTimeout(poll, 500); })
-      .catch(function (e) { $('devStatus').textContent = devErr(e); })
-      .then(function () { sending = false; });
+      .catch(function (e) {
+        // Kam auf das Dosieren keine Antwort, kann es trotzdem laufen: nicht erneut senden, Status abfragen.
+        if (e && e.name === 'AbortError' && path === '/dispense') {
+          $('devStatus').textContent = 'Keine Antwort vom Ger\u00e4t. Unklar, ob dosiert wird. Bitte nicht erneut dosieren, der Status wird abgefragt \u2026';
+          pollFails = 0; pollTimer = setTimeout(poll, 1500);
+        } else $('devStatus').textContent = devErr(e);
+      })
+      .then(function () { if (!force) sending = false; });
   }
   $('send').addEventListener('click', function () {
     var total = last ? last.totalGrams : getGrams();
@@ -461,7 +471,7 @@
     run('/dispense', $('json').textContent);
   });
   $('home').addEventListener('click', function () { run('/home'); });
-  $('stop').addEventListener('click', function () { sending = false; run('/stop', null, 4000); });
+  $('stop').addEventListener('click', function () { run('/stop', null, 4000, true); });
 
   // ---- Farbe aus Foto: Bild auf Canvas, Tippen liest 5x5 Pixel gemittelt.
   var canvas = $('canvas'), ctx = canvas.getContext('2d');
@@ -489,17 +499,22 @@
     var sum = [0, 0, 0], n = d.length / 4;
     for (var i = 0; i < d.length; i += 4) { sum[0] += d[i]; sum[1] += d[i + 1]; sum[2] += d[i + 2]; }
     var rgb = sum.map(function (v) { return Math.round(v / n); });
-    $('hex').value = farbmath.rgbToHex(rgb); $('color').value = $('hex').value; update();
+    $('hex').value = farbmath.rgbToHex(rgb); $('color').value = $('hex').value; repick = true; update();
   });
 
   // ---- Gespeicherte Farben im Browser.
   var RKEY = 'farbmischer.recipes';
+  // Jeder Eintrag wird beim Laden und Einlesen auf gültige Werte gebracht (Hex mit #, Gramm 1 bis 70).
+  function normRecipe(r) {
+    var g = parseFloat(r.grams);
+    return { name: String(r.name).slice(0, 40), hex: farbmath.rgbToHex(farbmath.hexToRgb(String(r.hex))), grams: isFinite(g) ? Math.min(70, Math.max(1, g)) : 20 };
+  }
   function loadRecipes() {
     try {
       var l = JSON.parse(localStorage.getItem(RKEY) || '[]');
       if (!Array.isArray(l)) return [];
       return l.filter(function (r) { return r && typeof r.name === 'string' && farbmath.hexToRgb(String(r.hex)); })
-        .map(function (r) { var g = parseFloat(r.grams); return { name: r.name, hex: String(r.hex), grams: isFinite(g) ? g : 20 }; });
+        .map(function (r) { return normRecipe(r); });
     } catch (e) { return []; }
   }
   function saveRecipes(list) { try { localStorage.setItem(RKEY, JSON.stringify(list)); return true; } catch (e) { return false; } }
@@ -531,9 +546,11 @@
     var list = loadRecipes(), i = parseInt(t.dataset.i, 10);
     if (t.classList.contains('del')) {
       if (!confirm('„' + shortName(list[i].name) + '“ aus der Palette entfernen?')) return;
-      list.splice(i, 1); saveRecipes(list); renderRecipes(); return;
+      list.splice(i, 1);
+      if (!saveRecipes(list)) { toast('Speichern geht hier nicht (privater Modus?)'); return; }
+      renderRecipes(); return;
     }
-    $('hex').value = list[i].hex; $('color').value = list[i].hex; $('grams').value = list[i].grams; update();
+    $('hex').value = list[i].hex; $('color').value = list[i].hex; $('grams').value = list[i].grams; repick = true; update();
     toast(shortName(list[i].name));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -547,8 +564,8 @@
   $('palImport').addEventListener('click', function () {
     var l; try { l = JSON.parse($('palText').value); } catch (e) {}
     if (!Array.isArray(l) || !l.length || !l.every(function (r) { return r && typeof r.name === 'string' && farbmath.hexToRgb(String(r.hex)) && isFinite(parseFloat(r.grams)); })) { toast('Text nicht lesbar'); return; }
-    if (!confirm(l.length + ' Farben einlesen und die Palette ersetzen?')) return;
-    if (!saveRecipes(l.slice(0, 50))) { toast('Speichern geht hier nicht (privater Modus?)'); return; }
+    if (!confirm(l.length + ' Farben einlesen und die Palette ersetzen?' + (l.length > 50 ? ' Es passen nur 50, die ersten 50 werden \u00fcbernommen.' : ''))) return;
+    if (!saveRecipes(l.slice(0, 50).map(normRecipe))) { toast('Speichern geht hier nicht (privater Modus?)'); return; }
     renderRecipes(); toast('Palette eingelesen');
   });
 

@@ -4,8 +4,8 @@
 # `sh ../web/paket.sh` lädt sie bei Bedarf, siehe README.
 set -e
 cd "$(dirname "$0")"
-if [ ! -s ../web/mixbox.js ]; then
-  echo "FEHLER: ../web/mixbox.js fehlt, die Seite würde auf dem Gerät nur einen Hinweis zeigen." >&2
+if [ ! -s ../web/mixbox.js ] || [ "$(wc -c < ../web/mixbox.js)" -lt 100000 ] || ! grep -q "MIXBOX" ../web/mixbox.js; then
+  echo "FEHLER: ../web/mixbox.js fehlt oder ist unvollständig, die Seite würde auf dem Gerät nur einen Hinweis zeigen." >&2
   echo "        Mit 'sh ../web/paket.sh' laden oder von Hand nach web/ legen, siehe README." >&2
   exit 1
 fi

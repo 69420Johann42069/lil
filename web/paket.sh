@@ -14,11 +14,18 @@ URL="https://raw.githubusercontent.com/scrtwpns/mixbox/master/javascript/mixbox.
 SHA256="7827560f74061e187acf5ce0e54abb7b2f81eac1515fc974f93efaaa1480eed9"
 OUT="../farbmischer-web.zip"
 
-for tool in curl zip python3; do
+for tool in zip python3; do
   command -v "$tool" >/dev/null 2>&1 || { echo "Fehler: $tool nicht gefunden" >&2; exit 1; }
 done
 
+# Eine vorhandene mixbox.js muss plausibel sein, sonst wird sie neu geladen.
+if [ -s mixbox.js ] && { [ "$(wc -c < mixbox.js)" -lt 100000 ] || ! grep -q "MIXBOX" mixbox.js; }; then
+  echo "mixbox.js ist unvollständig, lade neu ..."
+  rm -f mixbox.js
+fi
+
 if [ ! -s mixbox.js ]; then
+  command -v curl >/dev/null 2>&1 || { echo "Fehler: curl nicht gefunden, mixbox.js von Hand nach web/ legen" >&2; exit 1; }
   echo "mixbox.js fehlt, lade herunter ..."
   tmp="mixbox.js.tmp.$$"
   trap 'rm -f "$tmp"' EXIT

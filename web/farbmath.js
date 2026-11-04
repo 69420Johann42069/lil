@@ -129,7 +129,7 @@
 
   // Gewichte -> Rezept in Gramm. Anteile unter `minGrams` werden auf 0
   // gesetzt und der Rest neu normiert, damit die Summe stimmt.
-  function recipe(weights, primaries, totalGrams, minGrams) {
+  function recipe(weights, primaries, totalGrams, minGrams, targetRgb) {
     minGrams = minGrams == null ? 0.1 : minGrams;
     var w = weights.map(function (x) { return x * totalGrams >= minGrams ? x : 0; });
     var s = w.reduce(function (a, b) { return a + b; }, 0) || 1;
@@ -142,6 +142,28 @@
     raw.map(function (r, i) { return [r - u[i], i]; })
       .sort(function (a, b) { return b[0] - a[0] || a[1] - b[1]; })
       .slice(0, left).forEach(function (q) { u[q[1]]++; });
+    // Bei kleinen Mengen (bis 10 g) wiegt die Rundung auf 0,1 g schwer: Zehntelgramm paarweise
+    // verschieben, solange die Abweichung zur Zielfarbe dadurch kleiner wird.
+    if (targetRgb && U <= 100) {
+      var tl = rgbToLab(targetRgb);
+      var err = function (v) { return deltaE(rgbToLab(predict(primaries, v.map(function (x) { return x / U; }))), tl); };
+      var cur = err(u);
+      for (var pass = 0; pass < 30; pass++) {
+        var bi = -1, bj = -1, be = cur - 1e-9;
+        for (var ii = 0; ii < u.length; ii++) {
+          if (u[ii] < 1) continue;
+          for (var jj = 0; jj < u.length; jj++) {
+            if (jj === ii) continue;
+            u[ii]--; u[jj]++;
+            var e = err(u);
+            u[ii]++; u[jj]--;
+            if (e < be) { be = e; bi = ii; bj = jj; }
+          }
+        }
+        if (bi < 0) break;
+        u[bi]--; u[bj]++; cur = be;
+      }
+    }
     var wr = u.map(function (x) { return x / U; });
     var rows = [];
     primaries.forEach(function (p, i) {

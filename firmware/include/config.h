@@ -5,7 +5,7 @@
 #define N_STATIONS 5
 static const char STATION_IDS[N_STATIONS] = {'C', 'M', 'Y', 'W', 'K'};
 
-// Schrittmotortreiber (TMC2208 / A4988), ein gemeinsamer Enable-Pin.
+// Schrittmotortreiber (TMC2209 / A4988), ein gemeinsamer Enable-Pin.
 static const int PIN_STEP[N_STATIONS] = {13, 14, 27, 26, 25};
 static const int PIN_DIR[N_STATIONS]  = {33, 32, 4, 16, 17};
 static const int PIN_ENABLE = 23;  // LOW = Treiber aktiv
