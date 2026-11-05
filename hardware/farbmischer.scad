@@ -141,7 +141,7 @@ platte_dick = 8;               // senkrechte Platte X 28 bis 36 an der Schlitten
 winkel_h = 40;                 // senkrechte Platte Z S + 8 bis S + 48
 rippe_b = 3; rippe_h = 20; rippe_l = 22;               // zwei Stützrippen je 3 dick bei |Y| 9,5 bis 12,5
 winkel_schraube_z = [24, 40];  // 2 x M4 in Gewindeeinsätzen, Z relativ zu S (Hebel 32 zur Kippkante)
-einsatz_m4_d = 3.3; einsatz_m4_t = 12;   // Kernloch für M4 direkt in PETG (kein Gewindeeinsatz gekauft), 12 mm tief
+einsatz_m4_d = 3.7; einsatz_m4_t = 12;   // Kernloch für M4 direkt in PETG (kein Gewindeeinsatz gekauft), waagrecht gedruckt 3,7 (Richtwert Bambu-Forum: 3,75 waagrecht, 3,55 senkrecht), 12 mm tief
 stempel_d = 25; stempel_t = 6; gummi_t = 2; stempel_x = 53;      // Stempel Ø 25 am Ausleger, 4 mm innen von der Spritzenachse (Flanschauflage)
 kraft_max = 250;               // N, Haltekraft des Motors 1 am T8 (0,26 Nm, Wirkungsgrad 0,3), StallGuard schaltet früher ab
 // Brücke und Krone
@@ -980,7 +980,7 @@ module t_karussell() {
             cylinder(d = schaft_d + 0.3, h = z_platte1 - 1.5 - nabe_z0 + 1);
             translate([-10, -10, 0]) cube([10 + schaft_flach + 0.15, 20, z_platte1 - nabe_z0 + 2]);
         }
-        translate([0, 0, nabe_z0 + 2]) rotate([-90, 0, 0]) cylinder(d = m3_pilot, h = nabe_d / 2 + 1);
+        translate([0, 0, nabe_z0 + 3.6]) rotate([0, 90, 0]) cylinder(d = m3_pilot, h = nabe_d / 2 + 1);   // von +X auf die D-Fläche, über der Magnettasche
         // Magnettasche Ø 5,2 x 2,2 von unten auf r 14 (Hall-Sensor auf dem Turm)
         translate([hall_r, 0, nabe_z0 - eps]) cylinder(d = 5.2, h = 2.2);
         for (p = fenster_winkel) rotate([0, 0, p * teilung]) {
