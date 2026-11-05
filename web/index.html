@@ -32,7 +32,19 @@
   details summary { cursor:pointer; color:var(--muted); }
   .notice { background:#fff4e5; border:1px solid #f0c48a; padding:12px; border-radius:8px; margin-bottom:16px; }
   pre { background:#f1efe9; padding:10px; border-radius:8px; overflow:auto; font-size:.85rem; }
-  @media (max-width: 420px) { .row, .swatches { grid-template-columns: 1fr; } }
+  .btns { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+  .btns button { flex:1 1 auto; min-height:44px; }
+  button.stop { background:#c53030; color:#fff; border-color:#c53030; }
+  .scale { display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:end; margin:10px 0; }
+  .statline { font-size:1rem; margin:8px 0 4px; font-variant-numeric: tabular-nums; }
+  .bar { height:12px; background:#ebe8e0; border-radius:6px; overflow:hidden; }
+  .bar > i { display:block; height:100%; width:0; background:var(--accent); }
+  .bar.low > i { background:#c53030; }
+  .fill { display:grid; grid-template-columns: 96px 1fr 56px auto; gap:8px; align-items:center; margin-bottom:6px; font-size:.9rem; }
+  .fill button { padding:6px 10px; font-size:.85rem; }
+  .err { color:#c53030; font-weight:600; }
+  .warn { color:#9c4221; }
+  @media (max-width: 420px) { .row, .swatches { grid-template-columns: 1fr; } .fill { grid-template-columns: 80px 1fr 48px auto; } }
 </style>
 </head>
 <body>
@@ -98,16 +110,41 @@
 
   <section class="card">
     <details>
-      <summary>Gerät (Stufe 1)</summary>
-      <p class="muted">Schickt das Rezept als JSON an den ESP32. Erst nutzbar, wenn die Spritzenpumpen stehen. Vor dem ersten Dosieren eine Referenzfahrt machen.</p>
+      <summary>Gerät (Karussell mit sechs Spritzen)</summary>
+      <p class="muted">Schickt das Rezept an den ESP32. Das Karussell hat sechs Spritzen, die Wägezelle unter dem Becher wiegt mit und dosiert nach Gewicht. Vor dem ersten Dosieren: Becher in die Schublade stellen, Referenzfahrt, dann Tara.</p>
       <label for="devUrl">Adresse des Geräts</label>
       <input type="url" id="devUrl" value="http://farbmixer.local">
-      <p>
-        <button class="primary" id="send">Rezept dosieren</button>
+
+      <p class="statline" id="devState">Status: noch keine Verbindung</p>
+      <div class="bar" id="jobBar" hidden><i id="jobFill"></i></div>
+      <p class="muted" id="jobText"></p>
+      <p class="err" id="devError" hidden></p>
+      <p class="muted" id="devMsg"></p>
+
+      <div class="btns">
+        <button class="primary" id="send">Dosieren</button>
+        <button class="stop" id="stop">Stop</button>
+      </div>
+      <div class="btns">
         <button id="home">Referenzfahrt</button>
-        <button id="stop">Stopp</button>
-      </p>
-      <p id="devStatus" class="muted"></p>
+        <button id="tare">Tara</button>
+        <button id="park">Park</button>
+      </div>
+
+      <div class="scale">
+        <div>
+          <label for="knownG">Waage kalibrieren: bekanntes Gewicht in Gramm</label>
+          <input type="number" id="knownG" value="100" min="1" max="5000" step="0.1">
+        </div>
+        <button id="scale">Waage kalibrieren</button>
+      </div>
+      <p class="muted">Erst Tara ohne Last, dann das bekannte Gewicht auf die Waage legen, Gramm eintragen und kalibrieren.</p>
+
+      <h2 style="margin-top:16px">Füllstand</h2>
+      <div id="fills"></div>
+      <p class="warn" id="lowWarn" hidden></p>
+      <p class="muted">Ein voller Balken sind 50 ml. Nach dem Auffüllen einer Spritze „Nachgefüllt“ tippen. Weiß hat zwei Spritzen, das Gerät wählt die volle.</p>
+
       <pre id="json"></pre>
     </details>
   </section>
@@ -169,8 +206,9 @@
     });
     var dE = farbmath.deltaE(farbmath.rgbToLab(rgb), farbmath.rgbToLab(rec.predictedRgb));
     $('rating').textContent = 'Abweichung ΔE ' + dE.toFixed(1).replace('.', ',') + ': ' + farbmath.rating(dE);
-    var payload = { total_g: grams, rgb: rgb, grams: {} };
-    rec.rows.forEach(function (r) { payload.grams[r.id] = r.grams; });
+    // Nur die fünf Farben C, M, Y, W, K in Gramm; die Firmware verteilt W auf ihre zwei Spritzen.
+    var payload = { grams: {} };
+    rec.rows.forEach(function (r) { if (r.grams > 0) payload.grams[r.id] = r.grams; });
     $('json').textContent = JSON.stringify(payload, null, 2);
   }
 
@@ -183,34 +221,145 @@
   $('resetPrims').addEventListener('click', function () {
     prims = JSON.parse(JSON.stringify(farbmath.DEFAULT_PRIMARIES)); savePrims(); renderPrims(); update();
   });
+  // ---- Gerät: Adresse, Aktionen, Statusabfrage.
   // Wird die Seite vom ESP32 selbst ausgeliefert, ist das Gerät die eigene Adresse.
   if (location.protocol.indexOf('http') === 0) $('devUrl').value = location.origin;
   function devBase() { return $('devUrl').value.replace(/\/+$/, ''); }
-  function post(path, body) {
-    return fetch(devBase() + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body || '{}' })
-      .then(function (r) { return r.json().then(function (j) { return r.ok ? j : Promise.reject(new Error(j.error || ('HTTP ' + r.status))); }); });
+
+  // Antwort immer als {ok, status, data}; data ist {} bei ungültigem JSON.
+  function api(path, opts) {
+    opts = opts || {};
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 4000) : null;
+    if (ctrl) opts.signal = ctrl.signal;
+    var done = function () { if (timer) clearTimeout(timer); };
+    return fetch(devBase() + path, opts).then(function (r) {
+      done();
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        return { ok: r.ok, status: r.status, data: j || {} };
+      });
+    }, function (e) { done(); throw e; });
   }
-  var pollTimer = null;
+  function post(path, bodyObj) {
+    return api(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyObj || {}) })
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.data.error || ('HTTP ' + r.status));
+        return r.data;
+      });
+  }
+  function msg(text, isErr) {
+    var m = $('devMsg');
+    m.textContent = text;
+    m.className = isErr ? 'err' : 'muted';
+  }
+  function run(path, bodyObj, okText) {
+    msg('sende …', false);
+    return post(path, bodyObj).then(function () { msg(okText || 'ok', false); poll(); })
+      .catch(function (e) {
+        var net = e && (e.name === 'AbortError' || e.name === 'TypeError');
+        msg('Fehler: ' + (net ? 'Keine Verbindung zum Gerät' : e.message), true);
+      });
+  }
+
+  var STATIONS = [
+    { id: 'W1', name: 'W Weiß', platz: 1 }, { id: 'Y', name: 'Y Gelb', platz: 2 },
+    { id: 'M', name: 'M Magenta', platz: 3 }, { id: 'C', name: 'C Cyan', platz: 4 },
+    { id: 'K', name: 'K Schwarz', platz: 5 }, { id: 'W2', name: 'W Weiß', platz: 6 }
+  ];
+  var FULL_ML = 50, LOW_ML = 5;
+  var STATE_TEXT = { idle: 'bereit', homing: 'Referenzfahrt läuft', moving: 'fährt', dosing: 'dosiert', error: 'Fehler' };
+  var fillEls = {};
+  (function buildFills() {
+    var box = $('fills');
+    STATIONS.forEach(function (st) {
+      var row = document.createElement('div'); row.className = 'fill';
+      var nm = document.createElement('span'); nm.textContent = st.name + ' (' + st.platz + ')';
+      var bar = document.createElement('div'); bar.className = 'bar';
+      var inner = document.createElement('i'); bar.appendChild(inner);
+      var val = document.createElement('span'); val.className = 'muted'; val.textContent = '–';
+      var btn = document.createElement('button'); btn.textContent = 'Nachgefüllt'; btn.dataset.refill = st.id;
+      row.appendChild(nm); row.appendChild(bar); row.appendChild(val); row.appendChild(btn);
+      box.appendChild(row);
+      fillEls[st.id] = { bar: bar, inner: inner, val: val };
+    });
+  })();
+  $('fills').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button'); if (!b || !b.dataset.refill) return;
+    run('/refill', { id: b.dataset.refill }, 'Spritze ' + b.dataset.refill + ' als voll gemerkt');
+  });
+
+  function num(v) { return typeof v === 'number' && isFinite(v) ? v : null; }
+  function fmt(v, d) { return v === null ? '–' : v.toFixed(d).replace('.', ','); }
+  function showStatus(s) {
+    var line = 'Status: ' + (STATE_TEXT[s.state] || s.state || '?');
+    if (s.homed === false) line += ' (nicht referenziert)';
+    line += ' · Waage ' + fmt(num(s.weight_g), 1) + ' g · Stößel ' + fmt(num(s.plunger_mm), 1) + ' mm';
+    $('devState').textContent = line;
+
+    var job = s.job || {};
+    var target = num(job.target_g), done = num(job.done_g);
+    var active = !!job.active && target !== null && target > 0;
+    $('jobBar').hidden = !active;
+    if (active) {
+      var d = done === null ? 0 : done;
+      $('jobFill').style.width = Math.max(0, Math.min(100, d / target * 100)) + '%';
+      var id = job.id === 'W1' || job.id === 'W2' ? 'W' : (job.id || '');
+      $('jobText').textContent = 'Dosiere ' + id + ': ' + fmt(d, 1) + ' von ' + fmt(target, 1) + ' g' +
+        (num(job.steps) ? ' (Schritt ' + (num(job.step) || 0) + '/' + job.steps + ')' : '');
+    } else {
+      $('jobText').textContent = '';
+    }
+
+    var e = $('devError');
+    e.hidden = !s.error;
+    e.textContent = s.error ? 'Fehler am Gerät: ' + s.error : '';
+
+    var low = [];
+    var fill = s.fill_ml || {};
+    STATIONS.forEach(function (st) {
+      var ml = num(fill[st.id]), el = fillEls[st.id];
+      if (ml === null) { el.val.textContent = '–'; el.inner.style.width = '0%'; return; }
+      el.inner.style.width = Math.max(0, Math.min(100, ml / FULL_ML * 100)) + '%';
+      el.val.textContent = fmt(ml, 0) + ' ml';
+      var isLow = ml < LOW_ML;
+      el.bar.className = isLow ? 'bar low' : 'bar';
+      if (isLow) low.push(st.name.charAt(0) + ' (Platz ' + st.platz + ')');
+    });
+    var w = $('lowWarn');
+    w.hidden = low.length === 0;
+    w.textContent = low.length ? 'Unter 5 ml: ' + low.join(', ') + '. Bald nachfüllen.' : '';
+  }
+
+  // Status alle 1 s abfragen, solange die Seite offen ist.
+  var pollTimer = null, polling = false;
   function poll() {
     clearTimeout(pollTimer);
-    fetch(devBase() + '/status').then(function (r) { return r.json(); }).then(function (s) {
-      var st = $('devStatus');
-      if (s.busy) { st.textContent = 'läuft, Station ' + s.station + ' …'; pollTimer = setTimeout(poll, 700); }
-      else if (s.error) { st.textContent = 'Fehler: ' + s.error; }
-      else {
-        var rest = Object.keys(s.stations).map(function (k) { return k + ' ' + s.stations[k].remaining_ml.toFixed(0) + ' ml'; }).join(', ');
-        st.textContent = 'fertig. Vorrat: ' + rest;
-      }
-    }).catch(function (e) { $('devStatus').textContent = 'Keine Verbindung: ' + e.message; });
+    if (polling) return;
+    polling = true;
+    api('/status').then(function (r) {
+      if (!r.ok) throw new Error(r.data.error || ('HTTP ' + r.status));
+      showStatus(r.data);
+    }).catch(function (e) {
+      $('devState').textContent = 'Status: Keine Verbindung zum Gerät (' + e.message + ')';
+    }).then(function () { polling = false; pollTimer = setTimeout(poll, 1000); });
   }
-  function run(path, body) {
-    $('devStatus').textContent = 'sende …';
-    post(path, body).then(function () { pollTimer = setTimeout(poll, 500); })
-      .catch(function (e) { $('devStatus').textContent = 'Fehler: ' + e.message; });
-  }
-  $('send').addEventListener('click', function () { run('/dispense', $('json').textContent); });
-  $('home').addEventListener('click', function () { run('/home'); });
-  $('stop').addEventListener('click', function () { run('/stop'); });
+  $('devUrl').addEventListener('change', poll);
+
+  $('send').addEventListener('click', function () {
+    var body;
+    try { body = JSON.parse($('json').textContent); } catch (e) { body = null; }
+    if (!body || !body.grams || Object.keys(body.grams).length === 0) { msg('Fehler: Das Rezept ist leer.', true); return; }
+    run('/dispense', body, 'Dosieren gestartet');
+  });
+  $('home').addEventListener('click', function () { run('/home', {}, 'Referenzfahrt gestartet'); });
+  $('tare').addEventListener('click', function () { run('/tare', {}, 'Waage tariert'); });
+  $('park').addEventListener('click', function () { run('/park', {}, 'Fährt in Parkposition'); });
+  $('stop').addEventListener('click', function () { run('/stop', {}, 'Gestoppt'); });
+  $('scale').addEventListener('click', function () {
+    var g = parseFloat($('knownG').value);
+    if (!(g > 0)) { msg('Fehler: Bitte das bekannte Gewicht in Gramm eintragen.', true); return; }
+    run('/scale', { known_g: g }, 'Waage kalibriert mit ' + fmt(g, 1) + ' g');
+  });
 
   // ---- Farbe aus Foto: Bild auf Canvas, Tippen liest 5x5 Pixel gemittelt.
   var canvas = $('canvas'), ctx = canvas.getContext('2d');
@@ -269,6 +418,7 @@
   renderPrims();
   renderRecipes();
   update();
+  poll();
 })();
 </script>
 </body>

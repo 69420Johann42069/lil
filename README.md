@@ -6,10 +6,10 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 
 - Acrylfarbe aus fünf 60-ml-Spritzen: Primär-Cyan, Primär-Magenta, Primär-Gelb, Titanweiß, Schwarz
 - Günstige Studienacryl in 500-ml-Flaschen als Vorrat, nachgefüllt wird direkt in die Spritze
-- Bauform Stand 5.1: schwarzer Flakon mit Goldlinien, Ø 204 mm, 407 mm hoch, sechs Spritzen im Karussell, zwei Schrittmotoren, Dosieren nach Gewicht mit Wägezelle, Becher in einer Schublade
+- Bauform Stand 6: schwarzer Flakon mit Goldlinien, Ø 204 mm, 407 mm hoch, sechs Spritzen im Karussell, zwei Schrittmotoren, Dosieren nach Gewicht mit Wägezelle, Becher in einer Schublade. Ohne Licht, alles aus PETG gedruckt (auch Gold und Scheiben), keine Lackierung
 - Bedienung nur im Browser, der ESP32 liefert die Seite selbst im WLAN aus
 - Gerät dosiert nur, kein Rührwerk
-- Elektronik auf Lochraster (ein Treiber), Druckteile aus dem eigenen Drucker (Anycubic Kobra 2 Pro)
+- Elektronik auf Lochraster (zwei Treiber), Druckteile aus dem eigenen Drucker (Anycubic Kobra 2 Pro) in PETG
 
 ## Aufbau des Repos
 
@@ -17,15 +17,15 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 |---|---|
 | `web/` | Web-App: Farbwahl, Foto, Rezept, gemerkte Farben, Kalibrierung, Gerätesteuerung |
 | `firmware/` | PlatformIO-Projekt für den ESP32 |
-| `hardware/` | Parameterblätter, OpenSCAD-Druckteile und Renderings (aktuell: Revolver) |
-| `electronics/` | Generator für die KiCad-Trägerplatine (Fünf-Motor-Variante, beim Revolver nicht nötig) |
+| `hardware/` | Parameterblätter, OpenSCAD-Druckteile und Renderings (aktuell: Flakon Stand 8) |
+| `electronics/` | `VERDRAHTUNG.md`: Verdrahtungsplan Stand 8 (Lochraster, Dupont). Die alte KiCad-Trägerplatine (Fünf-Motor-Variante) gilt nicht mehr |
 
 ## Stufen
 
 | Stufe | Was | Status |
 |---|---|---|
 | 0 | Web-App: Farbe wählen, Rezept in Gramm, mit Küchenwaage abwiegen | fertig, getestet |
-| 1 | Revolver mit einem Motor und Karussell | Konzept, Druckteile und Rendering entworfen, Firmware noch auf fünf Motoren, nichts auf Hardware getestet |
+| 1 | Flakon mit zwei Motoren und Spritzenkarussell | Stand 8: Druckteile (OpenSCAD), Rendering, 56 Kollisionsprüfungen, Firmware (zwei Motoren, Wägezelle, Hall, Dosieren nach Gewicht, Host-Test der Rechenfunktionen), Web-App und Verdrahtungsplan fertig, Build mit `pio run` und alles auf Hardware nicht getestet |
 | 2 | Kalibrierung mit Farbsensor | optional |
 
 ## Stufe 0: Web-App
@@ -62,9 +62,19 @@ Fünf Flaschen reichen für alles. Gesucht wird in Studienqualität (Flasche 250
 
 Nachfüllen: Kolben aus der Spritze ziehen, Farbe aus der Flasche einfüllen, Kolben wieder einsetzen, Düse nach oben, Luft rausdrücken. Flaschenfarbe ist dünner als Tubenfarbe und pumpt sich leichter.
 
-## Stand 5.1: Flakon (aktuelles Konzept)
+## Stand 6: Flakon aus PETG, ohne Licht (aktuelles Konzept)
 
-Entstanden aus der Kritik von vier Rollen (Kosten, Design, Ingenieur, Kunstliebhaberin), drei Konzepten und deren Bewertung. Maßgeblich ist `hardware/farbmischer_parameter.md` mit Stückliste, Verdrahtung und dem Abschnitt für die Firmware. Rendering: `hardware/rendering_farbmischer.png`, Kollisionsprüfung: `python3 hardware/render_farbmischer.py --pruefung`, Druckteile: `hardware/farbmischer.scad`. Gerät etwa 200 Euro.
+Entstanden aus der Kritik von vier Rollen (Kosten, Design, Ingenieur, Kunstliebhaberin), drei Konzepten und deren Bewertung (Stand 5.1), dann umgebaut auf den Wunsch „fast alles 3D-druckbar, keine LEDs, PETG“. Maßgeblich ist `hardware/farbmischer_parameter.md` mit Stückliste, Verdrahtung und dem Abschnitt für die Firmware. Rendering: `hardware/rendering_farbmischer.png`, Kollisionsprüfung: `python3 hardware/render_farbmischer.py --pruefung`, Druckteile: `hardware/farbmischer.scad` (Variable `teil`, jedes Teil liegt in Druckorientierung auf Z = 0; `openscad -o teil.stl -D 'teil="krone"' hardware/farbmischer.scad`). Gerät etwa 160 Euro, mit Startpaket und Farbe etwa 246 Euro.
+
+Was sich gegenüber Stand 5.1 ändert: LEDs entfallen komplett (der Fortschritt steht nur in der App). Alles ist PETG, kein Spachteln, kein Lack, kein Anreibewachs. Gold sind gedruckte Gold-PETG-Teile (Goldring, Goldband, Kronenring, Portalrahmen in drei Leistenarten, Lippe, Buchsenring, Namensschild-Schrift). Portalscheibe (zwei Hälften) und Fensterscheiben sind gedruckt (Rauch- und Klar-PETG), der Ausleger mit Stempel ersetzt den Winkelstahl. Die Teilung des Körpers bei Z 235 ist eine gewollte Schattenfuge. Details in Abschnitt 0 des Parameterblatts.
+
+**Stand 8 (Karussell direkt am Motor, Standard in `farbmischer.scad`):** Motor 2 sitzt mittig unter der Karussellplatte in einem gedruckten Kasten (Motorturm), kein Riemen, keine Welle, kein 70-Z-Rad, keine Pancake (beide Motoren sind derselbe NEMA 17, 34 mm). Filament zählt nicht mit. Aufbau auf Stand 7:
+
+Schnelles Rendering Stand 8 (aus den OpenSCAD-Teilen, Scheiben undurchsichtig dargestellt): `hardware/rendering_stand8_aussen.png` und `hardware/rendering_stand8_schnitt.png` (Längsschnitt, Motorturm blau).
+
+**Stand 7 Budget** (Schalter `budget`): ohne Feuchtrinne, Magnete an den Scheiben, gekaufte Linearlager und Gewindeeinsätze (Linearlager sind gedruckt, Ballast wird gratis mit Schrauben aus dem Arbeitsvorrat gefüllt; Portalscheiben, Fensterscheiben, Goldrahmen und Goldlippe bleiben, sie sind gedruckt und kosten nichts extra, die Scheiben werden geklebt), Gerät etwa 83 Euro, alles zusammen etwa 164 Euro, ohne Filament, Schrauben, Muttern, Scheiben und Kleber aus dem Arbeitsvorrat. Einkauf bei einem Shop (Amazon.de, Links, Preise teils unbelegt): `hardware/einkaufsliste_amazon.md`. Einkaufsliste mit Quellen und gekennzeichneten Schätzungen: `hardware/einkaufsliste.md`.
+
+Filament für das ganze Gerät (Stand 6): PETG schwarz etwa 1,4 kg (am besten glänzend für Sockel und Front, matt für Körper und Krone), Gold 35 g, Rauch-PETG 50 g, Klar-PETG 25 g, weiß 40 g.
 
 ## Stufe 1: Revolver (Stand 4, abgelöst)
 
@@ -130,7 +140,8 @@ Acryl härtet an der Düse in Minuten. Düsen nach jeder Session abwischen und m
 
 ## Offene Punkte
 
-- Druckteile des Revolvers in OpenSCAD rendern, eine Station probeweise drucken, Spritzenmaße nachmessen
-- Firmware auf zwei Motoren (Stößel, Karussell) und Kontakt-Dosierung umstellen (Software-Sitzung)
+- Ausleger aus PETG mit 250 N belasten (Nachweis steht im Parameterblatt, Abschnitt 16), Rauch- und Klarscheibe als Probe drucken, Goldleisten als Probe kleben (Abschnitt 17)
+- Spritzenmaße nachmessen und Druckteile einer Station probeweise drucken
+- Firmware auf zwei Motoren (Stößel, Karussell), Dosieren nach Gewicht und ohne LEDs umstellen (Software-Sitzung)
 - Karussell-Lagerung testen: Gleitlager PETG auf PETG oder Stahlkugeln in der Rille, Reibung muss unter dem Motormoment bleiben
 - Erster Hardwaretest ohne Farbe: Referenzfahrten beider Motoren, Kontakt-Taster, 40 Schritte je Station prüfen
