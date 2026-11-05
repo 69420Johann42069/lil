@@ -261,8 +261,8 @@ function fits(v) = v[0] <= bett_x && v[1] <= bett_y && v[2] <= bett_z;
 function fits_blatt(v) = v[0] <= teil_xy_blatt && v[1] <= teil_xy_blatt && v[2] <= teil_z_blatt;
 function fits_z(v) = v[2] <= teil_z_blatt;
 
-schritte_umdr_kar = 200 * 16 * 70 / 20;       // 11 200
-schritte_platz = schritte_umdr_kar / n_plaetze;   // 1600
+schritte_umdr_kar = 200 * 16;                 // Stand 8: Direktantrieb, 3200 (Stand 6 und 7 mit Riemen 70/20: 11 200)
+schritte_platz = schritte_umdr_kar / n_plaetze;   // 457,142857, nicht ganzzahlig: Firmware rechnet q = round(p * 3200 / 7)
 schritte_mm = 200 * 16 / 2;                   // T8 x 2: 1600
 schritte_ml = mm_je_ml * schritte_mm;         // 2857
 ul_je_schritt = 1000 / schritte_ml;           // 0,35
@@ -376,8 +376,8 @@ assert(spindel_unten_rest > 0, "Spindel endet über der Mutter bei S_min");
 assert(falz_t > 0 && falz_t * 2 + sp <= wand + 0.001, "Falz passt nicht in die Wand");
 assert(wand - fenster_fuge_t >= 0.6, "Wand unter der Schattenfuge unter 0,6 mm");
 assert(rolle_oben < z_platte0 + 0.6, "Laufrolle stößt oben an die Karussellplatte");
-assert(abs(schritte_platz - round(schritte_platz)) < 1e-9, "Schritte je Platz nicht ganzzahlig");
-assert(abs(schritte_umdr_kar - 11200) < 1e-9, "Schritte je Umdrehung Karussell nicht 11200");
+assert(abs(schritte_platz * n_plaetze - schritte_umdr_kar) < 1e-9 && abs(round(2 * schritte_platz) - 2 * schritte_platz) < 1, "Schritte je Platz stimmen nicht mit 3200 je Umdrehung überein");
+assert(abs(schritte_umdr_kar - 3200) < 1e-9, "Schritte je Umdrehung Karussell nicht 3200");
 assert(abs(s_weg - 95.7) < 0.1, "Stempelweg weicht vom Blatt ab");
 assert(abs(z_hoehe - 406.8) < 1e-6 && abs(z_hoehe - (z_kr0 + 65.8)) < 1e-6, "Gesamthöhe passt nicht zur Kronenhöhe 65,8");
 assert(gt2_ueberstand <= -0.5 + 1e-6, "GT2-Scheibe in voller Höhe stößt an den Kronendeckel");

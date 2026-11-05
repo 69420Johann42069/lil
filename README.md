@@ -17,15 +17,15 @@ Ein Geschenk: Tischgerät plus Web-App. Sie wählt eine Farbe am Handy (Farbwäh
 |---|---|
 | `web/` | Web-App: Farbwahl, Foto, Rezept, gemerkte Farben, Kalibrierung, Gerätesteuerung |
 | `firmware/` | PlatformIO-Projekt für den ESP32 |
-| `hardware/` | Parameterblätter, OpenSCAD-Druckteile und Renderings (aktuell: Flakon Stand 6) |
-| `electronics/` | Generator für die KiCad-Trägerplatine (Fünf-Motor-Variante, beim Revolver nicht nötig) |
+| `hardware/` | Parameterblätter, OpenSCAD-Druckteile und Renderings (aktuell: Flakon Stand 8) |
+| `electronics/` | `VERDRAHTUNG.md`: Verdrahtungsplan Stand 8 (Lochraster, Dupont). Die alte KiCad-Trägerplatine (Fünf-Motor-Variante) gilt nicht mehr |
 
 ## Stufen
 
 | Stufe | Was | Status |
 |---|---|---|
 | 0 | Web-App: Farbe wählen, Rezept in Gramm, mit Küchenwaage abwiegen | fertig, getestet |
-| 1 | Flakon mit zwei Motoren und Spritzenkarussell | Konzept Stand 6, Druckteile (OpenSCAD) und Rendering entworfen, Firmware noch auf fünf Motoren mit LED-Ring, nichts auf Hardware getestet |
+| 1 | Flakon mit zwei Motoren und Spritzenkarussell | Stand 8: Druckteile (OpenSCAD), Rendering, 56 Kollisionsprüfungen, Firmware (zwei Motoren, Wägezelle, Hall, Dosieren nach Gewicht, Host-Test der Rechenfunktionen), Web-App und Verdrahtungsplan fertig, Build mit `pio run` und alles auf Hardware nicht getestet |
 | 2 | Kalibrierung mit Farbsensor | optional |
 
 ## Stufe 0: Web-App
