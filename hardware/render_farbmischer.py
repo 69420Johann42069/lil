@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Rendering und Prüfung des Farbmischers nach hardware/farbmischer_parameter.md (Stand 6).
+Rendering und Prüfung des Farbmischers nach hardware/farbmischer.scad (Stand 8: Karussell direkt am Motor 2) und
+hardware/farbmischer_parameter.md.
 
 Aufruf:  python3 render_farbmischer.py              erzeugt rendering_farbmischer.png (Hero, Schnitt, Draufsicht, Maßskizze)
-         python3 render_farbmischer.py --pruefung   rechnet nur alle Kollisionsprüfungen aus Abschnitt 15 des Blatts
+         python3 render_farbmischer.py --pruefung   rechnet nur alle Kollisionsprüfungen (Abschnitt 15 des Blatts, für Stand 8 neu)
 
 Nur numpy, matplotlib und Standardbibliothek. Der Hero ist ein eigener Strahlverfolger (analytische Zylinder,
 Kegel, Ebenen) mit Umgebungslicht aus Softboxen, weichem Tischschatten und Spiegelung. Schnitt, Draufsicht und
 Maßskizze sind exakte 2D-Zeichnungen aus denselben Maßen. Stand 6: kein Licht im Gerät (nichts leuchtet),
 alles aus PETG gedruckt, Gold sind gedruckte Gold-PETG-Teile.
+Stand 7 (budget = 1): ohne Feuchtrinne mit Säulen, Abstreifhalter, Lippen und Schwamm, ohne Kabelclips; Ballastbecher gefüllt.
+Stand 8: Motor 2 (NEMA 17, 34 mm) steht mittig mit der Welle nach oben in einem vierwandigen Kasten, dem Motorturm; die
+Karussellplatte sitzt mit einer Nabe Ø 36 direkt auf der Motorwelle. Lagerbock, Welle Ø 8, 70-Z-Rad, Motor-2-Winkel, Riemen unten
+und Hallhalter entfallen. Hall-Sensor auf einem Pfosten des Turmtischs, Magnet in der Nabenunterseite.
 
 Koordinaten wie im Blatt: Ursprung Gerätemitte auf der Tischfläche, +X nach vorne (Nutzerin), +Y von vorne gesehen
 nach rechts, +Z oben, Winkel theta von +X aus gegen den Uhrzeigersinn von oben (0 Grad vorne, 90 Grad rechts).
@@ -29,7 +34,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_PNG = os.path.join(HERE, "rendering_farbmischer.png")
 
 # ============================================================
-# Maße aus farbmischer_parameter.md (Stand 6), Abschnitte 3 bis 7 und farbmischer.scad
+# Maße aus farbmischer.scad (Stand 8) und farbmischer_parameter.md, Abschnitte 3 bis 7
 # ============================================================
 PITCH = 360.0 / 7.0            # Platzteilung
 RS = 57.0                      # Stationsradius
@@ -42,9 +47,6 @@ Z_POD0, Z_POD1 = 24.4, 26.0                  # Podestscheibe 1,6 dick (PETG schw
 Z_BODEN0, Z_BODEN1 = 26.0, 27.5
 Z_BECHER0, Z_BECHER1 = 27.5, 60.5
 BECHER_RU, BECHER_RO = 23.5, 31.0
-Z_RINNE0, Z_RINNE1, Z_SCHWAMM = 54.0, 64.0, 65.5
-Z_RDECKEL = 65.2                             # Rinnendeckel 1,2 dick (Z 64 bis 65,2) mit sechs Löchern Ø 14
-Z_LIPPE0, Z_LIPPE1 = 60.0, 68.5
 Z_VENTIL0, Z_VENTIL1 = 67.5, 77.5            # Ventilspitze unten, Ventil bis Konusansatz
 Z_KONUS1 = 97.5                              # Konus bis Zylinderende
 Z_ZYL0, Z_ZYL1 = 97.5, 219.5
@@ -56,6 +58,19 @@ Z_LAUF0, Z_LAUF1 = 182.5, 188.5
 Z_ROLLE0, Z_ROLLE1 = 188.5, 210.5
 Z_BOCK0, Z_BOCK1 = 193.5, 211.0
 Z_PLATTE0, Z_PLATTE1 = 211.0, 223.0
+# Stand 8: Motorturm, Motor 2, Nabe (farbmischer.scad, Abschnitt 5 "Stand 8" und t_motorturm, t_karussell, t_grundplatte)
+TW_A, TW_W = 25.2, 3.0                       # Turm außen +-25,2 (Motor 42,3 plus 1 mm Luft je Seite plus Wand 3)
+NEMA_B, NEMA_L2 = 42.3, 34.0                 # Motor 2: derselbe NEMA 17 wie der Stößel
+SCHAFT_L, SCHAFT_D = 22.0, 5.0               # Welle ab Flansch, 22 angenommen [MESSEN], Ø 5 mit D-Fläche
+Z_M2_TOP = Z_PLATTE1 - 1.5 - SCHAFT_L        # Motorflansch 199,5 (Wellenende 1,5 unter der Plattenoberseite)
+Z_M2_0 = Z_M2_TOP - NEMA_L2                  # 165,5
+TISCH_T = 2.5
+Z_TISCH0, Z_TISCH1 = Z_M2_TOP, Z_M2_TOP + TISCH_T   # Tisch 199,5 bis 202
+HALL_R = 14.0                                # Hall-Pfosten bei r 14 (x 11 bis 17, y +-4,5)
+NABE_D, NABE_Z0 = 36.0, 207.0                # Nabe Ø 36, Z 207 bis 211
+HALL_TOP = NABE_Z0 - 1.5                     # Pfostenoberseite 205,5
+TW_RAHMEN_LUFT, TW_RAHMEN_AUSSEN = 0.2, 1.6  # Aufnahmerahmen in der Grundplatte: innen tw_a + 0,2, außen tw_a + 1,6, 2 hoch (Z 7 bis 9)
+SCHLITZ_R0 = 41.0                            # Innenrand des Zylinderschlitzes (scad: schlitz_r0 = 41 = st_r - schlitz_b / 2)
 Z_KP_LEER = 231.5
 Z_KP_50 = 320.8
 Z_KP_REST = Z_KP_LEER + 2 * ML
@@ -299,6 +314,12 @@ def pruefung(verbose=True):
         ("Krone oben (Lager 387,8 + 0,5 + GT2 16 + 0,5 + 2)", Z_BR1 + 0.5 + 16.0 + 0.5 + 2.0, H_GESAMT),
         ("Führungswelle oben (Länge 170)", Z_SMIN + SL_U + 170.0, Z_WELLE1),
         ("Welle unten (S_min - 10)", Z_SMIN + SL_U, 225.1),
+        # Stand 8: Blatt-Spalte = Wert aus farbmischer.scad (Abschnitt "Stand 8" und t_motorturm, t_karussell)
+        ("Motorflansch (Platte oben - 1,5 - Welle 22)", Z_PLATTE1 - 1.5 - SCHAFT_L, 199.5),
+        ("Motor 2 unten (Flansch - 34)", Z_M2_TOP - NEMA_L2, 165.5),
+        ("Turmtisch oben (Flansch + 2,5)", Z_M2_TOP + TISCH_T, 202.0),
+        ("Nabe unten (Platte unten - 4)", Z_PLATTE0 - 4.0, NABE_Z0),
+        ("Hall-Pfosten oben (Nabe unten - 1,5)", NABE_Z0 - 1.5, 205.5),
     ]
     for n, ist, blatt in chain:
         ketten.append((n, ist, blatt))
@@ -315,12 +336,11 @@ def pruefung(verbose=True):
         "Stempel": (sd_circle(STEMPEL_X, 0, STEMPEL_D / 2), (S, S + 8.0)),
         "Motor 1": (sd_box(-59.0, 0, 21.15, 21.15), (Z_M1_0, Z_M1_1)),
         "Laufring": (sd_ring(74.5, 86.5, 15.0), (Z_LAUF0, Z_LAUF1)),
-        "Feuchtrinne": (sd_ring(45.0, 69.0, 38.0), (Z_RINNE0, Z_RDECKEL)),
-        "Schwamm": (sd_ring(48.0, 66.0, 38.0), (Z_RINNE1, Z_SCHWAMM)),
+        # Stand 8: Motorturm (fest, Z 7 bis Tischoberkante 202) und Hall-Pfosten (Z 202 bis 205,5)
+        "Motorturm": (sd_box(0.0, 0.0, TW_A, TW_A), (Z_GRUND1, Z_TISCH1)),
+        "Hall-Pfosten": (sd_box(HALL_R, 0.0, 3.0, 4.5), (Z_TISCH1, HALL_TOP)),
         "Becher": (sd_circle(RS, 0, BECHER_RO), (Z_BECHER0, Z_BECHER1)),
         "Körperwand": (sd_wall(R_KOERPER_IN), (Z_KOERPER0, Z_KOERPER1)),
-        "Lippe +40": (sd_box(57.0, 0, 7.0, 0.75, 40.0), (Z_LIPPE0, Z_LIPPE1)),
-        "Lippe -40": (sd_box(57.0, 0, 7.0, 0.75, -40.0), (Z_LIPPE0, Z_LIPPE1)),
     }
     for a in ZUGANKER_W:
         ca, sa = math.cos(math.radians(a)), math.sin(math.radians(a))
@@ -331,8 +351,6 @@ def pruefung(verbose=True):
             for k in range(1, 7):
                 P = _rot(B, k * PITCH + phis)
                 for fn, (sdf, zt) in fest.items():
-                    if fn.startswith("Lippe") and name == "Ventil":
-                        continue          # das Ventil darf an der Lippe streifen (Überdeckung 1,0 gewollt)
                     g = gap3(sdf, P, (z0, z1), zt)
                     key = (fn, name)
                     res[key] = min(res.get(key, 1e9), g)
@@ -344,7 +362,7 @@ def pruefung(verbose=True):
     for nm, B, zz in (("Rollenbock", bock, (Z_BOCK0, Z_BOCK1)), ("Rolle", rolle, (Z_ROLLE0, Z_ROLLE1))):
         for j in range(7):
             P = _rot(B, (j + 0.5) * PITCH + phis)
-            for fn in ["Körperwand", "Becher", "Feuchtrinne"] + ["Zuganker %+d" % round(a) for a in ZUGANKER_W]:
+            for fn in ["Körperwand", "Becher", "Motorturm", "Hall-Pfosten"] + ["Zuganker %+d" % round(a) for a in ZUGANKER_W]:
                 sdf, zt = fest[fn]
                 key = (fn, nm)
                 res[key] = min(res.get(key, 1e9), gap3(sdf, P, zz, zt))
@@ -379,8 +397,6 @@ def pruefung(verbose=True):
 
     festE = {
         "Laufringende": (sd_ring(74.5, 86.5, 15.0), (Z_LAUF0, Z_LAUF1)),
-        "Feuchtrinne": (sd_ring(45.0, 69.0, 38.0), (Z_RINNE0, Z_RDECKEL)),
-        "Schwamm": (sd_ring(48.0, 66.0, 38.0), (Z_RINNE1, Z_SCHWAMM)),
         "Stempel/Arm": (lambda P: np.minimum(sd_circle(STEMPEL_X, 0, STEMPEL_D / 2)(P), sd_box(48, 0, 20, 12.5)(P)), (S, S + 16.0)),
     }
     for j in range(7):
@@ -456,8 +472,6 @@ def pruefung(verbose=True):
     wz_ecke = math.hypot(63.35, 70.0)
     wand_z202 = cone_r(Z_WZ1) - WAND
     motor1_schl = (59.0 - 21.15) - 34.0
-    rad70_becher = RS - 23.5 - cup_r(51.0)
-    motor2_lager = (57.8 - 21.15) - 20.0
     # Rollen im Stillstand gegen den Rand der Laufringlücke (Rolle +-11 tangential bei r 80, Lücke +-15)
     rolle_luecke = (abs(PITCH / 2) - math.degrees(11.0 / 80.0) - 15.0) * math.pi / 180.0 * 80.0
     # Nachbarventile
@@ -474,13 +488,13 @@ def pruefung(verbose=True):
     def boxd(c, x0, x1, y0, y1):
         return math.hypot(max(x0 - c[0], 0, c[0] - x1), max(y0 - c[1], 0, c[1] - y1))
     bl = []
+    rahmen_a = TW_A + TW_RAHMEN_AUSSEN                   # 26,8, Aufnahmerahmen außen
     for r_, a_ in BALLAST:
         c = (r_ * math.cos(math.radians(a_)), r_ * math.sin(math.radians(a_)))
         rr = 19.0
-        bl += [boxd(c, 50.65, 63.35, -70, 10) - rr, boxd(c, 20, 104, -35, 35) - rr, math.hypot(*c) - 20 - rr,
-               boxd(c, -78.95 - 3, -36.65 + 3, -21.15 - 12, 21.15 + 12) - rr, 100.0 - math.hypot(*c) - rr]
-        for aa in (95, -95, 145, -145):
-            bl.append(math.hypot(c[0] - 57 * math.cos(math.radians(aa)), c[1] - 57 * math.sin(math.radians(aa))) - 4 - rr)
+        # Stand 8: Motorturm mit Aufnahmerahmen (außen +-26,8) statt Lagerbock und Motor 2; Rinnensäulen entfallen (budget = 1)
+        bl += [boxd(c, 50.65, 63.35, -70, 10) - rr, boxd(c, 20, 104, -35, 35) - rr,
+               boxd(c, -rahmen_a, rahmen_a, -rahmen_a, rahmen_a) - rr, 100.0 - math.hypot(*c) - rr]
         for aa in ZUGANKER_W:
             bl.append(math.hypot(c[0] - ZUGANKER_R * math.cos(math.radians(aa)), c[1] - ZUGANKER_R * math.sin(math.radians(aa))) - 2.5 - rr)
     ballast_min = min(bl)
@@ -497,21 +511,57 @@ def pruefung(verbose=True):
     ausleger_smin = min(gap3(sdf, B, zs, zt) for B, zs in teile_smin for sdf, zt in unten_smin)
     goldring_falz = R_GOLDRING_IN - R_SOCKELFALZ                  # 97,3 gegen 97,1
 
+    # ---- neue Prüfungen Stand 8: Motorturm, Nabe, Welle (Maße aus farbmischer.scad, Konstanten oben)
+    turm_sd = sd_box(0.0, 0.0, TW_A, TW_A)
+    turm_B = b_box(0.0, 0.0, TW_A, TW_A, 0.25)                    # Turmwand außen, Z 7 bis 202
+    rahmen_B = b_box(0.0, 0.0, rahmen_a, rahmen_a, 0.25)          # Aufnahmerahmen außen (Z 7 bis 9)
+    z_turm, z_rahmen = (Z_GRUND1, Z_TISCH1), (Z_GRUND1, Z_GRUND1 + 2.0)
+    turm_ecke = math.hypot(TW_A, TW_A)                            # 35,64
+    # Turm gegen Spritzenzylinder (Ø 30 bei r 57): Mittelpunkt in 0,05-Grad-Schritten über die ganze Drehung
+    th_f = np.radians(np.arange(0.0, 360.0, 0.05))
+    zyl_c = np.stack([RS * np.cos(th_f), RS * np.sin(th_f)], 1)
+    turm_zyl = min(float(turm_sd(zyl_c).min()) - 15.0, res[("Motorturm", "Zylinder")])
+    turm_schlitz = SCHLITZ_R0 - turm_ecke                         # Turmkante r 35,64 gegen Innenrand des Zylinderschlitzes r 41
+    turm_lauf = gap3(sd_ring(74.5, 86.5, 15.0), turm_B, z_turm, (Z_LAUF0, Z_LAUF1))
+    turm_bock = min(res[("Motorturm", "Rollenbock")], res[("Motorturm", "Rolle")], res[("Hall-Pfosten", "Rollenbock")], res[("Hall-Pfosten", "Rolle")])
+    turm_rahmen = (TW_A + TW_RAHMEN_LUFT) - TW_A                  # Rahmen innen tw_a + 0,2 gegen Turm außen tw_a
+    sd_nabe = sd_circle(0.0, 0.0, NABE_D / 2)
+    pfosten_B = b_box(HALL_R, 0.0, 3.0, 4.5, 0.25)
+    assert float(sd_nabe(pfosten_B).max()) < 0 and NABE_D / 2 <= TW_A, "Nabe liegt nicht über Pfosten und Tisch"
+    nabe_tisch = NABE_Z0 - Z_TISCH1                               # Nabe unten 207 gegen Tischoberkante 202
+    nabe_hall = gap3(sd_nabe, pfosten_B, (Z_TISCH1, HALL_TOP), (NABE_Z0, Z_PLATTE0))
+    wellenende = Z_PLATTE1 - (Z_M2_TOP + SCHAFT_L)                # Wellenende gegen Plattenoberseite
+    sackloch_luft = (Z_PLATTE1 - 1.5) - (Z_M2_TOP + SCHAFT_L)     # Wellenende gegen Boden der Sackbohrung (scad: bis 1,5 unter die Oberseite)
+    zelle_x_ = 57.0                                               # Podest Ø 60 um die Becherachse X 57, Z 24,4 bis 26
+    turm_podest = min(gap3(turm_sd, b_circle(zelle_x_, 0.0, 30.0, 720), (Z_POD0, Z_POD1), z_turm),
+                      gap3(turm_sd, b_circle(zelle_x_, 0.0, 7.0, 120), (Z_WZ1, Z_POD0), z_turm))
+    turm_podest_f = min(turm_podest, gap3(sd_box(0.0, 0.0, rahmen_a, rahmen_a), b_circle(zelle_x_, 0.0, 30.0, 720), (Z_POD0, Z_POD1), z_rahmen))
+    # Platinenhalter (zwei Leisten 4 x 4 bei X -49 und 45, Y -81 +-2, Z 7 bis 60) und Platine (Ebene Y -81 +-1, X +-45, Z 30 bis 100)
+    turm_platine = min(
+        min(gap3(sd_box(x0 + 2.0, PLATINE_Y, 2.0, 2.0), rahmen_B, z_rahmen, (Z_GRUND1, 60.0)) for x0 in (-49.0, 45.0)),
+        min(gap3(sd_box(x0 + 2.0, PLATINE_Y, 2.0, 2.0), turm_B, z_turm, (Z_GRUND1, 60.0)) for x0 in (-49.0, 45.0)),
+        gap3(sd_box(0.0, PLATINE_Y, 45.0, 1.0), turm_B, z_turm, (30.0, 100.0)))
+    # Schienen (Y +-32 bis 35): Pfosten X 20 bis 28 (Z 7 bis 22,5), Balken X 20 bis 98 (Z 22,5 bis 26,5)
+    turm_schiene = min(
+        min(gap3(sd_box(24.0, sy * 33.5, 4.0, 1.5), rahmen_B, z_rahmen, (Z_GRUND1, 22.5)),
+            gap3(sd_box(59.0, sy * 33.5, 39.0, 1.5), turm_B, z_turm, (22.5, 26.5))) for sy in (-1, 1))
+    # Schublade (X 27,2 bis 110, Y +-35, Z 26 bis 45): hinten gegen die Turmwand, negativ = Durchdringung
+    turm_schublade = gap3(sd_box(68.6, 0.0, 41.4, 35.0), turm_B, z_turm, (Z_BODEN0, 45.0))
+
     R = res
     E = ent
-    # Nummerierung fortlaufend 1 bis 50 (Stand 6), Zuordnung alt (Stand 5.1) -> neu:
-    #   1-10 -> 1-10 | neu 11, 12, 13 (Ausleger Park/Brücke, Stempelfuß/Kolbenplatte, Ausleger S_min) | 11-15 -> 14-18 | 17-32 -> 19-34
-    #   34 -> 35 | 36-42 -> 36-42 | 44-47 -> 43-46 | neu 47 (Goldring gegen Sockelfalz) | 48, 49 -> 48, 49 | 51 -> 50
-    #   entfallen (nur LED): 16 LED-Träger/Kolbenplatte, 33 Motor 1/LED-Träger, 35 Zuganker/LED-Oberkante, 43 Podest/LED-Ring,
-    #   50 Vitrinen-LED/Zylinder. Das Blatt-Maß der neuen Zeilen ist der hier gerechnete Wert (das Blatt wird nachgezogen).
+    # Nummerierung fortlaufend 1 bis N (Stand 8). Gegenüber Stand 6 (50 Prüfungen) entfallen gegenstandslos:
+    #   Feuchtrinne gegen Ventil, Schwamm nass gegen Ventil, Abstreiflippe gegen Konus, Entnahme Ventil/Konus gegen Feuchtrinne
+    #   (Stand 7: keine Feuchtrinne), GT2-Rad 70 Z gegen Becher (Rad entfällt), Motor 2 gegen Lagerbock (Lagerbock und Pancake entfallen).
+    # Neu (Stand 8): Motorturm gegen Spritzenzylinder, gegen Zylinderschlitz, gegen Laufring, gegen Rollenböcke, gegen Aufnahmerahmen,
+    #   Nabe gegen Tisch und Hall-Pfosten, Wellenende gegen Plattenoberseite, Turm gegen Podest, Platinenhalter, Schienen und Schublade.
+    #   Das Blatt-Maß der neuen Zeilen ist der hier gerechnete Wert (das Blatt wird nachgezogen).
     rows_roh = [
         ("Schlitten tiefste Stellung gegen Karussellplatte oben", 2.0, Z_SMIN + SL_U - Z_PLATTE1, 2.07, ""),
-        ("Wellenende Ø10 gegen Karussellplatte oben", 2.0, (Z_SMIN + SL_U) - Z_PLATTE1, 2.07, ""),
+        ("Führungswellenende Ø10 gegen Karussellplatte oben", 2.0, (Z_SMIN + SL_U) - Z_PLATTE1, 2.07, ""),
         ("Laufring (fest, innen r 74,5) gegen Spritzenzylinder beim Drehen", 2.0, R[("Laufring", "Zylinder")], 2.50, "dreht"),
         ("Zuganker gegen Rollenbock beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rollenbock")] for a in ZUGANKER_W), 2.50, "dreht"),
         ("Zuganker gegen Laufrolle beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Rolle")] for a in ZUGANKER_W), 3.78, "dreht"),
-        ("Feuchtrinne gegen Ventil beim Drehen", 2.0, R[("Feuchtrinne", "Ventil")], 2.30, "dreht"),
-        ("Schwamm nass gegen Ventil", 1.5, R[("Schwamm", "Ventil")], 2.00, "dreht"),
         ("Schlitten (r 34) gegen Kolbenplatten beim Drehen", 2.0, R[("Schlitten", "Kolbenplatte")], 4.00, "dreht"),
         ("Schlitten tief gegen Nachbar-Kolbenplatten", 2.0, R[("Schlitten tief", "Nachbar-Kolbenplatte")], 4.00, ""),
         ("Stempel in Park gegen Kolbenplatte 50 ml", 10.0, S - Z_KP_50, 10.00, ""),
@@ -520,7 +570,6 @@ def pruefung(verbose=True):
         ("Ausleger in S_min gegen Karussellplatte und Laufring", 2.0, ausleger_smin, 12.07, ""),
         ("Führungswellen Ø10 gegen Flansch beim Drehen", 2.0, R[("Führungswelle", "Flansch")], 7.93, "dreht"),
         ("Zuganker gegen Flansch beim Drehen", 2.0, min(R[("Zuganker %+d" % round(a), "Flansch")] for a in ZUGANKER_W), 6.91, "dreht"),
-        ("Abstreiflippe gegen Konus (nur das Ventil darf streifen)", 2.0, min(R[("Lippe +40", "Konus")], R[("Lippe -40", "Konus")]), 9.00, "dreht"),
         ("Rollenbock gegen Körperwand", 2.0, R[("Körperwand", "Rollenbock")], 10.90, "dreht"),
         ("Arm und Stempel beim Dosieren (tief) gegen Nachbar-Kolbenplatten", 3.0,
          min(R[("Arm tief", "Nachbar-Kolbenplatte")], R[("Stempel tief", "Nachbar-Kolbenplatte")]), 13.07, ""),
@@ -536,14 +585,23 @@ def pruefung(verbose=True):
         ("Entnahme: Kolbenplatte gegen Stempel oben", 3.0, E[("Stempel/Arm", "Kolbenplatte")], 10.00, "Entnahme"),
         ("Entnahme: Kolbenplatte gegen Nachbar-Kolbenplatten", 3.0, E[("Nachbar Kolbenplatte", "Kolbenplatte")], 11.46, "Entnahme"),
         ("Entnahme: Zylinder gegen Nachbarzylinder", 3.0, E[("Nachbar Zylinder", "Zylinder")], 19.46, "Entnahme"),
-        ("Entnahme: Ventil und Konus gegen Feuchtrinne", 3.0, min(E[("Feuchtrinne", "Ventil")], E[("Feuchtrinne", "Konus")]), 30.68, "Entnahme"),
         ("Flanschtaschen untereinander (Innenecken R 5)", 2.0, g_pocket, 3.12, ""),
         ("Zylinderschlitze untereinander", 4.0, g_slot, 17.46, ""),
         ("Rollenbock gegen Zylinderschlitz der Platte", 3.0, g_bock_slot, 5.51, ""),
         ("Motor 1 gegen Schlitten in Park", 2.0, motor1_schl, 3.85, ""),
         ("Stellring gegen Schlittentasche (Tasche 9 tief, Eintauchen 6)", 2.0, 9.0 - (S + SL_U + SL_H - (Z_BR0 - 8.0)), 3.00, ""),
-        ("GT2-Rad 70 Z gegen Becher (Z 43 bis 51)", 3.0, rad70_becher, 4.66, ""),
-        ("Motor 2 gegen Lagerbock", 3.0, motor2_lager, 16.65, ""),
+        ("Motorturm (Ecke r 35,6) gegen Spritzenzylinder beim Drehen", 2.0, turm_zyl, turm_zyl, "dreht"),
+        ("Turmkante r 35,6 gegen Innenrand des Zylinderschlitzes (r 41)", 2.0, turm_schlitz, turm_schlitz, "Grundriss"),
+        ("Motorturm gegen Laufring (r 74,5)", 2.0, turm_lauf, turm_lauf, ""),
+        ("Motorturm und Hall-Pfosten gegen Rollenböcke und Rollen beim Drehen", 2.0, turm_bock, turm_bock, "dreht"),
+        ("Motorturm gegen Aufnahmerahmen der Grundplatte (Luft je Seite)", 0.2, turm_rahmen, turm_rahmen, ""),
+        ("Nabe unten (Z 207) gegen Turmtisch oben (Z 202)", 2.0, nabe_tisch, nabe_tisch, ""),
+        ("Nabe unten gegen Hall-Pfosten oben (Z 205,5), Magnet sitzt darüber", 1.0, nabe_hall, nabe_hall, ""),
+        ("Wellenende (Ø 5, 22 lang) unter der Plattenoberseite", 1.0, wellenende, wellenende, "Länge angenommen"),
+        ("Motorturm gegen Podest Ø 60 und Stiel", 1.5, turm_podest_f, turm_podest_f, ""),
+        ("Motorturm gegen Platinenhalter und Platine", 2.0, turm_platine, turm_platine, ""),
+        ("Motorturm und Aufnahmerahmen gegen Schienen (Pfosten und Balken)", 2.0, turm_schiene, turm_schiene, ""),
+        ("Schublade hinten (X 27,2) gegen Motorturm (außen X 25,2)", 2.0, turm_schublade, turm_schublade, ""),
         ("Zuganker -32 gegen Wägezelle", 3.0, gap_wz_anker, 10.90, ""),
         ("Zuganker ± 32 gegen Schublade (Wand | Schiene)", 3.0, min(gap_sch_wand, gap_sch_schiene), 10.46, "Wand %.2f, Schiene %.2f" % (gap_sch_wand, gap_sch_schiene)),
         ("Platinenecke gegen Hülle (Z 97 bis 100)", 2.0, wand_z92 - platine_ecke, 2.86, ""),
@@ -562,10 +620,10 @@ def pruefung(verbose=True):
     # ---- Zusatzprüfungen (Hinweise, nicht im Blatt)
     extra += [
         ("Z1", "Mutter M5 verdreht (Ecke 4,62 außen) gegen Körperwand, falls die Tasche fehlt", 1.0, R_KOERPER_IN - (ZUGANKER_R + MUTTER_ECK)),
-        ("Z2", "Feuchtrinnen-Ende (theta +-38) gegen Becherrand (Dosierstellung, Z 54 bis 60,5)", 3.0,
-         float(sd_ring(45.0, 69.0, 38.0)(b_circle(RS, 0, cup_r(60.5), 360)).min())),
-        ("Z3", "Schubladen-Hinterkante (X 22) gegen Lagerbock (r 20)", 2.0, 22.0 - 20.0),
-        ("Z4", "Fenster oben (Z 180) gegen Laufring unten (Z 182,5)", 2.0, Z_LAUF0 - Z_FENSTER1),
+        ("Z2", "Fenster oben (Z 180) gegen Laufring unten (Z 182,5)", 2.0, Z_LAUF0 - Z_FENSTER1),
+        ("Z3", "Hall-Pfosten oben (Z 205,5) gegen Plattenunterseite (Z 211)", 2.0, Z_PLATTE0 - HALL_TOP),
+        ("Z4", "Wellenende gegen Boden der Sackbohrung (Welle 22 angenommen)", 0.0, sackloch_luft),
+        ("Z5", "Nabe Ø 36 (r 18) gegen Turmtisch-Kante (X 25,2), nur Grundriss", 2.0, TW_A - NABE_D / 2),
     ]
     if verbose:
         _print_pruefung(rows, extra, ketten, time.time() - t0)
@@ -575,7 +633,7 @@ def pruefung(verbose=True):
 def _print_pruefung(rows, extra, ketten, dt):
     line = "=" * 118
     print(line)
-    print("PRÜFUNG nach farbmischer_parameter.md, Stand 6, Abschnitt 15 (Maße in mm, negativ = Durchdringung, nichts wird verändert)")
+    print("PRÜFUNG Stand 8 (farbmischer.scad, Budget; Abschnitt 15 des Blatts neu gerechnet; Maße in mm, negativ = Durchdringung, nichts wird verändert)")
     print("Drehprüfungen: Karussell 0 bis 359 Grad in 1-Grad-Schritten, vier Füllstände (leer, 2 ml Rest, halb, 50 ml), sechs Stationen,")
     print("sieben Rollenböcke und Rollen drehen mit. Entnahme: Station vorne, Spritze radial 0 bis 130 mm. 2D exakt, 3D als Prismen.")
     print(line)
@@ -1002,30 +1060,29 @@ def build_scene(syr_fill=Z_KP_50, ziel=True):
     # ---- Innenleben
     I = lambda p: (setattr(p, "interior", True), intr.append(p))[1]
     I(Disc(7.0, 0.0, 100.0, "innen"))                                     # Grundplatte
-    I(Frustum(20.0, 7.0, 20.0, 40.0, "innen_hell"))                       # Lagerbock
-    I(Disc(40.0, 0.0, 20.0, "innen_hell"))
-    I(Frustum(23.5, 43.0, 23.5, 51.0, "innen_hell"))                      # GT2-Rad 70 Z
-    I(Disc(51.0, 0.0, 23.5, "innen_hell"))
+    # Stand 8: Motorturm (vierwandiger Kasten, Motor 2 darin), Aufnahmerahmen, Hall-Pfosten, Motorwelle und Nabe der Karussellplatte
+    I(Box(-(TW_A + TW_RAHMEN_AUSSEN), TW_A + TW_RAHMEN_AUSSEN, -(TW_A + TW_RAHMEN_AUSSEN), TW_A + TW_RAHMEN_AUSSEN, Z_GRUND1, Z_GRUND1 + 2.0, "innen_hell"))
+    I(Box(-TW_A, TW_A, -TW_A, TW_A, Z_GRUND1, Z_TISCH1, "innen_hell"))
+    I(Box(HALL_R - 3.0, HALL_R + 3.0, -4.5, 4.5, Z_TISCH1, HALL_TOP, "innen_hell"))
+    I(Frustum(SCHAFT_D / 2, Z_TISCH1, SCHAFT_D / 2, NABE_Z0, "stahl"))
+    I(Frustum(NABE_D / 2, NABE_Z0, NABE_D / 2, Z_PLATTE0, "innen"))
+    I(Disc(NABE_Z0, 0.0, NABE_D / 2, "innen"))
     # Wägezelle und Stufe der Bühne
     I(Box(50.65, 63.35, -70.0, 10.0, Z_WZ0, Z_WZ1, "stahl"))
     I(Frustum(30.0, Z_POD0, 30.0, Z_POD1, "podest", cx=RS))               # Podestscheibe Ø 60, PETG schwarz
     I(Disc(Z_POD1, 0.0, 30.0, "podest", cx=RS))
     # Schublade (PETG weiß): Boden, Seitenwände
-    I(Box(22.0, 104.0, -33.0, 33.0, Z_BODEN0, Z_BODEN1, "schublade"))
-    I(Box(22.0, 104.0, -35.0, -33.0, Z_BODEN0, 45.0, "schublade"))
-    I(Box(22.0, 104.0, 33.0, 35.0, Z_BODEN0, 45.0, "schublade"))
+    I(Box(27.2, 104.0, -33.0, 33.0, Z_BODEN0, Z_BODEN1, "schublade"))
+    I(Box(27.2, 104.0, -35.0, -33.0, Z_BODEN0, 45.0, "schublade"))
+    I(Box(27.2, 104.0, 33.0, 35.0, Z_BODEN0, 45.0, "schublade"))
     # Becher mit Farbe
     I(Frustum(BECHER_RU, Z_BECHER0, BECHER_RO, Z_BECHER1, "becherwand", cx=RS))
     zp = Z_BECHER0 + 22.5
     rp = lambda z: BECHER_RU + (BECHER_RO - BECHER_RU) * (z - Z_BECHER0) / (Z_BECHER1 - Z_BECHER0) - 0.8
     I(Frustum(rp(Z_BECHER0 + 1.0), Z_BECHER0 + 1.0, rp(zp), zp, "farbe_ziel", cx=RS))
     I(Disc(zp, 0.0, rp(zp), "farbe_ziel", cx=RS))
-    # Feuchtrinne mit Schwamm
-    cutR = lambda x, y, z: np.where(np.abs(np.degrees(np.arctan2(y, x))) < 38.0, M_LOCH, 0)
-    I(Frustum(69.0, Z_RINNE0, 69.0, Z_RINNE1, "innen_hell", cut=cutR))
-    I(Frustum(45.0, Z_RINNE0, 45.0, Z_RINNE1, "innen_hell", cut=cutR))
-    I(Disc(Z_RINNE1, 45.0, 69.0, "innen_hell", cut=cutR))
-    I(Disc(Z_RDECKEL, 45.0, 69.0, "innen_hell", cut=cutR))              # Rinnendeckel
+    # Stand 7: keine Feuchtrinne (budget = 1). Laufringlücke +-15 Grad vorne (lr_offen)
+    cutR = lambda x, y, z: np.where(np.abs(np.degrees(np.arctan2(y, x))) < 15.0, M_LOCH, 0)
     # Karussell
     I(Frustum(R_PLATTE, Z_PLATTE0, R_PLATTE, Z_PLATTE1, "innen"))
     I(Disc(Z_PLATTE1, 0.0, R_PLATTE, "innen"))
@@ -1650,25 +1707,20 @@ def draw_schnitt(ax):
         for zm in (Z_LAUF0 - 4.0, Z_LAUF1, 331.0, Z_BR0 - 4.0):
             R(cx - 4.0, cx + 4.0, zm, zm + 4.0, "#A9ABB1", ec="#6E7076", lw=0.3, z=3, alpha=0.8)   # Muttern M5
         R(cx - 5.0, cx + 5.0, 333.0, 336.0, "#3A3A40", ec="none", z=3, alpha=0.8)                   # Fugenhalter unter dem Goldband
-    # ---- Lagerbock, Welle, Lager
-    R(-20, -11, 7, 40, "#3A3A40", z=6)
-    R(11, 20, 7, 40, "#3A3A40", z=6)
-    R(-11, 11, 10, 17, "#76787E", z=6, lw=0.4)
-    R(-11, 11, 33, 40, "#76787E", z=6, lw=0.4)
-    R(-4, 4, 9, 221, STEELC, ec="#55575C", lw=0.5, z=7)
-    # GT2-Rad 70 Z mit Nabe und Magnet
-    R(-23.5, 23.5, 43, 51, "#3C3C42", z=6)
-    R(-10, 10, 41, 43, "#3C3C42", z=6)
-    for k in range(-5, 6):
-        R(k * 4 - 0.7, k * 4 + 0.7, 51, 52, "#3C3C42", ec="none", z=6)
-    R(13, 17, 41.4, 43, "#D63A3A", ec="none", z=7)
-    R(13.5, 16.5, 39.9, 41.4, "#2E7BD0", ec="none", z=7)                # Hall-Sensor unter dem Magneten
-    # Motor 2 (Pancake) mit Riemenscheibe und Riemen
-    R(-78.95, -36.65, 17, 40, "#4A4A50", z=6)
-    R(-59.3, -56.3, 40, 51, STEELC, ec="none", z=6)
-    R(-65.8, -49.8, 43, 51, "#6E7076", z=6, lw=0.4)
-    Ln([-49.8, -23.5], [43.4, 43.4], c="#222", lw=1.0)
-    Ln([-49.8, -23.5], [50.6, 50.6], c="#222", lw=1.0)
+    # ---- Stand 8: Motorturm (Schnitt Y = 0), Motor 2 mit Welle nach oben, Tisch mit Zentrierbund Ø 22,5, Hall-Pfosten, Aufnahmerahmen
+    TURM = "#3A3A40"
+    ri_ = TW_A - TW_W                                   # Innenseite der Turmwand 22,2
+    for sg in (-1, 1):
+        R(min(sg * ri_, sg * TW_A), max(sg * ri_, sg * TW_A), Z_GRUND1, Z_TISCH1, TURM, z=6)          # Wand
+        R(min(sg * 11.25, sg * TW_A), max(sg * 11.25, sg * TW_A), Z_M2_TOP, Z_TISCH1, TURM, z=6)       # Tisch, in der Mitte Zentrierbund Ø 22,5
+    R(-NEMA_B / 2, NEMA_B / 2, Z_M2_0, Z_M2_TOP, "#4A4A50", z=6)                                       # Motor 2, NEMA 17, 34 mm
+    R(-NEMA_B / 2, NEMA_B / 2, Z_M2_TOP - 2.0, Z_M2_TOP, "#5A5A62", ec="none", z=6)                    # Flanschplatte (angedeutet)
+    R(-SCHAFT_D / 2, SCHAFT_D / 2, Z_M2_TOP, Z_M2_TOP + SCHAFT_L, STEELC, ec="#55575C", lw=0.5, z=8)    # Welle Ø 5, 22 lang
+    R(HALL_R - 3.0, HALL_R + 3.0, Z_TISCH1, HALL_TOP, TURM, z=6)                                       # Hall-Pfosten
+    R(HALL_R - 2.2, HALL_R + 2.2, HALL_TOP - 1.2, HALL_TOP, "#2E7BD0", ec="none", z=7)                 # Hall-Sensor liegt flach in der Tasche
+    R(-(TW_A + TW_RAHMEN_AUSSEN), -(TW_A + TW_RAHMEN_LUFT), Z_GRUND1, Z_GRUND1 + 2.0, "#4C4C54", ec="none", z=6)   # Aufnahmerahmen
+    R(TW_A + TW_RAHMEN_LUFT, TW_A + TW_RAHMEN_AUSSEN, Z_GRUND1, Z_GRUND1 + 2.0, "#4C4C54", ec="none", z=6)
+    R(HALL_R - 2.5, HALL_R + 2.5, NABE_Z0, NABE_Z0 + 2.0, "#D63A3A", ec="none", z=8)                    # Magnet 5 x 2 in der Nabenunterseite
     # ---- Wägezelle, Podest, Schublade, Becher
     R(50.65, 63.35, Z_WZ0, Z_WZ1, "#C9CCD2", ec="#6E7076", lw=0.6, z=6, hatch="////")
     R(53, 61, 6.0, Z_WZ0 - 0.0, "#F0B040", ec="none", z=6)
@@ -1685,17 +1737,10 @@ def draw_schnitt(ax):
     zielc = "#8E3B76"
     P([(RS - cup_r(Z_BECHER0 + 0.9) + 0.9, Z_BECHER0 + 0.9), (RS - cup_r(zf) + 0.9, zf), (RS + cup_r(zf) - 0.9, zf),
        (RS + cup_r(Z_BECHER0 + 0.9) - 0.9, Z_BECHER0 + 0.9)], zielc, ec="none", z=7)
-    # ---- Feuchtrinne (hinten geschnitten), Schwamm
-    R(-69, -45, Z_RINNE0, Z_RINNE0 + 2, "#2B2B30", z=6)
-    R(-69, -45, Z_RINNE1, Z_RDECKEL, "#2B2B30", z=6)                     # Deckel
-    R(-69, -67, Z_RINNE0, Z_RINNE1, "#2B2B30", z=6)
-    R(-47, -45, Z_RINNE0, Z_RINNE1, "#2B2B30", z=6)
-    R(-67, -47, Z_RINNE0 + 2, Z_RINNE1, "#D9D3C0", ec="#8A8470", lw=0.4, z=6)
-    R(-67, -47, Z_RINNE0 + 2, Z_RINNE0 + 7, "#9CC9E4", ec="none", z=6, alpha=0.85)
     # ---- Karussell: Platte, Nabe, Laufring, Rolle (hinten bei 180 Grad), Kragen
     plate = [(-R_PLATTE, Z_PLATTE0), (41, Z_PLATTE0), (41, Z_FL0), (34, Z_FL0), (34, Z_PLATTE1), (-R_PLATTE, Z_PLATTE1)]
     P(plate, "#34343A", z=6)
-    R(-15, 15, 205, Z_PLATTE0, "#34343A", z=6)
+    R(-NABE_D / 2, NABE_D / 2, NABE_Z0, Z_PLATTE0, "#34343A", z=6)                          # Nabe Ø 36 direkt auf der Motorwelle
     R(-86.5, -74.5, Z_LAUF0, Z_LAUF1, "#4C4C54", z=6)
     R(-83.5, -76.5, Z_ROLLE0, Z_ROLLE1, STEELC, ec="#55575C", lw=0.5, z=7)
     R(-85.5, -74.5, Z_BOCK0, Z_PLATTE0, "#4C4C54", ec="none", z=5, alpha=0.65)
@@ -1770,19 +1815,18 @@ def draw_schnitt(ax):
         (-100.8, 235.0, "Schattenfuge Körperteilung", "V-Nut 1,0 x 0,5, Z 235 (Kerbe überhöht)", "l"),
         (-97.2, 275.0, "Körper Ø 196", "PETG matt, Wand 1,6", "l"),
         (-80.0, 200.0, "Laufrolle 608 und Laufring", "7 Rollen", "l"),
-        (-60.0, 217.0, "Karussellplatte Ø 171", "PETG schwarz, Nabe zentriert", "l"),
-        (-4.0, 150.0, "Karussellwelle Ø 8", "Lagerbock mit zwei 608", "l"),
+        (-60.0, 217.0, "Karussellplatte Ø 171", "PETG schwarz, läuft auf 7 Rollen", "l"),
+        (-18.0, 209.0, "Nabe Ø 36 auf der Motorwelle", "Ø 5 mit D-Fläche, Madenschraube M3", "l"),
+        (-8.0, 190.0, "Motor 2, NEMA 17 (34 mm)", "Welle nach oben, direkt am Karussell", "l"),
+        (-23.7, 120.0, "Motorturm, PETG", "Kasten ± 25,2, Wand 3, Z 7 bis 202", "l"),
         (-100.5, 99.0, "Goldring Ø 202, Gold-PETG", "unten Fase 0,8, am Portal offen", "l"),
-        (-58.0, 60.0, "Feuchtrinne mit Deckel", "Schwamm nass, 6 Löcher Ø 14", "l"),
-        (-22.0, 47.0, "GT2-Rad 70 Z", "1 : 3,5, Magnet für Hall", "l"),
-        (-58.0, 29.0, "Motor 2, Pancake 23 mm", "Karussell, Silikondämpfer", "l"),
-        (-44.0, 14.5, "Ballast 0,48 kg", "4 Stapel M20, hinter der Ebene", "l"),
+        (-44.0, 14.5, "Ballast, Becher gefüllt", "4 Stapel M20 (7 × 3 mm), hinter der Ebene", "l"),
         (-99.5, 70.0, "Sockel, glänzend", "PETG, Kegel Ø 204 auf 196", "l"),
         (4.0, 362.0, "Spindel T8, Steigung 2", "selbsthemmend, Stellring oben", "r"),
-        (24.0, 304.0, "Schlitten mit Messingmutter", "2 x LM10LUU auf Wellen Ø 10", "r"),
+        (24.0, 304.0, "Schlitten mit Messingmutter", "Gleitzonen gedruckt, Wellen Ø 10", "r"),
         (32.0, 318.0, "Ausleger mit Stempel, PETG (ein Teil)", "schwarz matt, Gummi 2 mm, 2 x M4", "r"),
         (99.0, 335.0, "Portalrahmen, Gold-PETG", "3 breit, 1,5 erhaben", "r"),
-        (89.5, 260.0, "Portalscheibe, Rauch-PETG 2 mm", "78 x 234, zwei Hälften, Magnete", "r"),
+        (89.5, 260.0, "Portalscheibe, Rauch-PETG 2 mm", "78 x 234, zwei Hälften, geklebt", "r"),
         (70.0, KP_D - 1.5, "Kolbenplatte Ø 38", "Stempel 4 mm innen", "r"),
         (70.0, 150.0, "Spritze 60 ml, Cyan", "Nutzfüllung 50 ml, Füllmarke", "r"),
         (76.0, 221.0, "Flansch in der Tasche", "Rastzunge, Einlaufschräge", "r"),
@@ -1792,6 +1836,7 @@ def draw_schnitt(ax):
         (57.0, 22.0, "Podest Ø 60, PETG schwarz", "liegt zum Wiegen auf der Wägezelle", "r"),
         (57.0, 14.0, "Wägezelle 500 g", "unter Podest und Schublade", "r"),
         (-12.7 + 12.0, 262.0, "Volle Spritzen", "hinter der Schnittebene", "r"),
+        (HALL_R, 204.5, "Hall-Sensor auf Pfosten", "A3144, Magnet 5 × 2 in der Nabe", "r"),
     ]
     return L
 
@@ -1893,16 +1938,6 @@ def draw_draufsicht(ax):
     ax.add_patch(Rectangle((-35, -107), 70, 85, fc="none", ec="#8A857A", **dash))                    # Schublade
     ax.add_patch(Circle(pxy(RS, 0), BECHER_RO, fc=ZIELFARBE, ec="#8A857A", alpha=0.0, lw=0.9, ls=(0, (4, 3)), zorder=6))
     ax.add_patch(Circle(pxy(RS, 0), BECHER_RO, fc="none", ec="#8A857A", **dash))
-    # Feuchtrinne r 45 bis 69, offen vorne +-38
-    for r in (45.0, 69.0):
-        ax.add_patch(Arc((0, 0), 2 * r, 2 * r, theta1=38 - 90 + 0, theta2=-38 - 90 + 360, ec="#5C8DB3", **dash))
-    for sg in (-1, 1):
-        ax.plot(*zip(pl(45, sg * 38), pl(69, sg * 38)), color="#5C8DB3", lw=0.9, ls=(0, (4, 3)), zorder=6)
-    # Abstreiflippen +-40
-    for sg in (-1, 1):
-        ax.plot(*zip(pl(50, sg * 40), pl(64, sg * 40)), color="#B8860B", lw=2.4, zorder=7, solid_capstyle="butt")
-    # Motor 2 (unter der Platte, hinten)
-    ax.add_patch(Rectangle(pxy(-36.65, -21.15)[::-1] if False else (-21.15, 36.65), 42.3, 42.3, fc="none", ec="#8A857A", **dash))
     # Karussellplatte
     ax.add_patch(Circle((0, 0), R_PLATTE, fc="#34343A", ec="#16161A", lw=1.0, zorder=8))
     for p in range(1, 7):
@@ -1913,6 +1948,15 @@ def draw_draufsicht(ax):
         lx, ly_ = pxy(*rot_xy([(76.0, 16.5 + 8.2)], th)[0])
         ax.text(lx, ly_, STATIONSBUCHSTABE[p - 1], fontsize=11, fontweight="bold", color="#8A8A94", ha="center", va="center",
                 rotation=th, rotation_mode="anchor", zorder=11, family=SANS)
+    # Stand 8: Motorturm, Aufnahmerahmen, Nabe und Hall-Pfosten unter der Platte (verdeckt, hell gestrichelt)
+    tdash = dict(ls=(0, (4, 3)), lw=1.0, zorder=11.5)
+    ax.add_patch(Rectangle((-TW_A, -TW_A), 2 * TW_A, 2 * TW_A, fc="none", ec="#C8C2B4", **tdash))
+    ax.add_patch(Rectangle((-(TW_A + TW_RAHMEN_AUSSEN), -(TW_A + TW_RAHMEN_AUSSEN)), 2 * (TW_A + TW_RAHMEN_AUSSEN), 2 * (TW_A + TW_RAHMEN_AUSSEN),
+                           fc="none", ec="#8A857A", **tdash))
+    ax.add_patch(Circle((0, 0), NABE_D / 2, fc="none", ec="#C8C2B4", **tdash))
+    ax.add_patch(Rectangle((-4.5, -(HALL_R + 3.0)), 9.0, 6.0, fc="none", ec="#C8C2B4", **tdash))
+    ax.add_patch(Circle((0, 0), SCHAFT_D / 2, fc="#C8CAD0", ec="#55575C", lw=0.5, zorder=11.6))
+    ax.text(0, -TW_A - 9.0, "Motorturm", fontsize=8.4, color="#C8C2B4", ha="center", va="center", zorder=11.7)
     # Laufringlücke (verdeckt)
     for sg in (-1, 1):
         ax.plot(*zip(pl(74.5, sg * 15), pl(86.5, sg * 15)), color="#8A857A", lw=1.0, ls=(0, (3, 2)), zorder=11)
@@ -2045,7 +2089,7 @@ def draw_masse(ax):
     for x in (168, 218, 268):
         ax.plot([x, x], [258, 266], color=ink, lw=1.2, zorder=9)
     ax.text(218, 274, "100 mm", fontsize=9.6, color=ink, ha="center", va="center", fontweight="bold")
-    ax.text(168, 236, "Grundfläche Ø 204: schmaler als ein\nA4-Blatt (210 mm), passt auf jeden\nSchreibtisch. 3,8 kg mit Ballast.", fontsize=9.3,
+    ax.text(168, 236, "Grundfläche Ø 204: schmaler als ein\nA4-Blatt (210 mm), passt auf jeden\nSchreibtisch.", fontsize=9.3,
             color=INK2, ha="left", va="top", linespacing=1.35)
 
 
@@ -2065,10 +2109,10 @@ def tafel(ss=1.5, verbose=True):
 
     # ---- Kopfzeile
     bg.text(48, 62, "Farbmischer", fontsize=46, family=SERIF, color=INK, ha="left", va="center")
-    bg.text(48, 118, "Stand 6 · schwarzer Flakon mit Goldlinien · Ø 204 × 407 mm · sechs Spritzen, zwei Motoren, alles aus PETG gedruckt",
+    bg.text(48, 118, "Stand 8 · schwarzer Flakon mit Goldlinien · Ø 204 × 407 mm · sechs Spritzen, zwei Motoren, Karussell direkt am Motor 2, alles aus PETG gedruckt",
             fontsize=13.5, color=INK2, ha="left", va="center")
     bg.plot([48, FW - 48], [148, 148], color=GOLDC, lw=1.4)
-    stats = [("406,8 mm", "Höhe"), ("Ø 204 mm", "Fuß und Krone"), ("3,8 kg", "mit Ballast"), ("6 × 50 ml", "Farbvorrat"), ("2", "Motoren")]
+    stats = [("406,8 mm", "Höhe"), ("Ø 204 mm", "Fuß und Krone"), ("1 : 1", "Karussell direkt am Motor"), ("6 × 50 ml", "Farbvorrat"), ("2", "Motoren")]
     x = FW - 48
     for big, small in stats[::-1]:
         bg.text(x, 56, big, fontsize=19, color=INK, ha="right", va="center", fontweight="bold")
@@ -2133,8 +2177,8 @@ def tafel(ss=1.5, verbose=True):
     axd = pane.axes(xlim=(-185, 185), ylim=(-174, 146))
     draw_draufsicht(axd)
     ly = y0 + 56 + 640 + 6
-    items = [("gestrichelt", "verdeckt: Schublade, Becher, Motor 2, Ballast, Laufringlücke ± 15°", "#8A857A"),
-             ("blau", "Feuchtrinne, vorne offen ± 38°", "#5C8DB3"), ("gold", "Abstreiflippen ± 40°, Goldring und Portalrahmen", "#B8860B"), ("pfeil", "Pfeil unten links: Drehrichtung + (gegen den Uhrzeigersinn)", GOLDD)]
+    items = [("gestrichelt", "verdeckt: Schublade, Becher, Motorturm mit Nabe und Hall-Pfosten, Ballast, Laufringlücke ± 15°", "#8A857A"),
+             ("gold", "Goldring und Portalrahmen", "#B8860B"), ("pfeil", "Pfeil unten links: Drehrichtung + (gegen den Uhrzeigersinn)", GOLDD)]
     for i, (a, b, c) in enumerate(items):
         top.plot([2046, 2072], [ly + 10 + i * 19] * 2, color=c, lw=2.0 if i else 1.2, ls=(0, (4, 3)) if i == 0 else "-")
         top.text(2084, ly + 10 + i * 19, b, fontsize=10, color=INK, ha="left", va="center")
@@ -2147,7 +2191,7 @@ def tafel(ss=1.5, verbose=True):
     draw_masse(axm)
 
     # ---- Fuß
-    top.text(48, FH - 26, "Nach hardware/farbmischer_parameter.md, Stand 6. Rendering mit eigenem Strahlverfolger, Schnitt, Draufsicht und Maße als Zeichnung "
+    top.text(48, FH - 26, "Nach hardware/farbmischer.scad und farbmischer_parameter.md, Stand 8 (Budget). Rendering mit eigenem Strahlverfolger, Schnitt, Draufsicht und Maße als Zeichnung "
             "aus denselben Parametern. Koordinaten: +X vorne, +Y rechts, Z = 0 Tischfläche.", fontsize=10, color=INK3, ha="left", va="center")
     fig.savefig(OUT_PNG, dpi=100, facecolor=PAPER)
     plt.close(fig)

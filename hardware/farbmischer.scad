@@ -212,7 +212,7 @@ zelle_fest_y1 = -50; zelle_last_y0 = -10;
 ues_luft = 0.8; ues_tasche_t = 1.5;
 podest_stiel_d = 14; podest_d = 60;
 // Schublade
-schub_b = 70; schub_wand = 2; schub_x0 = 22; schub_x1 = 110; schub_z1 = 45;   // Vorderkante folgt der Front (siehe t_schublade)
+schub_b = 70; schub_wand = 2; schub_x0 = 27.2; schub_x1 = 110; schub_z1 = 45;   // Vorderkante folgt der Front (siehe t_schublade)
 sitz_du = 48; sitz_do = 52; sitz_h = 3; sitz_da = 56;   // Bechersitz konisch
 front_b = 68; front_z0 = 17; front_z1 = 45; front_t = 8; lippe_b = 3; lippe_h = 1.5;
 auszug = 50;
